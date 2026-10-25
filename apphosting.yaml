@@ -1,0 +1,12 @@
+# Firebase App Hosting configuration for physics-tutor.
+# Runtime secrets and public Firebase config should be set in the App Hosting console.
+runtime:
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0
+  maxInstances: 2
+  concurrency: 80
+  timeoutSeconds: 60
+
+scripts:
+  build: npm run build
