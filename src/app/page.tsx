@@ -68,6 +68,7 @@ export default function Home() {
   const [results, setResults] = useState<Array<{user?: string; score?: number; total?: number}>>([]);
   const saveQuizResult = async (score: number) => { try { await addDoc(collection(db, "quizResults"), { title: "Тепловые явления ЕГЭ", score, total: quizQuestions.length, user: auth.currentUser?.email || "ученик", createdAt: serverTimestamp() }); } catch { setNotice("Результат показан, но пока не сохранён в Firestore. Проверьте правила базы."); } };
   useEffect(() => {
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => undefined);
     const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
     if (isLocal) { window.localStorage.setItem("physics-tutor-session", "active"); window.localStorage.setItem("physics-tutor-role", "teacher"); setRole("teacher"); setLoggedIn(true); } else setLoggedIn(window.localStorage.getItem("physics-tutor-session") === "active");
     const savedRole = window.localStorage.getItem("physics-tutor-role");
