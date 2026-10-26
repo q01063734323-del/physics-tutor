@@ -1,0 +1,10 @@
+{
+  "name": "Физика с Егором",
+  "short_name": "Физика",
+  "description": "Задания, теория и тренажёр ЕГЭ по физике",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#16233d",
+  "lang": "ru"
+}

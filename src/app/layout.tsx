@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Физика с Егором — кабинет ученика",
-  description: "Домашние задания и прогресс ученика по физике",
+  description: "Домашние задания, теория и тренажёр ЕГЭ по физике",
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
