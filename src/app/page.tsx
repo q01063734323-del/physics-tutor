@@ -2,9 +2,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { addDoc, collection, getDocs, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, serverTimestamp, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { gradeNumericAnswer } from "@/lib/grading";
 
@@ -93,8 +93,14 @@ export default function Home() {
     if (isLocal) { window.localStorage.setItem("physics-tutor-session", "active"); window.localStorage.setItem("physics-tutor-role", "teacher"); setRole("teacher"); setLoggedIn(true); } else setLoggedIn(window.localStorage.getItem("physics-tutor-session") === "active");
     const savedRole = window.localStorage.getItem("physics-tutor-role");
     if (savedRole === "teacher" || savedRole === "student") setRole(savedRole);
-    getDocs(collection(db, "attempts")).then(snapshot => setStudentAttempts(snapshot.docs.map(doc => doc.data() as {assignment?: string; answer?: number; correct?: boolean}))).catch(() => undefined);
-    getDocs(collection(db, "submissions")).then(snapshot => setStudentReviews(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as {assignment?: string; assignmentText?: string; comment?: string; score?: string; user?: string; fileUrl?: string; fileName?: string; fileType?: string; fileSize?: number; status?: string; createdAt?: unknown})))).catch(() => setNotice("Не удалось загрузить список отправленных работ."));
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+      const isTeacher = user.email?.toLowerCase() === TEACHER_EMAIL;
+      const attemptsRef = isTeacher ? collection(db, "attempts") : query(collection(db, "attempts"), where("user", "==", user.email));
+      const submissionsRef = isTeacher ? collection(db, "submissions") : query(collection(db, "submissions"), where("user", "==", user.email));
+      try { const snapshot = await getDocs(attemptsRef); setStudentAttempts(snapshot.docs.map(doc => doc.data() as {assignment?: string; answer?: number; correct?: boolean})); } catch { setStudentAttempts([]); }
+      try { const snapshot = await getDocs(submissionsRef); setStudentReviews(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as {assignment?: string; assignmentText?: string; comment?: string; score?: string; user?: string; fileUrl?: string; fileName?: string; fileType?: string; fileSize?: number; status?: string; createdAt?: unknown}))); } catch { setNotice("Не удалось загрузить список отправленных работ. Проверьте вход в Firebase."); }
+    });
     const savedMarked = window.localStorage.getItem("physics-tutor-marked");
     if (savedMarked) setMarkedTasks(JSON.parse(savedMarked));
     const savedStudents = window.localStorage.getItem("physics-tutor-students");
@@ -103,14 +109,10 @@ export default function Home() {
     if (saved) setItems(JSON.parse(saved));
     const savedStatuses = window.localStorage.getItem("physics-tutor-statuses");
     if (savedStatuses) setStatuses(JSON.parse(savedStatuses));
-    getDocs(collection(db, "submissions")).then(snapshot => {
-      const restored: Record<string, string> = {};
-      snapshot.docs.forEach(doc => { const data = doc.data() as { assignment?: string; status?: string }; if (data.assignment && data.status) restored[data.assignment] = data.status; });
-      if (Object.keys(restored).length) setStatuses(current => ({ ...restored, ...current }));
-    }).catch(() => undefined);
     getDocs(collection(db, "assignments")).then(snapshot => {
       if (!snapshot.empty) setItems(snapshot.docs.map(doc => doc.data() as typeof assignments[number]));
     }).catch(() => undefined);
+    return () => unsubscribe();
   }, []);
   useEffect(() => { window.localStorage.setItem("physics-tutor-students", JSON.stringify(students)); }, [students]);
   useEffect(() => { window.localStorage.setItem("physics-tutor-marked", JSON.stringify(markedTasks)); }, [markedTasks]);
