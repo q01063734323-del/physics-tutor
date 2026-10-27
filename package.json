@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types scripts/test-grading.mjs"
+    "test": "node --experimental-strip-types scripts/test-grading.mjs && node --experimental-strip-types scripts/test-dashboard.mjs"
   },
   "dependencies": {
     "firebase": "^13.1.0",
