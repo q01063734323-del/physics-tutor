@@ -8,6 +8,7 @@ import { addDoc, collection, getDocs, query, serverTimestamp, where } from "fire
 import { db } from "@/lib/firebase";
 import { gradeNumericAnswer } from "@/lib/grading";
 import { isOverdue, learningStreak, submissionStats } from "@/lib/dashboard";
+import { validateUpload } from "@/lib/file-validation";
 
 const assignments = [
   { icon: "🚀", title: "Законы Ньютона", text: "5 задач на второй закон Ньютона", due: "Сдать до 25 окт.", time: "20 мин", tone: "blue" },
@@ -162,7 +163,7 @@ export default function Home() {
     e.preventDefault();
     if (!newTitle.trim()) return;
     let text = newDescription.trim() || fileName || "Новое задание от преподавателя";
-    if (file) { const body = new FormData(); body.append("file", file); body.append("upload_preset", "physics_homework"); try { const response = await fetch("https://api.cloudinary.com/v1_1/y3gl6xsx/raw/upload", { method: "POST", body }); const result = await response.json(); if (!response.ok || !result.secure_url) throw new Error(result.error?.message || "Upload failed"); text = `Файл загружен: ${result.secure_url}`; } catch { setNotice("Не удалось загрузить файл. Проверьте Cloudinary preset."); return; } }
+    if (file) { const validationError = validateUpload(file); if (validationError) { setNotice(validationError); return; } const body = new FormData(); body.append("file", file); body.append("upload_preset", "physics_homework"); try { const response = await fetch("https://api.cloudinary.com/v1_1/y3gl6xsx/raw/upload", { method: "POST", body }); const result = await response.json(); if (!response.ok || !result.secure_url) throw new Error(result.error?.message || "Upload failed"); text = `Файл загружен: ${result.secure_url}`; } catch { setNotice("Не удалось загрузить файл. Проверьте Cloudinary preset."); return; } }
     const created = { icon: "📄", title: newTitle, text, due: newDue ? `Сдать до ${newDue}` : "Без дедлайна", dueDate: newDue || null, topic: newTopic, maxScore: Number(newMaxScore) || 10, time: "15 мин", tone: "blue", assignedTo: assignedStudent };
     setItems([created as typeof assignments[number], ...items]);
     try { await addDoc(collection(db, "assignments"), { ...created, createdAt: serverTimestamp(), createdBy: auth.currentUser?.email || "teacher" }); } catch { /* local fallback keeps the assignment visible */ }
@@ -204,14 +205,14 @@ export default function Home() {
             setIsSubmitting(true);
             try {
               let solutionUrl = "";
-              if (role === "student" && solutionFile) { const body = new FormData(); body.append("file", solutionFile); body.append("upload_preset", "physics_homework"); const response = await fetch("https://api.cloudinary.com/v1_1/y3gl6xsx/raw/upload", { method: "POST", body }); const result = await response.json(); if (!response.ok || !result.secure_url) throw new Error(result.error?.message || "Файл не загрузился"); solutionUrl = result.secure_url; }
+              if (role === "student") { const validationError = validateUpload(solutionFile); if (validationError) throw new Error(validationError); const body = new FormData(); body.append("file", solutionFile as File); body.append("upload_preset", "physics_homework"); const response = await fetch("https://api.cloudinary.com/v1_1/y3gl6xsx/raw/upload", { method: "POST", body }); const result = await response.json(); if (!response.ok || !result.secure_url) throw new Error(result.error?.message || "Файл не загрузился"); solutionUrl = result.secure_url; }
               const currentUser = auth.currentUser?.email || (role === "teacher" ? "teacher" : "student");
               const submission = { assignment: selected, assignmentText: items.find(item => item.title === selected)?.text || "", status: nextStatus, fileUrl: solutionUrl, fileName: solutionFile?.name || "", fileType: solutionFile?.type || "", fileSize: solutionFile?.size || 0, user: currentUser, reviewedBy: role === "teacher" ? "Егор" : null, comment: role === "teacher" ? reviewComment : "", score: role === "teacher" ? reviewScore : "", createdAt: serverTimestamp() };
               const saved = await addDoc(collection(db, "submissions"), submission);
               setStudentReviews(current => [...current, { ...submission, createdAt: new Date().toISOString() }]);
               setStatuses(current => ({...current, [selected]: nextStatus}));
               setSolutionFile(null); setReviewComment(""); setReviewScore(""); setSelected(null); setNotice(role === "teacher" ? "Работа проверена и сохранена" : `Решение отправлено (№ ${saved.id.slice(0, 6)})`);
-            } catch { setNotice(role === "student" ? "Не удалось сохранить работу. Файл и статус не были отправлены." : "Не удалось сохранить проверку. Повторите попытку."); }
+            } catch (error) { setNotice(error instanceof Error ? error.message : role === "student" ? "Не удалось сохранить работу. Файл и статус не были отправлены." : "Не удалось сохранить проверку. Повторите попытку."); }
             finally { setIsSubmitting(false); }
           }}> {isSubmitting ? "Сохраняем…" : role === "teacher" ? "Сохранить оценку" : "Отправить решение"}</button>}</div></div></div>}
     </div>
