@@ -164,6 +164,8 @@ export default function Home() {
           <button className={`nav-item ${activeView === "home" ? "active" : ""}`} onClick={() => setActiveView("home")}><span>⌂</span>Главная</button>
           <button className={`nav-item ${activeView === "tasks" ? "active" : ""}`} onClick={() => setActiveView("tasks")}><span>◈</span>Мои задания</button>
           <button className={`nav-item ${activeView === "progress" ? "active" : ""}`} onClick={() => setActiveView("progress")}><span>◷</span>Прогресс</button>
+          <button className={`nav-item ${activeView === "exam" ? "active" : ""}`} onClick={() => setActiveView("exam")}><span>▣</span>ЕГЭ-тренажёр</button>
+          <button className={`nav-item ${activeView === "theory" ? "active" : ""}`} onClick={() => setActiveView("theory")}><span>▤</span>Курсы и теория</button>
           <button className="nav-item" onClick={() => setNotice("Настройки профиля появятся после подключения Firebase Authentication") }><span>⚙</span>Настройки</button>
         </nav>
         <div className="profile"><div className="avatar">АК</div><div><strong>{role === "teacher" ? "Егор" : "Алексей К."}</strong><small>{role === "teacher" ? "Преподаватель" : "8 класс"}</small></div><button className="logout" onClick={() => { window.localStorage.removeItem("physics-tutor-session"); setLoggedIn(false); }}>Выйти</button></div>
