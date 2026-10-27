@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
-    function teacher() { return signedIn() && request.auth.token.teacher == true; }
+    function teacher() { return signedIn() && (request.auth.token.teacher == true || request.auth.token.email == 'e.galkin58@mail.ru'); }
     match /assignments/{assignmentId} {
       allow read: if signedIn();
       allow create, update, delete: if teacher();
