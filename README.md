@@ -11,14 +11,9 @@ npm run dev
 
 Откройте http://localhost:3000.
 
-Локальный преподавательский вход для проверки интерфейса:
+Вход выполняется через Firebase Authentication по email и паролю. Демо-пароли в клиенте отключены.
 
-```text
-Логин: egor
-Пароль: physics2025
-```
-
-Для реального production-доступа используйте Firebase Authentication; локальный вход не является механизмом безопасности.
+Для Render добавьте домен `physics-tutor-6ytz.onrender.com` в Firebase Authentication → Settings → Authorized domains и включите провайдер Email/Password.
 
 ## Проверки
 
@@ -36,9 +31,16 @@ npm run build -- --webpack
 - числовые попытки: Firestore `attempts`;
 - экзаменационные попытки: Firestore `examAttempts`;
 - результаты тематических тестов: Firestore `quizResults`;
+- тематический банк задач: Firestore `questionBank` (`verification: verified` виден ученикам, `needs_review` — только преподавателю);
 - учебные файлы: Cloudinary через unsigned upload preset `physics_homework`;
 - локальный fallback старых заданий и интерфейсных настроек: browser `localStorage`.
 
 ## Безопасность
 
-Правила доступа находятся в `firestore.rules`. Перед production-развёртыванием примените их через Firebase CLI и настройте custom claim `teacher: true` только из доверенного Admin SDK окружения. Не добавляйте секреты Admin SDK в Next.js клиентский код.
+Правила доступа находятся в `firestore.rules`. Перед production-развёртыванием примените их через Firebase CLI:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Преподаватель определяется по custom claim `teacher: true` или доверенному email из правил. Не добавляйте секреты Admin SDK в Next.js клиентский код.
