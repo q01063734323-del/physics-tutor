@@ -131,12 +131,13 @@ export default function Home() {
   const saveQuizResult = async (score: number) => { try { await addDoc(collection(db, "quizResults"), { title: selected || "Тепловые явления ЕГЭ", topic: selected || "Термодинамика", score, total: quizQuestions.length, user: auth.currentUser?.email || "ученик", createdAt: serverTimestamp() }); } catch { setNotice("Результат показан, но пока не сохранён в Firestore. Проверьте правила базы."); } };
   useEffect(() => {
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => undefined);
-    setLoggedIn(window.localStorage.getItem("physics-tutor-session") === "active");
+    setLoggedIn(false);
     const savedRole = window.localStorage.getItem("physics-tutor-role");
     if (savedRole === "teacher" || savedRole === "student") setRole(savedRole);
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) return;
+      if (!user) { setLoggedIn(false); window.localStorage.removeItem("physics-tutor-session"); return; }
       const isTeacher = user.email?.toLowerCase() === TEACHER_EMAIL;
+      setLoggedIn(true); setRole(isTeacher ? "teacher" : "student"); window.localStorage.setItem("physics-tutor-session", "active"); window.localStorage.setItem("physics-tutor-role", isTeacher ? "teacher" : "student");
       const attemptsRef = isTeacher ? collection(db, "attempts") : query(collection(db, "attempts"), where("user", "==", user.email));
       const submissionsRef = isTeacher ? collection(db, "submissions") : query(collection(db, "submissions"), where("user", "==", user.email));
       try { const snapshot = await getDocs(attemptsRef); setStudentAttempts(snapshot.docs.map(doc => doc.data() as {assignment?: string; answer?: number; correct?: boolean})); } catch { setStudentAttempts([]); }
