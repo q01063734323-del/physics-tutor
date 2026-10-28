@@ -141,6 +141,7 @@ export default function Home() {
       const submissionsRef = isTeacher ? collection(db, "submissions") : query(collection(db, "submissions"), where("user", "==", user.email));
       try { const snapshot = await getDocs(attemptsRef); setStudentAttempts(snapshot.docs.map(doc => doc.data() as {assignment?: string; answer?: number; correct?: boolean})); } catch { setStudentAttempts([]); }
       try { const snapshot = await getDocs(submissionsRef); setStudentReviews(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as {assignment?: string; assignmentText?: string; comment?: string; score?: string; user?: string; fileUrl?: string; fileName?: string; fileType?: string; fileSize?: number; status?: string; createdAt?: unknown}))); } catch { setNotice("Не удалось загрузить список отправленных работ. Проверьте вход в Firebase."); }
+      try { const bankRef = isTeacher ? collection(db, "questionBank") : query(collection(db, "questionBank"), where("verification", "==", "verified")); const snapshot = await getDocs(bankRef); if (!snapshot.empty) setBankQuestions(current => [...snapshot.docs.map(doc => doc.data() as typeof importedQuestionBank[number]), ...current]); } catch { /* банк может быть пустым до публикации первой задачи */ }
     });
     const savedMarked = window.localStorage.getItem("physics-tutor-marked");
     if (savedMarked) setMarkedTasks(JSON.parse(savedMarked));
@@ -152,9 +153,6 @@ export default function Home() {
     if (savedStatuses) setStatuses(JSON.parse(savedStatuses));
     getDocs(collection(db, "assignments")).then(snapshot => {
       if (!snapshot.empty) setItems(snapshot.docs.map(doc => doc.data() as typeof assignments[number]));
-    }).catch(() => undefined);
-    getDocs(collection(db, "questionBank")).then(snapshot => {
-      if (!snapshot.empty) setBankQuestions(current => [...snapshot.docs.map(doc => doc.data() as typeof importedQuestionBank[number]), ...current]);
     }).catch(() => undefined);
     return () => unsubscribe();
   }, []);
