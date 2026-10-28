@@ -25,5 +25,9 @@ service cloud.firestore {
       allow create: if signedIn() && request.resource.data.user == request.auth.token.email;
       allow read: if teacher() || (signedIn() && resource.data.user == request.auth.token.email);
     }
+    match /questionBank/{questionId} {
+      allow read: if signedIn() && (teacher() || resource.data.verification == 'verified');
+      allow create, update, delete: if teacher();
+    }
   }
 }

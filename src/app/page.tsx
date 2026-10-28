@@ -153,6 +153,9 @@ export default function Home() {
     getDocs(collection(db, "assignments")).then(snapshot => {
       if (!snapshot.empty) setItems(snapshot.docs.map(doc => doc.data() as typeof assignments[number]));
     }).catch(() => undefined);
+    getDocs(collection(db, "questionBank")).then(snapshot => {
+      if (!snapshot.empty) setBankQuestions(current => [...snapshot.docs.map(doc => doc.data() as typeof importedQuestionBank[number]), ...current]);
+    }).catch(() => undefined);
     return () => unsubscribe();
   }, []);
   useEffect(() => { window.localStorage.setItem("physics-tutor-students", JSON.stringify(students)); }, [students]);
