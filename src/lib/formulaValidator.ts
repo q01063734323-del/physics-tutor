@@ -11,6 +11,10 @@ const formulas: Record<string, FormulaDefinition> = {
   ohm: { label: "Закон Ома: I = U/R", equivalents: ["I=U/R", "U/R=I", "U=I*R", "U=R*I", "R=U/I", "R=U/I"] },
   newton2: { label: "Второй закон Ньютона: F = m*a", equivalents: ["F=m*a", "F=a*m", "a=F/m", "m=F/a"] },
   heat: { label: "Количество теплоты: Q = c*m*Δt", equivalents: ["Q=c*m*dt", "Q=m*c*dt", "m=Q/(c*dt)", "c=Q/(m*dt)", "dt=Q/(c*m)"] },
+  kinetic: { label: "Кинетическая энергия: E = m*v²/2", equivalents: ["E=m*v^2/2", "E=v^2*m/2", "m=2*E/v^2", "v^2=2*E/m"] },
+  density: { label: "Плотность: ρ = m/V", equivalents: ["rho=m/V", "p=m/V", "m=rho*V", "V=m/rho"] },
+  power: { label: "Мощность тока: P = U*I", equivalents: ["P=U*I", "P=I*U", "U=P/I", "I=P/U"] },
+  speed: { label: "Скорость: v = s/t", equivalents: ["v=s/t", "s=v*t", "t=s/v"] },
 };
 
 const cyrillicAliases: Record<string, string> = { "с": "c", "а": "a", "р": "p", "е": "e", "х": "x", "у": "y", "о": "o", "м": "m", "т": "t", "д": "d", "ф": "f", "к": "k", "л": "l", "н": "n", "в": "v" };
