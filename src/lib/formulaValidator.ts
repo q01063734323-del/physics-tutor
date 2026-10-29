@@ -15,6 +15,9 @@ const formulas: Record<string, FormulaDefinition> = {
   density: { label: "Плотность: ρ = m/V", equivalents: ["rho=m/V", "p=m/V", "m=rho*V", "V=m/rho"] },
   power: { label: "Мощность тока: P = U*I", equivalents: ["P=U*I", "P=I*U", "U=P/I", "I=P/U"] },
   speed: { label: "Скорость: v = s/t", equivalents: ["v=s/t", "s=v*t", "t=s/v"] },
+  potential: { label: "Потенциальная энергия: E = m*g*h", equivalents: ["E=m*g*h", "E=g*m*h", "m=E/(g*h)", "h=E/(m*g)"] },
+  force: { label: "Сила упругости: F = k*x", equivalents: ["F=k*x", "F=x*k", "k=F/x", "x=F/k"] },
+  lens: { label: "Формула тонкой линзы: 1/F = 1/d + 1/f", equivalents: ["1/F=1/d+1/f", "1/d+1/f=1/F"] },
 };
 
 const cyrillicAliases: Record<string, string> = { "с": "c", "а": "a", "р": "p", "е": "e", "х": "x", "у": "y", "о": "o", "м": "m", "т": "t", "д": "d", "ф": "f", "к": "k", "л": "l", "н": "n", "в": "v" };

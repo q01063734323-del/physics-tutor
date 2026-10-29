@@ -6,6 +6,8 @@ assert.equal(normalizeFormula("Q = c · m · Δt"), "q=c*m*dt");
 assert.equal(validateFormula("i = u/r", "ohm").isValid, true);
 assert.equal(validateFormula("U = R * I", "ohm").isValid, true);
 assert.equal(validateFormula("F = a*m", "newton2").isValid, true);
+assert.equal(validateFormula("E = m*g*h", "potential").isValid, true);
+assert.equal(validateFormula("1/d + 1/f = 1/F", "lens").isValid, true);
 assert.equal(validateFormula("I = U + R", "ohm").isValid, false);
 assert.equal(validateFormula("I=U/R", "missing").isValid, false);
 console.log("formula validator tests passed");
