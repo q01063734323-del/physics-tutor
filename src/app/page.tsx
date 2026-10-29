@@ -93,8 +93,8 @@ export default function Home() {
   const [examHints, setExamHints] = useState<Record<number, boolean>>({});
   const [examSubmitted, setExamSubmitted] = useState(false);
   const [examTime, setExamTime] = useState(15 * 60);
-  useEffect(() => { const savedExam = window.localStorage.getItem("physics-tutor-exam"); if (savedExam) { try { const parsed = JSON.parse(savedExam); setExamAnswers(parsed.answers || {}); setExamTime(parsed.time || 15 * 60); } catch { /* ignore invalid saved attempt */ } } }, []);
-  useEffect(() => { if (activeView === "exam" && !examSubmitted) window.localStorage.setItem("physics-tutor-exam", JSON.stringify({ answers: examAnswers, time: examTime })); }, [activeView, examAnswers, examTime, examSubmitted]);
+  useEffect(() => { const savedExam = window.localStorage.getItem("physics-tutor-exam"); if (savedExam) { try { const parsed = JSON.parse(savedExam); setExamAnswers(parsed.answers || {}); setExamTime(parsed.time || 15 * 60); if (parsed.mode === "ЕГЭ" || parsed.mode === "ОГЭ") setExamMode(parsed.mode); } catch { /* ignore invalid saved attempt */ } } }, []);
+  useEffect(() => { if (activeView === "exam" && !examSubmitted) window.localStorage.setItem("physics-tutor-exam", JSON.stringify({ answers: examAnswers, time: examTime, mode: examMode })); }, [activeView, examAnswers, examTime, examMode, examSubmitted]);
   const [role, setRole] = useState<"student" | "teacher">("student");
   const [items, setItems] = useState(assignments);
   const [newTitle, setNewTitle] = useState("");
