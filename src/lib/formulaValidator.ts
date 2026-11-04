@@ -9,9 +9,9 @@ type FormulaDefinition = { label: string; equivalents: string[] };
 
 const formulas: Record<string, FormulaDefinition> = {
   ohm: { label: "Закон Ома: I = U/R", equivalents: ["I=U/R", "U/R=I", "U=I*R", "U=R*I", "R=U/I", "R=U/I"] },
-  newton2: { label: "Второй закон Ньютона: F = m*a", equivalents: ["F=m*a", "F=a*m", "a=F/m", "m=F/a"] },
-  heat: { label: "Количество теплоты: Q = c*m*Δt", equivalents: ["Q=c*m*dt", "Q=m*c*dt", "m=Q/(c*dt)", "c=Q/(m*dt)", "dt=Q/(c*m)"] },
-  kinetic: { label: "Кинетическая энергия: E = m*v²/2", equivalents: ["E=m*v^2/2", "E=v^2*m/2", "m=2*E/v^2", "v^2=2*E/m"] },
+  newton2: { label: "Второй закон Ньютона: F = m*a", equivalents: ["F=m*a", "F=ma", "F=a*m", "a=F/m", "m=F/a"] },
+  heat: { label: "Количество теплоты: Q = c*m*Δt", equivalents: ["Q=c*m*dt", "Q=cm*dt", "Q=cmdt", "Q=m*c*dt", "m=Q/(c*dt)", "c=Q/(m*dt)", "dt=Q/(c*m)"] },
+  kinetic: { label: "Кинетическая энергия: E = m*v²/2", equivalents: ["E=m*v^2/2", "E=mv^2/2", "E=v^2*m/2", "m=2*E/v^2", "v^2=2*E/m"] },
   density: { label: "Плотность: ρ = m/V", equivalents: ["rho=m/V", "p=m/V", "m=rho*V", "V=m/rho"] },
   power: { label: "Мощность тока: P = U*I", equivalents: ["P=U*I", "P=I*U", "U=P/I", "I=P/U"] },
   speed: { label: "Скорость: v = s/t", equivalents: ["v=s/t", "s=v*t", "t=s/v"] },
@@ -24,6 +24,7 @@ const cyrillicAliases: Record<string, string> = { "с": "c", "а": "a", "р": "p
 
 export function normalizeFormula(value: string): string {
   let normalized = value.normalize("NFKC").toLowerCase().replace(/[сарехуомтдфклнв]/g, char => cyrillicAliases[char] || char);
+  normalized = normalized.replace(/²/g, "^2");
   normalized = normalized.replace(/[∆δ]t/g, "dt").replace(/[∆δ]/g, "d").replace(/[·×*]/g, "*").replace(/[/:÷]/g, "/");
   normalized = normalized.replace(/\s+/g, "").replace(/[{}\[\]]/g, "(");
   normalized = normalized.replace(/\)+/g, ")").replace(/\(([^()]*)\)/g, "$1");
