@@ -21,11 +21,14 @@ const cards: Card[] = [
 
 export default function FormulaRecallTrainer() {
   const [mode, setMode] = useState<"recall" | "choice" | "fix">("recall");
+  const [section, setSection] = useState("Все разделы");
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState("");
   const [state, setState] = useState<FormulaAttempt>(createFormulaAttempt());
   const [feedback, setFeedback] = useState<string | null>(null);
-  const card = useMemo(() => cards[index], [index]);
+  const sections = ["Все разделы", ...Array.from(new Set(cards.map(item => item.topic)))];
+  const deck = useMemo(() => section === "Все разделы" ? cards : cards.filter(item => item.topic === section), [section]);
+  const card = useMemo(() => deck[index % deck.length], [deck, index]);
   const choices = useMemo(() => [card.formula, cards[(index + 2) % cards.length].formula, cards[(index + 5) % cards.length].formula, cards[(index + 7) % cards.length].formula].sort(() => 0.5 - ((index + 1) % 2)), [card, index]);
   const broken = useMemo(() => card.id === "ohm" ? "I = U · R" : card.id === "speed" ? "v = s · t" : card.id === "kinetic" ? "E = mv / 2" : `${card.formula} + 1`, [card]);
 
@@ -48,14 +51,14 @@ export default function FormulaRecallTrainer() {
   }
 
   function next() {
-    setIndex(value => (value + 1) % cards.length);
+    setIndex(value => (value + 1) % deck.length);
     setInput("");
     setState(createFormulaAttempt());
     setFeedback(null);
   }
 
   return <div className="formula-recall">
-    <div className="formula-recall-head"><div><div className="eyebrow">Активное вспоминание</div><h4>Тренажёр формул</h4><p className="muted">Карточка {index + 1} из {cards.length}. Выбери режим и закрепи формулу.</p></div><span className="tag ready">{card.topic}</span></div>
+    <div className="formula-recall-head"><div><div className="eyebrow">Активное вспоминание</div><h4>Тренажёр формул</h4><p className="muted">Один вопрос за раз. Запиши формулу своими словами или математически.</p></div><span className="tag ready">{index % deck.length + 1} / {deck.length}</span></div><label className="formula-section-select">Раздел<select value={section} onChange={event => { setSection(event.target.value); setIndex(0); setState(createFormulaAttempt()); setFeedback(null); setInput(""); }}>{sections.map(item => <option key={item}>{item}</option>)}</select></label>
     <div className="formula-recall-tabs"><button className={mode === "recall" ? "selected" : ""} onClick={() => { setMode("recall"); setFeedback(null); }}>Вспомнить самому</button><button className={mode === "choice" ? "selected" : ""} onClick={() => { setMode("choice"); setFeedback(null); }}>Выбрать вариант</button><button className={mode === "fix" ? "selected" : ""} onClick={() => { setMode("fix"); setInput(""); setFeedback(null); }}>Исправить ошибку</button></div>
     <div className="formula-recall-card"><span className="formula-recall-kicker">{card.title}</span><h3>{mode === "fix" ? "Исправь ошибку в записи формулы" : card.prompt}</h3>{mode === "fix" && <div className="formula-broken">{broken}</div>}{mode !== "choice" ? <><input className="formula-recall-input" value={input} onChange={event => { setInput(event.target.value); setFeedback(null); }} onKeyDown={event => { if (event.key === "Enter") { if (mode === "fix") fixFormula(); else check(); } }} placeholder="Например: F = ma" aria-label="Ответ формулой" /><div className="formula-recall-actions"><button className="primary" onClick={mode === "fix" ? fixFormula : check} disabled={!input.trim()}>Проверить</button><button className="hint-button" onClick={() => setFeedback(card.hint)}>Подсказка</button><button className="task-action-button" onClick={next}>Следующая →</button></div></> : <div className="formula-choice-grid">{choices.map(choice => <button key={choice} onClick={() => choose(choice)}>{choice}</button>)}<button className="task-action-button" onClick={next}>Следующая →</button></div>}{feedback && <div className={`answer-feedback ${state.solved ? "success" : "error"}`}>{feedback}{state.revealAnswer && <strong> Ответ: {card.formula}</strong>}{state.showHint && !state.revealAnswer && <small> Подсказка открыта после двух ошибок.</small>}</div>}</div>
   </div>;
