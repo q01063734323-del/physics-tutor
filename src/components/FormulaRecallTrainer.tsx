@@ -20,16 +20,24 @@ const cards: Card[] = [
 ];
 
 export default function FormulaRecallTrainer() {
+  const [mode, setMode] = useState<"recall" | "choice">("recall");
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState("");
   const [state, setState] = useState<FormulaAttempt>(createFormulaAttempt());
   const [feedback, setFeedback] = useState<string | null>(null);
   const card = useMemo(() => cards[index], [index]);
+  const choices = useMemo(() => [card.formula, cards[(index + 2) % cards.length].formula, cards[(index + 5) % cards.length].formula, cards[(index + 7) % cards.length].formula].sort(() => 0.5 - ((index + 1) % 2)), [card, index]);
 
   function check() {
     const result = validateFormula(input, card.id);
     setState(previous => applyFormulaAnswer(previous, result.isValid));
     setFeedback(result.isValid ? "Верно! Формула распознана." : "Пока не совпало. Попробуй ещё раз или воспользуйся подсказкой.");
+  }
+
+  function choose(value: string) {
+    const correct = value === card.formula;
+    setState(previous => applyFormulaAnswer(previous, correct));
+    setFeedback(correct ? "Верно! Отличное узнавание формулы." : "Это другая формула. Проверь смысл вопроса и попробуй ещё раз.");
   }
 
   function next() {
@@ -40,7 +48,8 @@ export default function FormulaRecallTrainer() {
   }
 
   return <div className="formula-recall">
-    <div className="formula-recall-head"><div><div className="eyebrow">Активное вспоминание</div><h4>Тренажёр формул</h4><p className="muted">Вспомни формулу по смыслу и запиши её с клавиатуры. Карточка {index + 1} из {cards.length}.</p></div><span className="tag ready">{card.topic}</span></div>
-    <div className="formula-recall-card"><span className="formula-recall-kicker">{card.title}</span><h3>{card.prompt}</h3><input className="formula-recall-input" value={input} onChange={event => { setInput(event.target.value); setFeedback(null); }} onKeyDown={event => { if (event.key === "Enter") check(); }} placeholder="Например: F = ma" aria-label="Ответ формулой" /><div className="formula-recall-actions"><button className="primary" onClick={check} disabled={!input.trim()}>Проверить</button><button className="hint-button" onClick={() => setFeedback(card.hint)}>Подсказка</button><button className="task-action-button" onClick={next}>Следующая →</button></div>{feedback && <div className={`answer-feedback ${state.solved ? "success" : "error"}`}>{feedback}{state.revealAnswer && <strong> Ответ: {card.formula}</strong>}{state.showHint && !state.revealAnswer && <small> Подсказка открыта после двух ошибок.</small>}</div>}</div>
+    <div className="formula-recall-head"><div><div className="eyebrow">Активное вспоминание</div><h4>Тренажёр формул</h4><p className="muted">Карточка {index + 1} из {cards.length}. Выбери режим и закрепи формулу.</p></div><span className="tag ready">{card.topic}</span></div>
+    <div className="formula-recall-tabs"><button className={mode === "recall" ? "selected" : ""} onClick={() => { setMode("recall"); setFeedback(null); }}>Вспомнить самому</button><button className={mode === "choice" ? "selected" : ""} onClick={() => { setMode("choice"); setFeedback(null); }}>Выбрать вариант</button></div>
+    <div className="formula-recall-card"><span className="formula-recall-kicker">{card.title}</span><h3>{card.prompt}</h3>{mode === "recall" ? <><input className="formula-recall-input" value={input} onChange={event => { setInput(event.target.value); setFeedback(null); }} onKeyDown={event => { if (event.key === "Enter") check(); }} placeholder="Например: F = ma" aria-label="Ответ формулой" /><div className="formula-recall-actions"><button className="primary" onClick={check} disabled={!input.trim()}>Проверить</button><button className="hint-button" onClick={() => setFeedback(card.hint)}>Подсказка</button><button className="task-action-button" onClick={next}>Следующая →</button></div></> : <div className="formula-choice-grid">{choices.map(choice => <button key={choice} onClick={() => choose(choice)}>{choice}</button>)}<button className="task-action-button" onClick={next}>Следующая →</button></div>}{feedback && <div className={`answer-feedback ${state.solved ? "success" : "error"}`}>{feedback}{state.revealAnswer && <strong> Ответ: {card.formula}</strong>}{state.showHint && !state.revealAnswer && <small> Подсказка открыта после двух ошибок.</small>}</div>}</div>
   </div>;
 }
