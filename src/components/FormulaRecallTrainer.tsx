@@ -35,8 +35,8 @@ export default function FormulaRecallTrainer() {
 
   function check() {
     const phrase = input.toLowerCase().replace(/ё/g, "е");
-    const semantic = card.id === "momentum" && (phrase.includes("масса") && phrase.includes("скорост"));
-    const result = semantic ? { isValid: true, feedback: "Верно! Импульс — произведение массы на скорость.", normalizedInput: input, matchedFormula: "p = mv" } : validateFormula(input, card.id);
+    const semantic = (card.id === "momentum" && phrase.includes("масса") && phrase.includes("скорост")) || (card.id === "kinetic" && phrase.includes("половин") && phrase.includes("масса") && phrase.includes("квадрат") && phrase.includes("скорост")) || (card.id === "density" && phrase.includes("масса") && (phrase.includes("объем") || phrase.includes("объeм") || phrase.includes("объём")) && (phrase.includes("дел") || phrase.includes("раздел")));
+    const result = semantic ? { isValid: true, feedback: card.id === "momentum" ? "Верно! Импульс — произведение массы на скорость." : card.id === "kinetic" ? "Верно! Кинетическая энергия — половина произведения массы на квадрат скорости." : "Верно! Плотность — масса, делённая на объём.", normalizedInput: input, matchedFormula: card.formula } : validateFormula(input, card.id);
     setState(previous => applyFormulaAnswer(previous, result.isValid));
     setFeedback(result.isValid ? "Верно! Формула распознана." : "Пока не совпало. Попробуй ещё раз или воспользуйся подсказкой.");
   }
