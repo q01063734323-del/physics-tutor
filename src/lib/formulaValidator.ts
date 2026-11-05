@@ -8,6 +8,7 @@ export interface FormulaCheckResult {
 type FormulaDefinition = { label: string; equivalents: string[] };
 
 const formulas: Record<string, FormulaDefinition> = {
+  momentum: { label: "Импульс тела: p = m*v", equivalents: ["p=m*v", "p=mv", "m*v=p"] },
   ohm: { label: "Закон Ома: I = U/R", equivalents: ["I=U/R", "U/R=I", "U=I*R", "U=R*I", "R=U/I", "R=U/I"] },
   newton2: { label: "Второй закон Ньютона: F = m*a", equivalents: ["F=m*a", "F=ma", "F=a*m", "a=F/m", "m=F/a"] },
   heat: { label: "Количество теплоты: Q = c*m*Δt", equivalents: ["Q=c*m*dt", "Q=cm*dt", "Q=cmdt", "Q=m*c*dt", "m=Q/(c*dt)", "c=Q/(m*dt)", "dt=Q/(c*m)"] },

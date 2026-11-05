@@ -7,6 +7,7 @@ import { applyFormulaAnswer, createFormulaAttempt, type FormulaAttempt } from "@
 type Card = { id: string; topic: string; title: string; prompt: string; formula: string; hint: string };
 
 const cards: Card[] = [
+  { id: "momentum", topic: "Механика", title: "Импульс тела", prompt: "Из каких физических величин состоит импульс тела? Запиши формулу", formula: "p = mv", hint: "Импульс равен произведению массы на скорость." },
   { id: "newton2", topic: "Механика", title: "Второй закон Ньютона", prompt: "Запиши формулу силы через массу и ускорение", formula: "F = ma", hint: "Сила равна произведению массы на ускорение." },
   { id: "speed", topic: "Механика", title: "Скорость", prompt: "Как найти скорость через путь и время?", formula: "v = s / t", hint: "Раздели пройденный путь на время движения." },
   { id: "kinetic", topic: "Механика", title: "Кинетическая энергия", prompt: "Запиши энергию движущегося тела", formula: "E = mv² / 2", hint: "В формуле есть масса и квадрат скорости." },
@@ -33,7 +34,9 @@ export default function FormulaRecallTrainer() {
   const broken = useMemo(() => card.id === "ohm" ? "I = U · R" : card.id === "speed" ? "v = s · t" : card.id === "kinetic" ? "E = mv / 2" : `${card.formula} + 1`, [card]);
 
   function check() {
-    const result = validateFormula(input, card.id);
+    const phrase = input.toLowerCase().replace(/ё/g, "е");
+    const semantic = card.id === "momentum" && (phrase.includes("масса") && phrase.includes("скорост"));
+    const result = semantic ? { isValid: true, feedback: "Верно! Импульс — произведение массы на скорость.", normalizedInput: input, matchedFormula: "p = mv" } : validateFormula(input, card.id);
     setState(previous => applyFormulaAnswer(previous, result.isValid));
     setFeedback(result.isValid ? "Верно! Формула распознана." : "Пока не совпало. Попробуй ещё раз или воспользуйся подсказкой.");
   }
