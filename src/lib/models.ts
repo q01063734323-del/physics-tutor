@@ -7,6 +7,7 @@ export type QuestionType = "single_choice" | "multi_choice" | "numeric" | "seque
 export type Assignment = {
   id?: string;
   createdById?: string;
+  teacherId?: string;
   title: string;
   description: string;
   topic: string;
@@ -33,6 +34,7 @@ export type Question = {
 export type Submission = {
   id?: string;
   userId?: string;
+  teacherId?: string;
   assignmentId?: string;
   assignment: string;
   user: string;
