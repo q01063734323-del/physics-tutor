@@ -1,9 +1,12 @@
 export type UserRole = "student" | "teacher";
+export type UserProfile = { uid: string; email: string; role: UserRole; displayName?: string; createdAt?: unknown; updatedAt?: unknown };
+export type TeacherStudentLink = { id?: string; teacherId: string; studentId: string; status: "active" | "invited" | "archived"; createdAt?: unknown };
 export type AssignmentStatus = "new" | "in_progress" | "submitted" | "reviewed" | "returned";
 export type QuestionType = "single_choice" | "multi_choice" | "numeric" | "sequence" | "matching" | "ordering" | "written";
 
 export type Assignment = {
   id?: string;
+  createdById?: string;
   title: string;
   description: string;
   topic: string;
@@ -29,6 +32,7 @@ export type Question = {
 
 export type Submission = {
   id?: string;
+  userId?: string;
   assignmentId?: string;
   assignment: string;
   user: string;
