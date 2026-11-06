@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types scripts/test-grading.mjs && node --experimental-strip-types scripts/test-dashboard.mjs && node --experimental-strip-types scripts/test-file-validation.mjs && node --experimental-strip-types scripts/test-question-bank.mjs && node --experimental-strip-types scripts/test-formula-validator.mjs && node --experimental-strip-types scripts/test-formula-trainer.mjs && node --experimental-strip-types scripts/test-security-config.mjs"
+    "test": "node --experimental-strip-types scripts/test-grading.mjs && node --experimental-strip-types scripts/test-dashboard.mjs && node --experimental-strip-types scripts/test-file-validation.mjs && node --experimental-strip-types scripts/test-question-bank.mjs && node --experimental-strip-types scripts/test-formula-validator.mjs && node --experimental-strip-types scripts/test-formula-trainer.mjs && node --experimental-strip-types scripts/test-security-config.mjs && node --experimental-strip-types scripts/test-invitations.mjs"
   },
   "dependencies": {
     "firebase": "^13.1.0",

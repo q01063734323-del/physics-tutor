@@ -13,6 +13,12 @@ service cloud.firestore {
       allow create: if teacher() && request.resource.data.teacherId == request.auth.uid && (request.resource.data.studentId is string || request.resource.data.studentEmail is string);
       allow update, delete: if teacher() && resource.data.teacherId == request.auth.uid;
     }
+    match /invitations/{invitationId} {
+      allow create: if teacher() && request.resource.data.teacherId == request.auth.uid && request.resource.data.status == 'pending';
+      allow read: if teacher() || (signedIn() && resource.data.email == request.auth.token.email);
+      allow update: if teacher() || (signedIn() && resource.data.email == request.auth.token.email && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'acceptedAt']));
+      allow delete: if teacher();
+    }
     match /assignments/{assignmentId} {
       allow read: if signedIn();
       allow create, update, delete: if teacher();
