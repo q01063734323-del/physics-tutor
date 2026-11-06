@@ -175,7 +175,7 @@ export default function Home() {
     const savedStatuses = window.localStorage.getItem("physics-tutor-statuses");
     if (savedStatuses) setStatuses(JSON.parse(savedStatuses));
     getDocs(collection(db, "assignments")).then(snapshot => {
-      if (!snapshot.empty) setItems(snapshot.docs.map(doc => doc.data() as typeof assignments[number]));
+      if (!snapshot.empty) setItems(snapshot.docs.map(item => ({ id: item.id, ...item.data() }) as typeof assignments[number] & { id: string }));
     }).catch(() => undefined);
     return () => unsubscribe();
   }, []);
@@ -250,7 +250,7 @@ export default function Home() {
               let solutionUrl = "";
               if (role === "student" && !demoMode) { const validationError = validateUpload(solutionFile); if (validationError) throw new Error(validationError); const body = new FormData(); body.append("file", solutionFile as File); body.append("upload_preset", "physics_homework"); const response = await fetch("https://api.cloudinary.com/v1_1/y3gl6xsx/raw/upload", { method: "POST", body }); const result = await response.json(); if (!response.ok || !result.secure_url) throw new Error(result.error?.message || "Файл не загрузился"); solutionUrl = result.secure_url; }
               const currentUser = auth.currentUser?.email || (role === "teacher" ? "teacher" : "student");
-              const submission = { assignment: selected, assignmentText: items.find(item => item.title === selected)?.text || "", status: nextStatus, fileUrl: solutionUrl, fileName: solutionFile?.name || "", fileType: solutionFile?.type || "", fileSize: solutionFile?.size || 0, user: currentUser, userId: auth.currentUser?.uid || null, reviewedBy: role === "teacher" ? "Егор" : null, comment: role === "teacher" ? reviewComment : "", score: role === "teacher" ? reviewScore : "", createdAt: serverTimestamp() };
+              const submission = { assignment: selected, assignmentId: (items.find(item => item.title === selected) as { id?: string } | undefined)?.id || null, assignmentText: items.find(item => item.title === selected)?.text || "", status: nextStatus, fileUrl: solutionUrl, fileName: solutionFile?.name || "", fileType: solutionFile?.type || "", fileSize: solutionFile?.size || 0, user: currentUser, userId: auth.currentUser?.uid || null, reviewedBy: role === "teacher" ? "Егор" : null, comment: role === "teacher" ? reviewComment : "", score: role === "teacher" ? reviewScore : "", createdAt: serverTimestamp() };
               const saved = demoMode ? { id: `demo-${Date.now()}` } : await addDoc(collection(db, "submissions"), submission);
               setStudentReviews(current => [...current, { ...submission, createdAt: new Date().toISOString() }]);
               setStatuses(current => ({...current, [selected]: nextStatus}));
