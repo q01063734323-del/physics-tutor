@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { addDoc, collection, doc, getDocs, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { gradeNumericAnswer } from "@/lib/grading";
 import { isOverdue, learningStreak, submissionStats } from "@/lib/dashboard";
@@ -158,7 +158,7 @@ export default function Home() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) { if (window.localStorage.getItem("physics-tutor-demo")) return; setLoggedIn(false); window.localStorage.removeItem("physics-tutor-session"); return; }
       const isTeacher = user.email?.toLowerCase() === TEACHER_EMAIL;
-      setLoggedIn(true); setRole(isTeacher ? "teacher" : "student"); window.localStorage.setItem("physics-tutor-session", "active"); window.localStorage.setItem("physics-tutor-role", isTeacher ? "teacher" : "student");
+      const nextRole = isTeacher ? "teacher" : "student"; setLoggedIn(true); setRole(nextRole); window.localStorage.setItem("physics-tutor-session", "active"); window.localStorage.setItem("physics-tutor-role", nextRole); setDoc(doc(db, "users", user.uid), { email: user.email, role: nextRole, updatedAt: serverTimestamp() }, { merge: true }).catch(() => { /* profile sync must not block sign-in */ });
       const attemptsRef = isTeacher ? collection(db, "attempts") : query(collection(db, "attempts"), where("user", "==", user.email));
       const submissionsRef = isTeacher ? collection(db, "submissions") : query(collection(db, "submissions"), where("user", "==", user.email));
       try { const snapshot = await getDocs(attemptsRef); setStudentAttempts(snapshot.docs.map(doc => doc.data() as {assignment?: string; answer?: number; correct?: boolean})); } catch { setStudentAttempts([]); }
