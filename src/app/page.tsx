@@ -65,7 +65,6 @@ const DEMO_ENABLED = process.env.NEXT_PUBLIC_ENABLE_DEMO === "true" && process.e
 export default function Home() {
   const [loggedIn, setLoggedIn] = useState(true);
   const [demoMode, setDemoMode] = useState(false);
-  const [isLocalHost, setIsLocalHost] = useState(false);
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
