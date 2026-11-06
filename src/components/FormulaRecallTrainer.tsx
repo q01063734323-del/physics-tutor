@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { validateFormula } from "@/lib/formulaValidator";
 import { applyFormulaAnswer, createFormulaAttempt, type FormulaAttempt } from "@/lib/formulaTrainer";
 
@@ -38,8 +38,8 @@ export default function FormulaRecallTrainer() {
   const currentProgress = progress[card.id] || { attempts: 0, correct: 0, lastSeen: "" };
   const saveProgress = (correct: boolean) => { const now = new Date().toISOString(); setProgress(previous => ({ ...previous, [card.id]: { attempts: (previous[card.id]?.attempts || 0) + 1, correct: (previous[card.id]?.correct || 0) + (correct ? 1 : 0), lastSeen: now } })); setStreak(previous => correct ? previous + 1 : 0); };
 
-  useState(() => { try { const saved = window.localStorage.getItem("physics-tutor-formula-progress"); if (saved) setProgress(JSON.parse(saved) as Progress); } catch { /* storage unavailable */ } });
-  useState(() => { try { window.localStorage.setItem("physics-tutor-formula-progress", JSON.stringify(progress)); } catch { /* storage unavailable */ } });
+  useEffect(() => { try { const saved = window.localStorage.getItem("physics-tutor-formula-progress"); if (saved) setProgress(JSON.parse(saved) as Progress); } catch { /* storage unavailable */ } }, []);
+  useEffect(() => { try { window.localStorage.setItem("physics-tutor-formula-progress", JSON.stringify(progress)); } catch { /* storage unavailable */ } }, [progress]);
 
   function check() {
     const phrase = input.toLowerCase().replace(/ё/g, "е");
