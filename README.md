@@ -11,7 +11,7 @@ npm run dev
 
 Откройте http://localhost:3000.
 
-Вход выполняется через Firebase Authentication по email и паролю. Для демонстрации интерфейса доступны локальные демо-учётные данные: `demo` / `physics2025` (преподаватель) и `student` / `physics2025` (ученик). Демо-режим не записывает данные в Firebase; для реальных заданий и оценок используйте Firebase-аккаунты.
+Вход выполняется через Firebase Authentication по email и паролю. Демо-режим предназначен только для локальной разработки: включите `NEXT_PUBLIC_ENABLE_DEMO=true` и задайте `NEXT_PUBLIC_DEMO_PASSWORD` в локальном `.env.local`. В production демо-режим автоматически отключён и не заменяет Firebase Authentication.
 
 Для Render добавьте домен `physics-tutor-6ytz.onrender.com` в Firebase Authentication → Settings → Authorized domains и включите провайдер Email/Password.
 
