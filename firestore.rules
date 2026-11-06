@@ -9,7 +9,7 @@ service cloud.firestore {
       allow delete: if false;
     }
     match /teacherStudents/{linkId} {
-      allow read: if signedIn() && (resource.data.teacherId == request.auth.uid || resource.data.studentId == request.auth.uid);
+      allow read: if signedIn() && (resource.data.teacherId == request.auth.uid || resource.data.studentId == request.auth.uid || resource.data.studentEmail == request.auth.token.email);
       allow create: if teacher() && request.resource.data.teacherId == request.auth.uid && (request.resource.data.studentId is string || request.resource.data.studentEmail is string);
       allow update, delete: if teacher() && resource.data.teacherId == request.auth.uid;
     }
