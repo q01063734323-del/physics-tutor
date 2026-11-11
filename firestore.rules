@@ -4,12 +4,29 @@ service cloud.firestore {
     function signedIn() { return request.auth != null; }
     function teacher() { return signedIn() && (request.auth.token.email == 'e.galkin58@mail.ru'); }
     function enabledAccount() {
-      return signedIn() && (!exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('status', 'active') != 'inactive');
+      return teacher() || (signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'student'
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'active');
+    }
+    function assignedToMe(assignment) {
+      return assignment.audience == 'class'
+        || (assignment.audience == 'student' && assignment.assignedToId == request.auth.uid);
+    }
+    function validSubmission() {
+      let data = request.resource.data;
+      let assignment = get(/databases/$(database)/documents/assignments/$(data.assignmentId));
+      return data.user == request.auth.token.email && data.userId == request.auth.uid
+        && assignedToMe(assignment.data) && data.teacherId == assignment.data.teacherId
+        && data.status == 'На проверке' && data.score == '' && data.comment == '' && data.reviewedBy == null
+        && data.keys().hasOnly(['assignment', 'assignmentId', 'teacherId', 'assignmentText', 'status',
+          'fileUrl', 'fileName', 'fileType', 'fileSize', 'user', 'userId', 'reviewedBy', 'comment', 'score', 'createdAt'])
+        && data.fileUrl is string && data.fileUrl.size() <= 2048 && data.fileSize is int
+        && data.fileSize > 0 && data.createdAt == request.time;
     }
     match /users/{userId} {
       allow read: if teacher() || (enabledAccount() && request.auth.uid == userId);
-      allow update: if enabledAccount() && request.auth.uid == userId
+      allow update: if (teacher() || (enabledAccount() && request.auth.uid == userId))
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'updatedAt'])
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() > 0
@@ -23,14 +40,17 @@ service cloud.firestore {
       allow read: if teacher() && resource.data.teacherId == request.auth.uid;
     }
     match /assignments/{assignmentId} {
-      allow read: if enabledAccount();
-      allow create, update, delete: if teacher();
+      allow read: if teacher() || (enabledAccount() && assignedToMe(resource.data));
+      allow create: if teacher() && request.resource.data.teacherId == request.auth.uid
+        && (request.resource.data.audience == 'class' && request.resource.data.assignedToId == null
+          || request.resource.data.audience == 'student' && request.resource.data.assignedToId is string);
+      allow update, delete: if teacher();
     }
     match /submissions/{submissionId} {
-      allow create: if enabledAccount() && request.resource.data.user == request.auth.token.email;
+      allow create: if enabledAccount() && validSubmission();
       allow read: if teacher() || (enabledAccount() && resource.data.user == request.auth.token.email);
       allow update: if teacher();
-      allow delete: if teacher() || (enabledAccount() && resource.data.user == request.auth.token.email);
+      allow delete: if teacher();
     }
     match /attempts/{attemptId} {
       allow create: if enabledAccount() && request.resource.data.user == request.auth.token.email;

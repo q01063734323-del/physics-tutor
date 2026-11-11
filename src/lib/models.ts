@@ -17,6 +17,8 @@ export type Assignment = {
   level: string;
   due: string;
   assignedTo: string;
+  assignedToId?: string | null;
+  audience?: "class" | "student";
   status?: AssignmentStatus;
   materialUrl?: string;
   createdBy?: string;

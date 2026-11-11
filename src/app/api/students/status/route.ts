@@ -3,10 +3,11 @@ import { getFirebaseAdmin } from "@/lib/firebase-admin";
 
 export async function POST(request: Request) {
   try {
-    const { adminAuth, adminDb } = getFirebaseAdmin();
     const authorization = request.headers.get("authorization");
     if (!authorization?.startsWith("Bearer ")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const decoded = await adminAuth.verifyIdToken(authorization.slice(7), true);
+    const { adminAuth, adminDb } = getFirebaseAdmin();
+    const decoded = await adminAuth.verifyIdToken(authorization.slice(7), true).catch(() => null);
+    if (!decoded) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     if (decoded.email !== "e.galkin58@mail.ru") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     const body = await request.json() as { studentId?: string; status?: "active" | "inactive" };
     if (typeof body.studentId !== "string" || !body.studentId || body.studentId.includes("/") || !["active", "inactive"].includes(body.status ?? "")) return NextResponse.json({ error: "studentId and status are required" }, { status: 400 });

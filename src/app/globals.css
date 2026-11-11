@@ -59,3 +59,12 @@ html{scroll-behavior:smooth;scrollbar-color:#bdc9ec transparent;scrollbar-width:
 .landing-actions button:disabled{opacity:.6;cursor:not-allowed}
 .invitations-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 24px;margin-bottom:24px;box-shadow:var(--shadow)}.invitation-list{display:grid;gap:8px}.invitation-row{display:flex;align-items:center;gap:12px;padding:11px;border-radius:12px;background:#fafbfe}.invitation-row div{flex:1}.invitation-row b,.invitation-row small{display:block;font-size:12px}.invitation-row small{color:var(--muted);margin-top:3px}.invitation-row .tag{margin:0}@media(max-width:600px){.invitation-row{display:grid}.invitation-row .tag{width:max-content}}
 .invite-page{min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 80% 0,#e8eeff,transparent 35%),var(--cream);padding:20px}.invite-card{width:min(430px,100%);background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:var(--shadow)}.invite-card h1{margin:10px 0 14px}.invite-card p{color:var(--muted);line-height:1.5}.invite-card input{display:block;width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}.invite-card .primary{display:inline-block;text-decoration:none;margin-top:8px}.invite-message{margin-top:14px;padding:10px;border-radius:9px;background:#fff0f0;color:#b24141;font-size:13px;line-height:1.5}.invite-message.success{background:#e4f8f0;color:#17845d}.invite-link{margin-top:14px}
+
+.student-management .invite-form { flex-wrap: wrap; align-items: center; }
+.student-management .invite-form select { max-width: 100%; }
+.student-management .invitation-row { flex-wrap: wrap; overflow-wrap: anywhere; }
+.student-management .assignment > div { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .student-management .invite-form > *, .student-management .invitation-row > button { width: 100%; }
+  .student-management .invitation-row > div { flex: 1 1 100%; }
+}
