@@ -11,6 +11,7 @@ function getAdminApp() {
   return initializeApp({ credential: cert({ projectId: credentials.project_id, clientEmail: credentials.client_email, privateKey: credentials.private_key.replace(/\\n/g, "\n") }) });
 }
 
-const app = getAdminApp();
-export const adminAuth = getAuth(app);
-export const adminDb = getFirestore(app);
+export function getFirebaseAdmin() {
+  const app = getAdminApp();
+  return { adminAuth: getAuth(app), adminDb: getFirestore(app) };
+}

@@ -1,17 +1,24 @@
 import { NextResponse } from "next/server";
-import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { getFirebaseAdmin } from "@/lib/firebase-admin";
 import { createInvitationToken, hashInvitationToken, invitationExpiry } from "@/lib/invitations";
 
 export async function POST(request: Request) {
   try {
+    const { adminAuth, adminDb } = getFirebaseAdmin();
     const authorization = request.headers.get("authorization");
     if (!authorization?.startsWith("Bearer ")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const decoded = await adminAuth.verifyIdToken(authorization.slice(7));
-    if (decoded.email !== "e.galkin58@mail.ru" && decoded.teacher !== true) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const decoded = await adminAuth.verifyIdToken(authorization.slice(7), true);
+    if (decoded.email !== "e.galkin58@mail.ru") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     const body = await request.json() as { email?: string; displayName?: string };
-    const email = body.email?.trim().toLowerCase();
-    const displayName = body.displayName?.trim();
-    if (!email || !email.includes("@") || !displayName) return NextResponse.json({ error: "Email and displayName are required" }, { status: 400 });
+    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    const displayName = typeof body.displayName === "string" ? body.displayName.trim() : "";
+    if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !displayName || displayName.length > 120) return NextResponse.json({ error: "Email and displayName are required" }, { status: 400 });
+    try {
+      await adminAuth.getUserByEmail(email);
+      return NextResponse.json({ error: "Аккаунт с таким email уже существует" }, { status: 409 });
+    } catch (error) {
+      if ((error as { code?: string }).code !== "auth/user-not-found") throw error;
+    }
     const token = createInvitationToken();
     const tokenHash = await hashInvitationToken(token);
     const expiresAt = invitationExpiry(7);

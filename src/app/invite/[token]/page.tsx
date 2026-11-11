@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 
-export default function InvitePage({ params }: { params: { token: string } }) {
+export default function InvitePage({ params }: { params: Promise<{ token: string }> }) {
+  const { token } = use(params);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [message, setMessage] = useState("");
@@ -13,7 +14,7 @@ export default function InvitePage({ params }: { params: { token: string } }) {
     if (password.length < 6) { setMessage("Пароль должен содержать минимум 6 символов."); return; }
     if (password !== confirm) { setMessage("Пароли не совпадают."); return; }
     setMessage("Создаём аккаунт…");
-    const response = await fetch("/api/invitations/accept", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: params.token, password }) });
+    const response = await fetch("/api/invitations/accept", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, password }) });
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) { setMessage(payload.error || "Приглашение недействительно."); return; }
     setDone(true); setMessage("Аккаунт создан. Теперь войди на главной странице по email и новому паролю.");

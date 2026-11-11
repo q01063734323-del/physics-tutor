@@ -2,47 +2,50 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
-    function teacher() { return signedIn() && (request.auth.token.teacher == true || request.auth.token.email == 'e.galkin58@mail.ru'); }
+    function teacher() { return signedIn() && (request.auth.token.email == 'e.galkin58@mail.ru'); }
+    function enabledAccount() {
+      return signedIn() && (!exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('status', 'active') != 'inactive');
+    }
     match /users/{userId} {
-      allow create: if signedIn() && request.auth.uid == userId && request.resource.data.email == request.auth.token.email;
-      allow read, update: if signedIn() && request.auth.uid == userId;
-      allow delete: if false;
+      allow read: if teacher() || (enabledAccount() && request.auth.uid == userId);
+      allow update: if enabledAccount() && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'updatedAt'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() > 0
+        && request.resource.data.displayName.size() <= 120;
     }
     match /teacherStudents/{linkId} {
-      allow read: if signedIn() && (resource.data.teacherId == request.auth.uid || resource.data.studentId == request.auth.uid || resource.data.studentEmail == request.auth.token.email);
-      allow create: if teacher() && request.resource.data.teacherId == request.auth.uid && (request.resource.data.studentId is string || request.resource.data.studentEmail is string);
-      allow update, delete: if teacher() && resource.data.teacherId == request.auth.uid;
+      allow read: if teacher() && resource.data.teacherId == request.auth.uid
+        || (enabledAccount() && resource.data.studentId == request.auth.uid);
     }
     match /invitations/{invitationId} {
-      allow create: if teacher() && request.resource.data.teacherId == request.auth.uid && request.resource.data.status == 'pending';
-      allow read: if teacher() || (signedIn() && resource.data.email == request.auth.token.email);
-      allow update: if teacher() || (signedIn() && resource.data.email == request.auth.token.email && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'acceptedAt']));
-      allow delete: if teacher();
+      allow read: if teacher() && resource.data.teacherId == request.auth.uid;
     }
     match /assignments/{assignmentId} {
-      allow read: if signedIn();
+      allow read: if enabledAccount();
       allow create, update, delete: if teacher();
     }
     match /submissions/{submissionId} {
-      allow create: if signedIn() && request.resource.data.user == request.auth.token.email;
-      allow read: if teacher() || (signedIn() && resource.data.user == request.auth.token.email);
+      allow create: if enabledAccount() && request.resource.data.user == request.auth.token.email;
+      allow read: if teacher() || (enabledAccount() && resource.data.user == request.auth.token.email);
       allow update: if teacher();
-      allow delete: if teacher() || (signedIn() && resource.data.user == request.auth.token.email);
+      allow delete: if teacher() || (enabledAccount() && resource.data.user == request.auth.token.email);
     }
     match /attempts/{attemptId} {
-      allow create: if signedIn() && request.resource.data.user == request.auth.token.email;
-      allow read: if teacher() || (signedIn() && resource.data.user == request.auth.token.email);
+      allow create: if enabledAccount() && request.resource.data.user == request.auth.token.email;
+      allow read: if teacher() || (enabledAccount() && resource.data.user == request.auth.token.email);
     }
     match /examAttempts/{attemptId} {
-      allow create: if signedIn() && request.resource.data.user == request.auth.token.email;
-      allow read: if teacher() || (signedIn() && resource.data.user == request.auth.token.email);
+      allow create: if enabledAccount() && request.resource.data.user == request.auth.token.email;
+      allow read: if teacher() || (enabledAccount() && resource.data.user == request.auth.token.email);
     }
     match /quizResults/{resultId} {
-      allow create: if signedIn() && request.resource.data.user == request.auth.token.email;
-      allow read: if teacher() || (signedIn() && resource.data.user == request.auth.token.email);
+      allow create: if enabledAccount() && request.resource.data.user == request.auth.token.email;
+      allow read: if teacher() || (enabledAccount() && resource.data.user == request.auth.token.email);
     }
     match /questionBank/{questionId} {
-      allow read: if signedIn() && (teacher() || resource.data.verification == 'verified');
+      allow read: if enabledAccount() && (teacher() || resource.data.verification == 'verified');
       allow create, update, delete: if teacher();
     }
   }
