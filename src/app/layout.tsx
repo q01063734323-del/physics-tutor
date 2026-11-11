@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./physics-design.css";
 
 export const metadata: Metadata = {
-  title: "Физика с Егором — кабинет ученика",
+  title: "Physics Tutor — физика с Егором",
   description: "Домашние задания, теория и тренажёр ЕГЭ по физике",
   manifest: "/manifest.webmanifest",
 };
