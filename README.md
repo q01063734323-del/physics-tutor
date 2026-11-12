@@ -13,7 +13,7 @@ npm run dev
 
 Вход выполняется через Firebase Authentication по email и паролю. Демо-режим предназначен только для локальной разработки: включите `NEXT_PUBLIC_ENABLE_DEMO=true` и задайте `NEXT_PUBLIC_DEMO_PASSWORD` в локальном `.env.local`. В production демо-режим автоматически отключён и не заменяет Firebase Authentication.
 
-Для Render добавьте домен `physics-tutor-6ytz.onrender.com` в Firebase Authentication → Settings → Authorized domains и включите провайдер Email/Password.
+Для Render используйте `render.yaml` в корне репозитория. В настройках Web Service добавьте Firebase public config, `FIREBASE_SERVICE_ACCOUNT_JSON`, `LIVEKIT_URL`, `LIVEKIT_API_KEY` и `LIVEKIT_API_SECRET`. После первого деплоя добавьте домен `*.onrender.com` в Firebase Authentication → Settings → Authorized domains и включите провайдер Email/Password.
 
 ## Проверки
 
