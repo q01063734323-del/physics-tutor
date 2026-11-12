@@ -36,6 +36,27 @@ assert.equal((await access(alice, `users/${alice.uid}?updateMask.fieldPaths=role
   method: "PATCH", body: JSON.stringify({ fields: { role: { stringValue: "teacher" } } }),
 })).status, 403);
 const teacher = await student("teacher", "e.galkin58@mail.ru");
+const classroom = `classroomRooms/${suffix}`;
+const board = `${classroom}/board/state`;
+const expiry = new Date(Date.now() + 60_000);
+await db.doc(classroom).set({
+  teacherId: teacher.uid, studentId: alice.uid, status: "open", studentRemoved: false, expiresAt: expiry,
+});
+await db.doc(board).set({ strokes: [], notes: {}, expiresAt: expiry });
+for (const [account, path, status] of [
+  [teacher, classroom, 200], [teacher, board, 200], [alice, classroom, 200], [alice, board, 200],
+  [bob, classroom, 403], [bob, board, 403], [outsider, board, 403],
+]) {
+  assert.equal((await access(account, path)).status, status, path);
+}
+assert.equal((await access(alice, board, { method: "DELETE" })).status, 403, "student cannot bypass server writes");
+assert.equal((await access(teacher, classroom, { method: "DELETE" })).status, 403, "teacher must use moderation endpoint");
+await db.doc(classroom).update({ studentRemoved: true });
+assert.equal((await access(alice, classroom)).status, 200, "student can see the removal notice");
+assert.equal((await access(alice, board)).status, 403, "removed student cannot read the board");
+assert.equal((await access(teacher, board)).status, 200);
+await db.doc(classroom).update({ status: "ended" });
+assert.equal((await access(teacher, board)).status, 403, "finished board is closed");
 const list = async (account, filters) => {
   const where = filters.length === 1 ? filters[0] : { compositeFilter: { op: "AND", filters } };
   const response = await access(account, ":runQuery", {

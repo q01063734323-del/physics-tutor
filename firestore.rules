@@ -36,6 +36,18 @@ service cloud.firestore {
       allow read: if teacher() && resource.data.teacherId == request.auth.uid
         || (enabledAccount() && resource.data.studentId == request.auth.uid);
     }
+    match /classroomRooms/{roomId} {
+      function isMember(room) {
+        return enabledAccount() && (room.teacherId == request.auth.uid || room.studentId == request.auth.uid);
+      }
+      allow get: if isMember(resource.data);
+      match /board/{boardId} {
+        function room() { return get(/databases/$(database)/documents/classroomRooms/$(roomId)).data; }
+        allow get: if boardId == 'state' && isMember(room()) && room().status == 'open'
+          && room().expiresAt > request.time
+          && (room().teacherId == request.auth.uid || !room().studentRemoved);
+      }
+    }
     match /invitations/{invitationId} {
       allow read: if teacher() && resource.data.teacherId == request.auth.uid;
     }

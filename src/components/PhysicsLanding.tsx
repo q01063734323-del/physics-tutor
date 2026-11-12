@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import { PhysicsIcon, PhysicsMark } from "./PhysicsMark";
 
 const benefits = [
-  { n: "01", title: "Практика по темам", text: "От законов Ньютона до оптики. Выбирайте тему, решайте задачи и возвращайтесь к сложным вопросам.", icon: "book" },
-  { n: "02", title: "Работа с преподавателем", text: "Разбирайте ход решения, отправляйте домашние работы и получайте комментарии к своим ответам.", icon: "people" },
-  { n: "03", title: "Видимый прогресс", text: "Следите за результатами, сроками сдачи и темами, которые стоит повторить перед экзаменом.", icon: "progress" },
+  { title: "Практика по темам", text: "От законов Ньютона до оптики. Выбирайте тему, решайте задачи и возвращайтесь к сложным вопросам.", icon: "book" },
+  { title: "Работа с преподавателем", text: "Отправляйте домашние работы и разбирайте комментарии к своим решениям.", icon: "people" },
+  { title: "Видимый прогресс", text: "Следите за результатами, сроками сдачи и темами, которые стоит повторить перед экзаменом.", icon: "progress" },
 ] as const;
 
 export function PhysicsLanding({ children }: { children: ReactNode }) {
@@ -19,7 +19,7 @@ export function PhysicsLanding({ children }: { children: ReactNode }) {
         <div className="pt-hero-copy">
           <p className="pt-kicker"><span /> ФИЗИКА · ОГЭ И ЕГЭ</p>
           <h1 id="pt-title">Физика,<br />которую <em>понимаешь.</em></h1>
-          <p className="pt-hero-lead">Интерактивные онлайн-занятия, задачи и личная обратная связь. От первой формулы до уверенного решения на экзамене.</p>
+          <p className="pt-hero-lead">Онлайн-платформа для занятий физикой. Решайте задачи в интерактивном тренажёре и получайте разборы от преподавателя.</p>
           <div className="pt-hero-actions"><a className="pt-action" href="#login">Войти в кабинет <PhysicsIcon name="arrow" size={19} /></a><a className="pt-text-link" href="#method">Как проходит обучение</a></div>
         </div>
         <figure className="pt-figure">
@@ -46,19 +46,19 @@ export function PhysicsLanding({ children }: { children: ReactNode }) {
         </figure>
       </section>
       <section className="pt-editorial pt-wrap" id="features">
-        <p className="pt-kicker">01 / ВОЗМОЖНОСТИ</p><h2>Всё для практики.</h2>
-        <div className="pt-benefits">{benefits.map(item => <article key={item.n}><div className="pt-benefit-top"><PhysicsIcon name={item.icon} size={24} /><span>{item.n}</span></div><h3>{item.title}</h3><p>{item.text}</p></article>)}</div>
+        <h2>Всё для практики.</h2>
+        <div className="pt-benefits">{benefits.map(item => <article key={item.title}><div className="pt-benefit-top"><PhysicsIcon name={item.icon} size={24} /></div><h3>{item.title}</h3><p>{item.text}</p></article>)}</div>
       </section>
       <div className="pt-method"><section className="pt-wrap pt-method-grid" id="method">
-        <div><p className="pt-kicker">02 / УЧЕБНЫЙ ПРОЦЕСС</p><h2>От вопроса<br />к решению.</h2><p>Теория, практика и обратная связь связаны в один цикл.</p></div>
+        <div><h2>От вопроса<br />к решению.</h2></div>
         <ol>{[["Изучите принцип", "Начните с теории, формул и наглядных примеров."], ["Решите задачу", "Проверьте себя в тренажёре или отправьте решение преподавателю."], ["Разберите результат", "Вернитесь к комментариям и повторите то, что оказалось сложным."]].map(([title, body], i) => <li key={title}><span>0{i + 1}</span><div><h3>{title}</h3><p>{body}</p></div></li>)}</ol>
       </section></div>
       <section className="pt-wrap pt-teacher" id="teacher">
         <div className="pt-teacher-mark" aria-hidden="true"><span>φ</span><small>PHYSICS / 01</small></div>
-        <div><p className="pt-kicker">03 / ПРЕПОДАВАТЕЛЬ</p><h2>Егор</h2><p>Преподаватель физики и автор Physics Tutor. На занятиях разбираем, почему формула работает и как выбрать подход к новой задаче.</p></div>
+        <div><p className="pt-kicker">ПРЕПОДАВАТЕЛЬ</p><h2>Егор</h2><p>Преподаватель физики и автор Physics Tutor. На занятиях разбираем, почему формула работает и как выбрать подход к новой задаче.</p></div>
       </section>
       <section className="pt-wrap pt-login-section" id="login">
-        <div><p className="pt-kicker">04 / ВАШ КАБИНЕТ</p><h2>Продолжим?</h2><p>Если вы учитесь впервые, попросите преподавателя прислать личную ссылку для регистрации.</p></div>
+        <div><h2>Начните учиться</h2><p>Попросите преподавателя прислать личную ссылку для регистрации. Если аккаунт уже есть, войдите в кабинет.</p></div>
         {children}
       </section>
     </main>

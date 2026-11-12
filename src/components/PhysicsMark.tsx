@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-export function PhysicsMark() {
-  return <Link href="/" className="pt-brand"><span aria-hidden="true">φ</span><strong>Physics Tutor</strong></Link>;
+export function PhysicsMark({ linked = true }: { linked?: boolean }) {
+  const wordmark = <><span aria-hidden="true">φ</span><strong>Physics Tutor</strong></>;
+  return linked ? <Link href="/" className="pt-brand">{wordmark}</Link> : <div className="pt-brand">{wordmark}</div>;
 }
 
 const icons = {
