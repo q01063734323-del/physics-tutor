@@ -80,13 +80,15 @@ async function getStudents(account: Account) {
 
 async function issueToken(account: Account, roomId: string, config: ReturnType<typeof liveKit>) {
   const token = new AccessToken(config.key, config.secret, {
-    identity: account.id, name: account.name, ttl: "45s", metadata: JSON.stringify({ role: account.role }),
+    identity: account.id, name: account.name, ttl: "5h", metadata: JSON.stringify({ role: account.role }),
   });
   token.roomConfig = new RoomConfiguration(roomOptions);
   token.addGrant({
     room: `pt-${roomId}`, roomJoin: true, canSubscribe: true, canPublish: true,
     canPublishData: false, canUpdateOwnMetadata: false,
-    canPublishSources: [TrackSource.CAMERA, TrackSource.MICROPHONE, TrackSource.SCREEN_SHARE],
+    canPublishSources: account.role === "teacher"
+      ? [TrackSource.CAMERA, TrackSource.MICROPHONE, TrackSource.SCREEN_SHARE]
+      : [TrackSource.CAMERA, TrackSource.MICROPHONE],
   });
   return reply({ roomId, role: account.role, url: config.url, token: await token.toJwt() });
 }

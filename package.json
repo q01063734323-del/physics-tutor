@@ -7,10 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types scripts/test-grading.mjs && node --experimental-strip-types scripts/test-dashboard.mjs && node --experimental-strip-types scripts/test-file-validation.mjs && node --experimental-strip-types scripts/test-question-bank.mjs && node --experimental-strip-types scripts/test-formula-validator.mjs && node --experimental-strip-types scripts/test-formula-trainer.mjs && node --experimental-strip-types scripts/test-kinematics.mjs && node --experimental-strip-types scripts/test-security-config.mjs && node --experimental-strip-types scripts/test-invitations.mjs",
+    "test": "node --experimental-strip-types scripts/test-grading.mjs && node --experimental-strip-types scripts/test-dashboard.mjs && node --experimental-strip-types scripts/test-file-validation.mjs && node --experimental-strip-types scripts/test-question-bank.mjs && node --experimental-strip-types scripts/test-formula-validator.mjs && node --experimental-strip-types scripts/test-formula-trainer.mjs && node --experimental-strip-types scripts/test-kinematics.mjs && node --experimental-strip-types scripts/test-classroom.mjs && node --experimental-strip-types scripts/test-security-config.mjs && node --experimental-strip-types scripts/test-invitations.mjs",
     "test:assignment-access": "node --experimental-strip-types scripts/test-assignment-access.mjs",
     "test:kinematics": "node --experimental-strip-types scripts/test-kinematics.mjs",
-    "test:classroom-rules": "node scripts/test-classroom-rules.mjs"
+    "test:classroom-rules": "node scripts/test-classroom-rules.mjs",
+    "test:classroom": "node --experimental-strip-types scripts/test-classroom.mjs"
   },
   "dependencies": {
     "firebase": "^13.1.0",

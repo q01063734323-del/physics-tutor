@@ -68,7 +68,16 @@ export function useClassroomMedia(session: ClassroomSession, notice: (message: s
     room.on(RoomEvent.ParticipantConnected, participant => { notice(`${participant.name || "Участник"} подключился.`); sync(); });
     room.on(RoomEvent.ParticipantDisconnected, participant => { notice(`${participant.name || "Участник"} вышел из звонка.`); sync(); });
     room.on(RoomEvent.Reconnected, () => { notice("Связь восстановлена."); sync(); });
-    room.connect(session.url, session.token).then(sync).catch(() => {
+    room.on(RoomEvent.Disconnected, reason => { notice(reason ? `Связь завершена: ${reason}.` : "Связь завершена."); sync(); });
+    room.connect(session.url, session.token).then(async () => {
+      try {
+        await room.localParticipant.setCameraEnabled(true);
+        await room.localParticipant.setMicrophoneEnabled(true);
+      } catch (problem) {
+        error(classroomMediaError(problem, "Камера или микрофон не подключены. Их можно включить кнопками ниже."));
+      }
+      sync();
+    }).catch(() => {
       if (!active) return;
       sync();
       error("Не удалось подключиться к звонку. Попробуйте подключиться снова.");

@@ -278,6 +278,7 @@ export function ClassroomLesson({ session, user, onLeave }: LessonProps) {
             <PhysicsIcon name="video" size={18} /> Камера
           </button>
           <button type="button" disabled={!connected || !!pendingAction} aria-pressed={Boolean(local?.screenOn)}
+            hidden={!teacher}
             onClick={() => void run("screen", async () => {
               if (!navigator.mediaDevices?.getDisplayMedia) { setError("Этот браузер не поддерживает показ экрана."); return; }
               const sharing = !local?.screenOn;

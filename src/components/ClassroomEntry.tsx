@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -26,6 +26,7 @@ export function ClassroomEntry() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const autoJoinAttempted = useRef(false);
 
   useEffect(() => onAuthStateChanged(auth, nextUser => {
     setUser(nextUser);
@@ -41,6 +42,17 @@ export function ClassroomEntry() {
       .catch(problem => { if (!controller.signal.aborted) setError(problem.message); });
     return () => controller.abort();
   }, [user]);
+
+  useEffect(() => {
+    if (!user || !account || !isClassroomId(invite) || autoJoinAttempted.current) return;
+    autoJoinAttempted.current = true;
+    setBusy(true);
+    setError("");
+    classroomRequest<ClassroomSession>(user, { action: "join", roomId: invite })
+      .then(next => { if (auth.currentUser?.uid === user.uid) setSession(next); })
+      .catch(problem => setError(problem instanceof Error ? problem.message : "Не удалось восстановить урок."))
+      .finally(() => setBusy(false));
+  }, [account, invite, user]);
 
   async function enter(event: FormEvent<HTMLFormElement>, create: boolean) {
     event.preventDefault();
