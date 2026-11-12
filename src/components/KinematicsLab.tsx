@@ -61,6 +61,19 @@ function NumberInput({ label, value, onChange }: { label: string; value: number;
   return <label className="kin-field">{label}<input type="number" step="0.1" value={value} onChange={event => onChange(Number(event.target.value))} /></label>;
 }
 
+function savedBuilder() {
+  if (typeof window === "undefined") return { source: "x" as GraphKind, points: defaultKinematicPoints, x0: 0, v0: 0 };
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem("physics-tutor-kinematics-builder") || "null") as { source?: GraphKind; points?: KinematicPoint[]; x0?: number; v0?: number } | null;
+    return {
+      source: parsed?.source || "x",
+      points: Array.isArray(parsed?.points) && parsed.points.length >= 2 ? parsed.points : defaultKinematicPoints,
+      x0: typeof parsed?.x0 === "number" ? parsed.x0 : 0,
+      v0: typeof parsed?.v0 === "number" ? parsed.v0 : 0,
+    };
+  } catch { return { source: "x" as GraphKind, points: defaultKinematicPoints, x0: 0, v0: 0 }; }
+}
+
 function TaskCard({ task, onComplete }: { task: EgeTask; onComplete: (correct: boolean) => void }) {
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState<boolean | null>(null);
@@ -69,10 +82,11 @@ function TaskCard({ task, onComplete }: { task: EgeTask; onComplete: (correct: b
 
 export default function KinematicsLab() {
   const [mode, setMode] = useState<LabMode>("builder");
-  const [source, setSource] = useState<GraphKind>("x");
-  const [points, setPoints] = useState<KinematicPoint[]>(defaultKinematicPoints);
-  const [x0, setX0] = useState(0);
-  const [v0, setV0] = useState(0);
+  const [initialBuilder] = useState(savedBuilder);
+  const [source, setSource] = useState<GraphKind>(initialBuilder.source);
+  const [points, setPoints] = useState<KinematicPoint[]>(initialBuilder.points);
+  const [x0, setX0] = useState(initialBuilder.x0);
+  const [v0, setV0] = useState(initialBuilder.v0);
   const [selectedGraph, setSelectedGraph] = useState<GraphKind>("x");
   const [taskIndex, setTaskIndex] = useState(0);
   const [taskScore, setTaskScore] = useState(0);
@@ -82,6 +96,10 @@ export default function KinematicsLab() {
   const [examFinished, setExamFinished] = useState(false);
   const [seconds, setSeconds] = useState(25 * 60);
   const [checkMessage, setCheckMessage] = useState("");
+
+  useEffect(() => {
+    window.localStorage.setItem("physics-tutor-kinematics-builder", JSON.stringify({ source, points, x0, v0 }));
+  }, [source, points, x0, v0]);
 
   const derived = useMemo(() => deriveAll(source, points, { x0, v0 }), [source, points, x0, v0]);
   const analysis = useMemo(() => ({
