@@ -23,6 +23,7 @@ function readLocalProfile(uid: string, exam: BattleExam): BattleProfile {
 
 export default function PhysicsBattle() {
   const [user, setUser] = useState<User | null>(null);
+  const [demoMode, setDemoMode] = useState(false);
   const [profile, setProfile] = useState<BattleProfile>(() => createBattleProfile());
   const [authReady, setAuthReady] = useState(false);
   const [selectedMode, setSelectedMode] = useState<BattleMode | null>(null);
@@ -33,22 +34,30 @@ export default function PhysicsBattle() {
   const [showExamPicker, setShowExamPicker] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => onAuthStateChanged(auth, async currentUser => {
-    setUser(currentUser);
-    setAuthReady(true);
-    if (!currentUser) return;
-    const local = readLocalProfile(currentUser.uid, "ЕГЭ");
-    setProfile(local);
-    try {
-      const snapshot = await getDoc(doc(db, "battleProfiles", currentUser.uid));
-      if (snapshot.exists()) setProfile(snapshot.data() as BattleProfile);
-    } catch { /* local progress remains available when Firestore rules are not configured */ }
-  }), []);
+  useEffect(() => {
+    const demoStudent = window.localStorage.getItem("physics-tutor-demo") === "student";
+    return onAuthStateChanged(auth, async currentUser => {
+      setUser(currentUser);
+      setDemoMode(!currentUser && demoStudent);
+      setAuthReady(true);
+      if (!currentUser) {
+        if (demoStudent) setProfile(readLocalProfile("demo-student", "ЕГЭ"));
+        return;
+      }
+      const local = readLocalProfile(currentUser.uid, "ЕГЭ");
+      setProfile(local);
+      try {
+        const snapshot = await getDoc(doc(db, "battleProfiles", currentUser.uid));
+        if (snapshot.exists()) setProfile(snapshot.data() as BattleProfile);
+      } catch { /* local progress remains available when Firestore rules are not configured */ }
+    });
+  }, []);
 
   useEffect(() => {
-    if (!user) return;
-    try { window.localStorage.setItem(profileStorageKey(user.uid), JSON.stringify(profile)); } catch { /* storage unavailable */ }
-  }, [profile, user]);
+    const uid = user?.uid ?? (demoMode ? "demo-student" : "");
+    if (!uid) return;
+    try { window.localStorage.setItem(profileStorageKey(uid), JSON.stringify(profile)); } catch { /* storage unavailable */ }
+  }, [demoMode, profile, user]);
 
   const forecast = useMemo(() => estimateForecast(profile), [profile]);
   const level = levelForXp(profile.xp);
@@ -67,9 +76,11 @@ export default function PhysicsBattle() {
 
   async function persist(next: BattleProfile) {
     setProfile(next);
-    if (!user) return;
+    if (!user && !demoMode) return;
     setSaving(true);
-    try { await setDoc(doc(db, "battleProfiles", user.uid), next, { merge: true }); } catch { /* local-first UX */ }
+    try {
+      if (user) await setDoc(doc(db, "battleProfiles", user.uid), next, { merge: true });
+    } catch { /* local-first UX */ }
     finally { setSaving(false); }
   }
 
@@ -99,7 +110,7 @@ export default function PhysicsBattle() {
   }
 
   if (!authReady) return <main className="battle-app battle-loading"><span className="battle-pulse" />Загружаем баттл…</main>;
-  if (!user) return <main className="battle-app battle-auth"><div className="battle-auth-card"><span className="battle-kicker">PHYSICS TUTOR / ARENA</span><h1>Физический баттл ждёт тебя.</h1><p>Войди в кабинет ученика, чтобы сохранять XP, прогноз и путь к цели.</p><Link className="battle-primary" href="/#login">Войти в кабинет</Link></div></main>;
+  if (!user && !demoMode) return <main className="battle-app battle-auth"><div className="battle-auth-card"><span className="battle-kicker">PHYSICS TUTOR / ARENA</span><h1>Физический баттл ждёт тебя.</h1><p>Войди в кабинет ученика, чтобы сохранять XP, прогноз и путь к цели.</p><Link className="battle-primary" href="/#login">Войти в кабинет</Link></div></main>;
 
   return (
     <main className="battle-app">
