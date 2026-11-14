@@ -7,7 +7,7 @@ import {
   type ClassroomBoardState, type ClassroomControl, type ClassroomRole,
 } from "@/lib/classroom";
 
-const teacherEmail = "e.galkin58@mail.ru";
+const teacherEmail = "e.galkin07@mail.ru";
 const roomOptions = { maxParticipants: 2, emptyTimeout: 300, departureTimeout: 120 };
 const lessonDuration = 4 * 60 * 60 * 1000;
 
