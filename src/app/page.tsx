@@ -69,7 +69,7 @@ const quizBank: Record<string, Array<{q: string; a: string[]; correct: number}>>
 };
 const TEACHER_EMAIL = "e.galkin07@mail.ru";
 const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD || "";
-const DEMO_ENABLED = process.env.NEXT_PUBLIC_ENABLE_DEMO === "true" && process.env.NODE_ENV !== "production";
+const DEMO_ENABLED = process.env.NEXT_PUBLIC_ENABLE_DEMO === "true";
 
 export default function Home() {
   const pathname = usePathname();
