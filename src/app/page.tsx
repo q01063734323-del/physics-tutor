@@ -67,7 +67,7 @@ const quizBank: Record<string, Array<{q: string; a: string[]; correct: number}>>
   "Законы Ньютона": [{q:"Что называют силой?",a:["Меру взаимодействия тел","Массу тела","Скорость движения"],correct:0},{q:"Единица силы в СИ?",a:["Джоуль","Ньютон","Паскаль"],correct:1},{q:"По второму закону Ньютона F равно…",a:["m/a","ma","a/m"],correct:1}],
   "Электричество": [{q:"Единица силы тока?",a:["Ампер","Вольт","Ом"],correct:0},{q:"Что измеряет вольтметр?",a:["Сопротивление","Напряжение","Мощность"],correct:1},{q:"Формула закона Ома?",a:["I=U/R","U=IR²","R=UI"],correct:0}]
 };
-const TEACHER_EMAIL = "e.galkin58@mail.ru";
+const TEACHER_EMAIL = "e.galkin07@mail.ru";
 const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD || "";
 const DEMO_ENABLED = process.env.NEXT_PUBLIC_ENABLE_DEMO === "true" && process.env.NODE_ENV !== "production";
 
@@ -366,6 +366,7 @@ export default function Home() {
         <nav id="pt-dashboard-nav" className={`nav-list ${menuOpen ? "pt-nav-open" : ""}`} aria-label="Кабинет">
           {navGroups.map(group => <div className="pt-nav-group" key={group.title}><p>{group.title}</p>{group.entries.map(([key, label, icon]) => <button type="button" key={key} className={`nav-item ${activeView === key ? "active" : ""}`} aria-current={activeView === key ? "page" : undefined} onClick={() => navigate(key)}><PhysicsIcon name={icon} size={18} />{label}</button>)}</div>)}
           <Link className="nav-item pt-class-nav" href="/classroom"><PhysicsIcon name="video" size={18} />Виртуальный класс</Link>
+          {role === "student" && <Link className="nav-item pt-battle-nav" href="/battle"><PhysicsIcon name="progress" size={18} />Физический баттл</Link>}
         </nav>
         <div className="profile">
           <button type="button" className="avatar profile-avatar" aria-label="Открыть профиль" onClick={() => navigate("profile")}>{initials}</button>
