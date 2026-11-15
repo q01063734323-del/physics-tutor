@@ -37,6 +37,8 @@ export default function PhysicsBattle() {
   const [roundResults, setRoundResults] = useState<BattleAttempt[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const answerSubmitted = useRef(false);
+  const roundDeadline = useRef(0);
+  const profileRevision = useRef(0);
 
   useEffect(() => {
     const demoStudent = process.env.NEXT_PUBLIC_ENABLE_DEMO === "true" && window.localStorage.getItem("physics-tutor-demo") !== null;
@@ -49,12 +51,15 @@ export default function PhysicsBattle() {
         return;
       }
       const local = readLocalProfile(currentUser.uid, "ЕГЭ");
+      const loadingRevision = profileRevision.current;
       setProfile(local);
       try {
         const snapshot = await getDoc(doc(db, "battleProfiles", currentUser.uid));
         if (auth.currentUser?.uid === currentUser.uid && snapshot.exists()) {
           const cloud = snapshot.data() as BattleProfile;
-          setProfile(current => cloud.lastActive > current.lastActive ? cloud : current);
+          if (loadingRevision === profileRevision.current) {
+            setProfile(current => !local.attempts.length || cloud.lastActive > current.lastActive ? cloud : current);
+          }
         }
       } catch { /* local progress remains available when Firestore rules are not configured */ }
     });
@@ -84,6 +89,7 @@ export default function PhysicsBattle() {
   };
 
   async function persist(next: BattleProfile) {
+    profileRevision.current += 1;
     setProfile(next);
     if (!user && !demoMode) return;
     setSaving(true);
@@ -95,10 +101,11 @@ export default function PhysicsBattle() {
 
   useEffect(() => {
     if (!selectedMode || challengeDone || !["speed", "boss"].includes(selectedMode)) return;
-    const timer = window.setInterval(() => setRemaining(value => {
-      if (value <= 1) { setChallengeDone(true); return 0; }
-      return value - 1;
-    }), 1000);
+    const timer = window.setInterval(() => {
+      const seconds = Math.max(0, Math.ceil((roundDeadline.current - Date.now()) / 1000));
+      setRemaining(seconds);
+      if (seconds === 0) setChallengeDone(true);
+    }, 1000);
     return () => window.clearInterval(timer);
   }, [challengeDone, selectedMode]);
 
@@ -106,6 +113,7 @@ export default function PhysicsBattle() {
     setSelectedMode(mode);
     setSelectedTopic(topic);
     setRemaining(mode === "boss" ? 720 : 180);
+    roundDeadline.current = Date.now() + (mode === "boss" ? 720 : 180) * 1000;
     setRoundResults([]);
     answerSubmitted.current = false;
     setQuestionIndex(0);
