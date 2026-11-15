@@ -424,3 +424,25 @@ body { background: var(--pt-paper); color: var(--ink); font-family: var(--pt-san
 .battle-challenge { max-height:calc(100dvh - 36px); overflow-y:auto; }
 @media(max-width:600px){.pt-guest-steps{grid-template-columns:1fr;gap:9px}.pt-guest-steps span{padding-top:9px}.challenge-meta{flex-wrap:wrap}}
 @media(prefers-reduced-motion:reduce){.battle-app *, .battle-app *::before{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+
+/* PWA viewport, home indicator and accessible mobile controls. */
+body {
+  padding-top:env(safe-area-inset-top,0px);
+  padding-right:env(safe-area-inset-right,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  padding-left:env(safe-area-inset-left,0px);
+}
+.pt-pwa-notice { position:fixed; z-index:60; bottom:calc(16px + env(safe-area-inset-bottom,0px)); left:max(16px,env(safe-area-inset-left,0px)); right:max(16px,env(safe-area-inset-right,0px)); margin-inline:auto; width:fit-content; max-width:calc(100% - 32px); padding:14px 16px; display:flex; align-items:center; gap:20px; border:1px solid #375277; border-radius:12px; background:#07142b; color:#f1f6ff; box-shadow:0 12px 40px #0004; }
+.pt-pwa-notice p { margin:0; font-size:14px; line-height:1.5; }
+.pt-pwa-notice > div { display:flex; gap:8px; flex-shrink:0; }
+.pt-pwa-notice button { min-height:44px; padding:8px 13px; border:0; border-radius:7px; background:#c0dcff; color:#07142b; font:600 14px var(--pt-sans); }
+.pt-pwa-notice .pt-pwa-later { background:transparent; color:#c0dcff; }
+.pt-pwa-notice :focus-visible { outline-color:#fff; }
+@media(max-width:650px) {
+  :where(input,textarea,select) { font-size:16px; max-width:100%; }
+  .pt-dashboard .nav-item,.pt-menu-button,.pt-media-actions button,.pt-room-controls button,.pt-room-controls a { min-height:44px; }
+  .pt-room-controls { padding-bottom:8px; }
+  .pt-lesson-lobby input,.pt-live-invite input { min-width:0; width:100%; }
+  .pt-live-toolbar,.pt-room-grid,.pt-room-side { min-width:0; }
+  .pt-pwa-notice { flex-wrap:wrap; gap:10px; width:calc(100% - 32px); }
+}
