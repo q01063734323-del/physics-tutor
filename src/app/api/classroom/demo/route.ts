@@ -68,7 +68,9 @@ export async function POST(request: Request) {
   try {
     if (process.env.NEXT_PUBLIC_ENABLE_DEMO !== "true") throw new DemoError("Гостевые уроки отключены.", 404);
     const origin = request.headers.get("origin");
-    if (request.headers.get("sec-fetch-site") === "cross-site" || (origin && origin !== new URL(request.url).origin)) {
+    const host = request.headers.get("x-forwarded-host")?.split(",")[0].trim()
+      || request.headers.get("host") || new URL(request.url).host;
+    if (request.headers.get("sec-fetch-site") === "cross-site" || (origin && new URL(origin).host !== host)) {
       throw new DemoError("Запрос отклонён.", 403);
     }
     const raw = await request.text();
