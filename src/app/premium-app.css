@@ -1,0 +1,48 @@
+/* Premium application surfaces. Data, forms and navigation retain their owners. */
+:root { --ink:#edf3ff;--muted:#9aaac4;--blue:#38bdf8;--mint:#9edcff;--cream:#060b18;--line:#293750;--shadow:0 12px 35px #0002;--pt-paper:#060b18;--pt-forest:#b8ddff;--pt-accent:#78baff;--pt-soft:#152c49; }
+body { background:#060b18;color:#edf3ff;color-scheme:dark; }
+.pt-dashboard.app-shell { background:radial-gradient(ellipse at 85% 0,#1b315633,transparent 55%),#080f20; }
+.pt-dashboard .sidebar { background:#090f1e;border-color:#202c43;color:#edf3ff; }
+.pt-dashboard .pt-brand > span { background:#1c3050;color:#9bdcff;border:1px solid #39587b; }
+.pt-dashboard .nav-item { color:#9caecb;min-height:42px;border-radius:8px; }
+.pt-dashboard .nav-item:hover,.pt-dashboard .nav-item.active { color:#d8edff;background:#142a47; }
+.pt-dashboard .nav-item.active { box-shadow:inset 2px 0 #38bdf8; }
+.pt-dashboard .profile { color:#edf3ff;border-color:#293750; }
+.pt-dashboard .avatar { color:#b8ddff;background:#203958; }
+.pt-dashboard .topbar { border-color:#24334b; }
+.pt-dashboard .topbar h1 { font-family:Inter,"Helvetica Neue",Arial,sans-serif;font-weight:500;letter-spacing:-.055em;font-size:clamp(29px,4vw,48px); }
+.pt-dashboard .top-logout { color:#c9daf3;background:#121f34;border-color:#31425f; }
+.pt-dashboard .pt-study-feature { background:linear-gradient(120deg,#12375b,#202953);border:1px solid #3c5680;border-radius:16px; }
+.pt-dashboard .pt-study-feature h2 { font-family:Inter,"Helvetica Neue",Arial,sans-serif;font-weight:500;letter-spacing:-.05em; }
+.pt-dashboard .pt-study-feature p:not(.pt-kicker) { color:#becde5; }
+.pt-dashboard .pt-study-feature .pt-kicker { color:#8cd5ff; }
+.pt-dashboard .pt-study-feature .pt-action { background:#8bd6ff;color:#081a2c; }
+.pt-dashboard .pt-study-formula { color:#a7ccff; }
+.pt-dashboard :is(.pt-metrics,.pt-overview-aside,.pt-schedule-agenda,.teacher-card,.results-card,.attempts-card,.progress-panel,.question-bank-panel,.blitz-panel,.assignment,.theory-card) { background:linear-gradient(125deg,#132038,#0e192c);border:1px solid #293a57;border-radius:13px;box-shadow:0 12px 35px #0002;color:#e6efff; }
+.pt-dashboard .pt-metrics strong { font-family:Inter,"Helvetica Neue",Arial,sans-serif;font-size:clamp(24px,3vw,38px);font-weight:500;letter-spacing:-.04em; }
+.pt-dashboard :is(.assignment,.attempt-row,.invitation-row,.student-row) { background:#111d32;color:#e6efff;border-color:#293a57; }
+.pt-dashboard .assignment { transition:border-color .2s,box-shadow .2s; }
+.pt-dashboard .assignment:hover { border-color:#4f7fae;box-shadow:0 10px 25px #0003; }
+.pt-dashboard :is(.group-code,.review-box,.submission-details,.topic-progress,.errors-box,.blitz-content,.empty-state) { background:#0c182b;color:#a7b9d3;border-color:#304460; }
+.pt-dashboard :is(input,select,textarea),.pt-dashboard .pt-publish-field :is(input,select,textarea) { color:#f1f6ff;background:#0a1426;border-color:#344965;border-radius:8px; }
+.pt-dashboard :is(.file-input,.solution-upload) { color:#b7d6ff;background:#10243f;border-color:#4e7199; }
+.pt-dashboard :is(.tag.ready,.positive,.task-filters button.selected) { color:#95ebce;background:#113c36; }
+.pt-dashboard :is(.task-action-button,.task-action button:not(.mark-task),.blitz-tabs button.selected,.theory-formula,.formula-large,.notification-dot,.notice-icon.blue) { color:#b1d9ff;background:#173455;border-color:#365d84; }
+.pt-dashboard :is(.task-action-button,.task-action button:not(.mark-task),.blitz-options button):hover { background:#21466f;border-color:#5f8db6; }
+.pt-dashboard .task-icon { color:#9acfff;background:#1d3456; }
+.pt-dashboard .bar i { background:linear-gradient(90deg,#38bdf8,#8b5cf6); }
+.pt-dashboard :is(.group-code b,.group-code button,.submission-details a,.topic-progress-row b,.next-blitz,.flash-card p,.streak-dots) { color:#9bd6ff; }
+.pt-dashboard .primary,.invite-page .primary,.pt-offline .primary { background:#417beb;color:#fff;min-height:44px; }
+.pt-dashboard .primary:hover,.invite-page .primary:hover,.pt-offline .primary:hover { background:#558df8; }
+.pt-dashboard .pt-action { color:#081a2c;background:#8bd6ff; }
+.pt-dashboard :where(a,button,input,textarea,select):focus-visible { outline:2px solid #8bd6ff;outline-offset:4px; }
+.pt-dashboard .pt-menu-button { color:#c7defa;background:#152943;border-color:#344965; }
+@media(max-width:650px) { .pt-dashboard .content { padding-inline:18px; }.pt-dashboard .pt-study-feature { border-radius:12px; }.pt-dashboard .nav-item { min-height:44px; } }
+@media(prefers-reduced-motion:reduce) { .pt-dashboard *, .pt-dashboard *::before,.pt-dashboard *::after { animation:none!important;transition:none!important;scroll-behavior:auto!important; } }
+.pt-dashboard :is(.students-card,.stat,.progress-highlight,.notice-panel,.exam-panel,.formula-card,.profile-card,.materials-card) { background:#101d32;color:#e6efff;border-color:#293a57;box-shadow:0 12px 35px #0002;border-radius:13px; }
+.pt-dashboard :is(.results-count,.notice) { background:#173c3a;color:#9ae8d4; }
+.pt-dashboard :is(.blitz-options button,.task-filters button,.refresh-results,.mark-task) { color:#b8cae4;background:#13243d;border-color:#344965; }
+.pt-dashboard :is(.modal,.modal-content) { background:#111e33;color:#e6efff;border-color:#344965; }
+.pt-dashboard .modal-backdrop { background:#020611b8; }
+.landing .login-error { color:#ffc1ce;background:#4b2032; }
+.invite-page .login-card { background:#111e33;color:#e6efff;border-color:#344965; }

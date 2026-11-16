@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { PwaRegistration } from "@/components/PwaRegistration";
 import "./globals.css";
 import "./physics-design.css";
+import "./premium-app.css";
 
 export const metadata: Metadata = {
   title: "Physics Tutor — физика с Егором",
