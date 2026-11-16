@@ -69,7 +69,7 @@ const quizBank: Record<string, Array<{q: string; a: string[]; correct: number}>>
 };
 const TEACHER_EMAIL = "e.galkin07@mail.ru";
 const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD || "";
-const DEMO_ENABLED = process.env.NEXT_PUBLIC_ENABLE_DEMO === "true" && process.env.NODE_ENV !== "production";
+const DEMO_ENABLED = process.env.NEXT_PUBLIC_ENABLE_DEMO === "true";
 
 export default function Home() {
   const pathname = usePathname();
@@ -167,7 +167,6 @@ export default function Home() {
   const [results, setResults] = useState<Array<{user?: string; score?: number; total?: number}>>([]);
   const saveQuizResult = async (score: number) => { try { await addDoc(collection(db, "quizResults"), { title: selected || "Тепловые явления ЕГЭ", topic: selected || "Термодинамика", score, total: quizQuestions.length, user: auth.currentUser?.email || "ученик", createdAt: serverTimestamp() }); } catch { setNotice({ message: "Результат показан, но пока не сохранён в Firestore. Проверьте правила базы.", tone: "error" }); } };
   useEffect(() => {
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => undefined);
     const savedDemo = DEMO_ENABLED ? window.localStorage.getItem("physics-tutor-demo") : null;
     if (savedDemo === "teacher" || savedDemo === "student") { setDemoMode(true); setLoggedIn(true); setRole(savedDemo); }
     const unsubscribe = onAuthStateChanged(auth, async (user) => {

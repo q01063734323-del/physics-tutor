@@ -42,7 +42,7 @@ type MediaState = {
 
 const initialMedia: MediaState = { room: null, state: ConnectionState.Connecting, participants: [], audioAllowed: true };
 
-export function useClassroomMedia(session: ClassroomSession, notice: (message: string) => void, error: (message: string) => void) {
+export function useClassroomMedia(session: ClassroomSession, notice: (message: string) => void, error: (message: string) => void, enableDevices = true) {
   const [media, setMedia] = useState(initialMedia);
   useEffect(() => {
     let active = true;
@@ -70,11 +70,11 @@ export function useClassroomMedia(session: ClassroomSession, notice: (message: s
     room.on(RoomEvent.Reconnected, () => { notice("Связь восстановлена."); sync(); });
     room.on(RoomEvent.Disconnected, reason => { notice(reason ? `Связь завершена: ${reason}.` : "Связь завершена."); sync(); });
     room.connect(session.url, session.token).then(async () => {
-      try {
-        await room.localParticipant.setCameraEnabled(true);
-        await room.localParticipant.setMicrophoneEnabled(true);
-      } catch (problem) {
-        error(classroomMediaError(problem, "Камера или микрофон не подключены. Их можно включить кнопками ниже."));
+      if (!active) { await room.disconnect(); return; }
+      if (enableDevices) {
+        const results = await Promise.allSettled([room.localParticipant.setCameraEnabled(true), room.localParticipant.setMicrophoneEnabled(true)]);
+        const failed = results.find(result => result.status === "rejected");
+        if (active && failed?.status === "rejected") error(classroomMediaError(failed.reason, "Проверьте камеру и микрофон. Их можно включить кнопками ниже."));
       }
       sync();
     }).catch(() => {
@@ -87,7 +87,7 @@ export function useClassroomMedia(session: ClassroomSession, notice: (message: s
       room.removeAllListeners();
       void room.disconnect();
     };
-  }, [session.token, session.url, notice, error]);
+  }, [session.token, session.url, notice, error, enableDevices]);
   return media;
 }
 

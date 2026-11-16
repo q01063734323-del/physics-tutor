@@ -1,10 +1,17 @@
 {
+  "id": "/",
   "name": "Физика с Егором",
   "short_name": "Физика",
-  "description": "Задания, теория и тренажёр ЕГЭ по физике",
+  "description": "Занятия физикой, домашние задания и подготовка к ОГЭ и ЕГЭ",
+  "lang": "ru",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#f5f7fb",
-  "theme_color": "#16233d",
-  "lang": "ru"
+  "background_color": "#07142B",
+  "theme_color": "#07142B",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
 }

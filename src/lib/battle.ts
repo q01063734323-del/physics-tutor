@@ -78,6 +78,23 @@ export const battleQuestions: BattleQuestion[] = [
   { id: "optics-error", topic: "Оптика", mode: "mistake", difficulty: 2, prompt: "В решении написано: D = F. Какая формула нужна для оптической силы?", answer: "1/F", explanation: "Оптическая сила равна величине, обратной фокусному расстоянию в метрах.", formula: "D = 1 / F", mistake: "Фокусное расстояние и оптическая сила — взаимно обратные величины." },
 ];
 
+// Additional short rounds cover the full set of advertised modes.
+battleQuestions.push(
+  { id: "speed-distance", topic: "Механика", mode: "speed", difficulty: 1, prompt: "Велосипедист едет со скоростью 6 м/с. Какой путь в метрах он пройдёт за 20 с?", answer: "120", explanation: "При равномерном движении s = vt = 6 · 20 = 120 м.", formula: "s = vt" },
+  { id: "speed-lens", topic: "Оптика", mode: "speed", difficulty: 1, prompt: "Фокусное расстояние собирающей линзы 0,5 м. Найди оптическую силу в диоптриях.", answer: "2", explanation: "D = 1/F = 1/0,5 = 2 дптр.", formula: "D = 1/F" },
+  { id: "speed-heat", topic: "Термодинамика", mode: "speed", difficulty: 1, prompt: "Тело получило 300 Дж теплоты и совершило работу 100 Дж. На сколько джоулей увеличилась его внутренняя энергия?", answer: "200", explanation: "По первому закону термодинамики ΔU = Q − A = 300 − 100 = 200 Дж.", formula: "ΔU = Q − A" },
+  { id: "formula-acceleration", topic: "Механика", mode: "formulas", difficulty: 1, prompt: "Вырази ускорение a из второго закона Ньютона F = ma. Введи правую часть формулы.", answer: "F/m", explanation: "Разделим обе части равенства на массу. Получим a = F/m.", formula: "a = F/m" },
+  { id: "formula-temperature", topic: "Термодинамика", mode: "formulas", difficulty: 2, prompt: "Вырази изменение температуры из Q = cmΔT. Введи правую часть формулы через Q, c и m.", answer: "Q/(c*m)", explanation: "Чтобы найти ΔT, разделим Q на произведение c и m.", formula: "ΔT = Q/(cm)" },
+  { id: "formula-ohm", topic: "Электродинамика", mode: "formulas", difficulty: 1, prompt: "Из закона Ома I = U/R вырази напряжение U. Введи правую часть формулы.", answer: "I*R", explanation: "Умножим обе части равенства на R. Получим U = IR.", formula: "U = IR" },
+  { id: "mistake-speed", topic: "Механика", mode: "mistake", difficulty: 1, prompt: "Ученик перевёл 72 км/ч в м/с и получил 72 · 3,6. Запиши правильное числовое значение скорости в м/с.", answer: "20", explanation: "Для перевода километров в час в метры в секунду нужно разделить на 3,6. Получим 20 м/с.", formula: "v = 72/3,6 = 20 м/с" },
+  { id: "mistake-power", topic: "Электродинамика", mode: "mistake", difficulty: 2, prompt: "Для тока 2 А и сопротивления 3 Ом ученик получил мощность 6 Вт. Найди правильную мощность в ваттах.", answer: "12", explanation: "В формуле мощности ток возводится в квадрат. P = I²R = 4 · 3 = 12 Вт.", formula: "P = I²R" },
+  { id: "mistake-density", topic: "Молекулярная физика", mode: "mistake", difficulty: 1, prompt: "Плотность записали как ρ = V/m. Введи правильную правую часть формулы.", answer: "m/V", explanation: "Плотность равна массе единицы объёма, поэтому массу делят на объём.", formula: "ρ = m/V" },
+  { id: "streak-pressure", topic: "Молекулярная физика", mode: "streak", difficulty: 1, prompt: "Сила давления 60 Н действует на площадь 2 м². Найди давление в паскалях.", answer: "30", explanation: "p = F/S = 60/2 = 30 Па.", formula: "p = F/S" },
+  { id: "streak-work", topic: "Механика", mode: "streak", difficulty: 2, prompt: "Сила 15 Н перемещает тело на 4 м вдоль направления силы. Найди работу в джоулях.", answer: "60", explanation: "A = Fs = 15 · 4 = 60 Дж.", formula: "A = Fs" },
+  { id: "streak-magnetic", topic: "Магнитное поле", mode: "streak", difficulty: 3, prompt: "Проводник длиной 0,2 м с током 5 А расположен перпендикулярно полю 0,4 Тл. Найди силу Ампера в ньютонах.", answer: "0.4", explanation: "При перпендикулярном расположении F = BIl = 0,4 · 5 · 0,2 = 0,4 Н.", formula: "F = BIl" },
+  { id: "streak-photon", topic: "Квантовая физика", mode: "streak", difficulty: 3, prompt: "Во сколько раз увеличится энергия фотона, если частоту излучения увеличить в 3 раза?", answer: "3", explanation: "E = hν, поэтому энергия прямо пропорциональна частоте.", formula: "E = hν" },
+);
+
 export function emptyTopicProgress(): TopicProgress { return { attempts: 0, correct: 0, recent: [] }; }
 
 export function createBattleProfile(exam: BattleExam = "ЕГЭ"): BattleProfile {
@@ -97,11 +114,15 @@ export function xpToNextLevel(xp: number) {
   return { level, current: xp - (level - 1) * 250, needed: 250 };
 }
 
-export function normalizeAnswer(value: string) { return value.trim().toLowerCase().replaceAll(",", ".").replaceAll(" ", ""); }
+export function normalizeAnswer(value: string) {
+  return value.trim().toLowerCase().replaceAll(",", ".").replace(/\s+/g, "")
+    .replace(/[·×]/g, "*").replace(/\*/g, "");
+}
 
 export function answerIsCorrect(question: BattleQuestion, value: string) {
   const actual = normalizeAnswer(value);
   const expected = normalizeAnswer(question.answer);
+  if (!actual) return false;
   if (actual === expected) return true;
   const numericActual = Number(actual);
   const numericExpected = Number(expected);
@@ -117,9 +138,10 @@ export function estimateForecast(profile: BattleProfile) {
   const mockAttempts = attempts.filter(item => item.mode === "boss").length;
   const base = profile.exam === "ЕГЭ" ? 35 : 20;
   const score = Math.round(base + quality * (100 - base));
-  const confidence = Math.min(92, 34 + attempts.length * 4 + mockAttempts * 8);
+  const coverage = new Set(attempts.map(item => item.topic)).size;
+  const confidence = Math.min(85, 20 + Math.min(attempts.length, 30) + coverage * 4 + Math.min(mockAttempts, 7));
   const spread = Math.max(4, Math.round(18 - confidence / 8));
-  return { ready: true, score, low: Math.max(base, score - spread), high: Math.min(100, score + spread), confidence, label: confidence >= 70 ? "Уверенный прогноз" : "Предварительный прогноз" };
+  return { ready: true, score, low: Math.max(base, score - spread), high: Math.min(100, score + spread), confidence, label: "Ориентир по практике" };
 }
 
 export function buildPlan(profile: BattleProfile) {
@@ -147,7 +169,14 @@ export function recordBattleAttempt(profile: BattleProfile, question: BattleQues
     coins: profile.coins + (correct ? 4 + question.difficulty : 0),
     streak: nextStreak,
     bestStreak: Math.max(profile.bestStreak, nextStreak),
-    dailyCompleted: profile.dailyCompleted + 1,
+    dailyCompleted: (profile.lastActive.slice(0, 10) === now.slice(0, 10) ? profile.dailyCompleted : 0) + 1,
+    achievements: Array.from(new Set([
+      ...profile.achievements,
+      ...(correct ? ["Первый верный ответ"] : []),
+      ...(nextStreak >= 5 ? ["Пять подряд"] : []),
+      ...(profile.xp + score >= 1000 ? ["Тысяча XP"] : []),
+      ...(question.mode === "boss" && correct ? ["Шаг к экзамену"] : []),
+    ])),
     attempts: [...profile.attempts, attempt].slice(-120),
     topics: { ...profile.topics, [question.topic]: { attempts: stats.attempts + 1, correct: stats.correct + (correct ? 1 : 0), recent: [...stats.recent, correct ? 1 : 0].slice(-8) } },
     lastActive: now,

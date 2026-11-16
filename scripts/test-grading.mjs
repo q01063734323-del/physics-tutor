@@ -3,6 +3,9 @@ import { parseNumericAnswer, gradeNumericAnswer, gradeSequence, gradeMultiSelect
 assert.equal(parseNumericAnswer(' 2,5 '), 2.5);
 assert.equal(parseNumericAnswer('-3.2'), -3.2);
 assert.equal(parseNumericAnswer('abc'), null);
+assert.equal(parseNumericAnswer('3e-19'), 3e-19);
+assert.equal(parseNumericAnswer(''), null);
+assert.equal(parseNumericAnswer('1e'), null);
 assert.equal(gradeNumericAnswer('9,81', 9.8, { tolerance: 0.02 }).correct, true);
 assert.equal(gradeNumericAnswer('9,81', 9.8, { tolerance: 0.005 }).correct, false);
 assert.equal(gradeSequence('2 3 -4', [2, 3, -4]).correct, true);

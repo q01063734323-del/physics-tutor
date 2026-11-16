@@ -2,7 +2,7 @@ export type NumericRule = { tolerance?: number; decimals?: number };
 
 export function parseNumericAnswer(value: string): number | null {
   const normalized = value.trim().replace(/\s+/g, '').replace(',', '.');
-  if (!normalized || !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(normalized)) return null;
+  if (!normalized || !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(normalized)) return null;
   const parsed = Number(normalized);
   return Number.isFinite(parsed) ? parsed : null;
 }

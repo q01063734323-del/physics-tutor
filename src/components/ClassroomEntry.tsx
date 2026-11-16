@@ -9,6 +9,7 @@ import { auth } from "@/lib/firebase";
 import { classroomRequest } from "@/lib/classroom-client";
 import { isClassroomId, type ClassroomRole, type ClassroomSession, type ClassroomStudent } from "@/lib/classroom";
 import { ClassroomWorkspace } from "./ClassroomWorkspace";
+import { DemoClassroom } from "./DemoClassroom";
 
 const ClassroomLesson = dynamic(() => import("./ClassroomLesson").then(module => module.ClassroomLesson), {
   loading: () => <main className="pt-classroom"><p role="status">Открываем онлайн-урок…</p></main>,
@@ -26,12 +27,15 @@ export function ClassroomEntry() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [demoRole, setDemoRole] = useState<ClassroomRole | null>(null);
   const autoJoinAttempted = useRef(false);
 
   useEffect(() => onAuthStateChanged(auth, nextUser => {
     setUser(nextUser);
     setAccount(null);
     setSession(null);
+    const demo = window.localStorage.getItem("physics-tutor-demo");
+    if (process.env.NEXT_PUBLIC_ENABLE_DEMO === "true" && (demo === "teacher" || demo === "student")) setDemoRole(demo);
   }), []);
 
   useEffect(() => {
@@ -86,6 +90,7 @@ export function ClassroomEntry() {
   }, []);
 
   if (session && user) return <ClassroomLesson key={session.roomId} session={session} user={user} onLeave={leave} />;
+  if (process.env.NEXT_PUBLIC_ENABLE_DEMO === "true" && (params.has("guest") || (!user && demoRole))) return <DemoClassroom />;
 
   return (
     <ClassroomWorkspace lobby={
