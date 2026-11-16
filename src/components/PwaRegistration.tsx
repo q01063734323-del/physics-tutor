@@ -16,9 +16,13 @@ export function PwaRegistration() {
   const reloadRequested = useRef(false);
 
   useEffect(() => {
+<<<<<<< HEAD
     // Development chunk URLs are reused between edits; a cache-first worker
     // can otherwise mix old client code with freshly rendered server markup.
     if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
+=======
+    if (!("serviceWorker" in navigator)) return;
+>>>>>>> e9b7eb92d3ce579c73cd0d9cb47130480b341024
     let active = true;
     let registration: ServiceWorkerRegistration | undefined;
     let installing: ServiceWorker | null = null;
