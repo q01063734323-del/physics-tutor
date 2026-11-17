@@ -344,6 +344,13 @@ def main():
         overrides = profile.get('conditionFragmentOverrides', {}).get(question['id'])
         if overrides:
             question['fragments'] = [crop(fragment['pdfPage'], fragment['bbox']) for fragment in overrides] + [fragment for fragment in question['fragments'] if fragment['role'] != 'condition']
+        solution_overrides = profile.get('solutionFragmentOverrides', {}).get(question['id'])
+        if solution_overrides:
+            question['solutionCandidate'] = {
+                'fragments': [crop(fragment['pdfPage'], fragment['bbox'], 'solution') for fragment in solution_overrides],
+                'status': 'needs_review',
+                'sourceLabel': 'source-profile:' + question['id'],
+            }
         question['review']['issues'].extend(profile.get('reviewIssuesById', {}).get(question['id'], []))
     # Persist source-bound visual reviews across every later import.
     reviews_file=directory/'review-ledger.json'
@@ -376,7 +383,7 @@ def main():
              'solutionCandidates':sum(bool(question['solutionCandidate']) for question in candidates),
              'duplicateCount':0,'unresolvedPages':sorted(unresolved,key=lambda entry:entry['pdfPage']),
              'warnings':['Все материалы остаются локальными черновиками; Firebase и публикация не используются.',
-                         'Распознанный текст, метки и границы большинства задач требуют сверки. Число кандидатов не является окончательным числом упражнений.',
+                         f'Сверено со сканом: {source_checked} из {len(candidates)} записей. Осталось для проверки: {len(candidates)-source_checked}. Составные упражнения считаются одной записью.',
                          'Условия и рисунки сохранены сканами. Непроверенные ответы не включены в автопроверку.',
                          'Полные сканы всех 488 страниц, включая ответы и решения, доступны для проверки. Права на публикацию не подтверждены.'],
              'reimport':stats}
