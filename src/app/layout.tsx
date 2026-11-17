@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { TypographyMotion } from "@/components/TypographyMotion";
 import localFont from "next/font/local";
 import { Suspense } from "react";
 import { PwaRegistration } from "@/components/PwaRegistration";
@@ -33,7 +34,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html className={`${manrope.variable} ${inter.variable}`} lang="ru" data-scroll-behavior="smooth">
-      <body>{children}<Suspense fallback={null}><PwaRegistration /></Suspense></body>
+      <body>{children}<Suspense fallback={null}><PwaRegistration /><TypographyMotion /></Suspense></body>
     </html>
   );
 }

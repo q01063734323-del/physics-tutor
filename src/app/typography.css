@@ -22,3 +22,19 @@ body { font-size:var(--type-body);line-height:1.6; }
 .pt-site h2 { font-weight:750!important;font-variation-settings:"wght" 750;letter-spacing:-.05em!important;line-height:1.15!important; }
 .pt-site h3 { font-weight:700;letter-spacing:-.035em; }
 @media(max-width:650px) { .pt-site h1 { letter-spacing:-.05em!important;line-height:1.13!important; }.pt-site h2 { letter-spacing:-.035em!important; } }
+
+/* Shared hierarchy also reaches standalone trainers and classroom routes. */
+:root { --type-leading-body:1.7;--type-leading-heading:1.18;--type-weight-heading:750;--type-tracking-heading:-.04em; }
+:where(h1,h2,h3,h4):not(.katex *) { font-family:var(--font-display),Arial,sans-serif;letter-spacing:var(--type-tracking-heading);line-height:var(--type-leading-heading);text-wrap:balance; }
+:where(main h1) { font-size:var(--type-h1); }
+:where(main h2) { font-size:var(--type-h2); }
+:where(main h3) { font-size:var(--type-h3); }
+:where(button,input,select,textarea) { font-family:var(--pt-sans); }
+:where(p) { text-wrap:pretty; }
+:where(time,progress,.pt-metrics strong) { font-variant-numeric:tabular-nums; }
+/* Math keeps KaTeX's own font families and spacing. */
+.katex { letter-spacing:normal;text-wrap:initial; }
+:where([class*="prompt"],[class*="Prompt"]) { line-height:1.85;overflow-wrap:break-word; }
+[data-type-entered="true"] { animation:section-type-enter .65s ease both; }
+@keyframes section-type-enter { from { opacity:.3;translate:0 10px;filter:blur(2px); } to { opacity:1;translate:0 0;filter:none; } }
+@media(prefers-reduced-motion:reduce) { [data-type-entered] { animation:none!important; } }
