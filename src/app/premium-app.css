@@ -53,3 +53,10 @@ body { background:#060b18;color:#edf3ff;color-scheme:dark; }
 .pt-dashboard .theory-library { background:#101d32;color:#e6efff;border:1px solid #293a57;border-radius:13px; }
 .pt-dashboard .official-resources a { color:#b4d9ff; }
 .pt-dashboard .official-resources p { color:#9eafc9; }
+/* Standalone account and offline states share the premium surface system. */
+.invite-page .invite-card,.pt-offline section { background:linear-gradient(135deg,#142039,#0d1527);color:#edf3ff;border-color:#344965;box-shadow:0 20px 60px #0003; }
+.invite-page :is(input,select) { background:#091426;color:#edf3ff;border-color:#344965;min-height:46px;font-size:16px; }
+.invite-page .primary,.pt-offline .primary { background:#417beb;color:#fff; }
+.invite-page .primary:hover,.pt-offline .primary:hover { background:#558df8; }
+.invite-page :where(a,button,input):focus-visible,.pt-offline :where(a,button):focus-visible { outline:2px solid #8bd6ff;outline-offset:4px; }
+@media(max-width:650px) { .invite-page,.pt-offline { padding:18px; }.invite-page .invite-card,.pt-offline section { min-width:0;overflow-wrap:break-word; } }
