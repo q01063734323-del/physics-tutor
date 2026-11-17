@@ -10,7 +10,7 @@ export type TrainerAnswer =
 
 export type TrainerAsset = {
   id: string;
-  role?: "diagram" | "condition" | "answer" | "solution";
+  role?: "diagram" | "condition" | "answer" | "solution" | "scan";
   url: string;
   alt: string;
   sha256?: string;
@@ -29,6 +29,7 @@ export type TrainerQuestion = {
   section: PhysicsSection;
   topics: string[];
   prompt: string;
+  searchText?: string;
   assets: TrainerAsset[];
   answer: TrainerAnswer | null;
   solution: string | null;
@@ -128,7 +129,7 @@ export function filterTrainerQuestions(questions: TrainerQuestion[], filters: Tr
     if (filters.mode === "numbers" && filters.number !== "all" && (filters.number === "unmapped" ? question.examNumber !== null : question.examNumber !== filters.number)) return false;
     if (filters.mode === "topics" && filters.section !== "all" && question.section !== filters.section) return false;
     if (filters.mode === "topics" && filters.topic !== "all" && !question.topics.includes(filters.topic)) return false;
-    if (query && ![question.id, question.prompt, question.section, ...question.topics, question.source.taskLabel].join(" ").toLocaleLowerCase("ru").includes(query)) return false;
+    if (query && ![question.id, question.prompt, question.searchText || "", question.section, ...question.topics, question.source.taskLabel].join(" ").toLocaleLowerCase("ru").includes(query)) return false;
     const last = latestAttempt(question, attempts);
     return filters.progress === "all" || (filters.progress === "new" && !last) || (filters.progress === "mistakes" && last?.correct === false) || (filters.progress === "solved" && last?.correct === true);
   });
