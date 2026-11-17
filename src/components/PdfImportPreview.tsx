@@ -11,7 +11,7 @@ import PdfBankReview from "./PdfBankReview";
 import styles from "./QuestionTrainer.module.css";
 
 export default function PdfImportPreview({ batch, full }: { batch: PdfPilotBatch; full?: PdfDraftBank | null }) {
-  const [dataset, setDataset] = useState(full ? "full" : "pilot");
+  const [dataset, setDataset] = useState(full ? "checked" : "pilot");
   const checkedQuestions = full ? full.questions.flatMap(question => {
     if (question.review.status !== "source_checked") return [];
     const pilot = batch.questions.find(item => item.id === question.pilotQuestionId);

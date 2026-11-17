@@ -6,6 +6,9 @@ import { usePathname } from "next/navigation";
 export function TypographyMotion() {
   const pathname = usePathname();
   useEffect(() => {
+    // The private preview streams a large bank: leave its headings untouched
+    // until React has hydrated the whole review interface.
+    if (pathname === "/teacher/import-preview") return;
     const media = matchMedia("(prefers-reduced-motion: reduce)");
     const observed = new Set<Element>();
     const observer = new IntersectionObserver(entries => {

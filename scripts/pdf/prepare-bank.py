@@ -383,7 +383,7 @@ def main():
              'solutionCandidates':sum(bool(question['solutionCandidate']) for question in candidates),
              'duplicateCount':0,'unresolvedPages':sorted(unresolved,key=lambda entry:entry['pdfPage']),
              'warnings':['Все материалы остаются локальными черновиками; Firebase и публикация не используются.',
-                         f'Сверено со сканом: {source_checked} из {len(candidates)} записей. Осталось для проверки: {len(candidates)-source_checked}. Составные упражнения считаются одной записью.',
+                         f'Сверено со сканом: {source_checked} из {len(candidates)} записей. Не включены в практику: {len(candidates)-source_checked}. Составные упражнения считаются одной записью.',
                          'Условия и рисунки сохранены сканами. Непроверенные ответы не включены в автопроверку.',
                          'Полные сканы всех 488 страниц, включая ответы и решения, доступны для проверки. Права на публикацию не подтверждены.'],
              'reimport':stats}
