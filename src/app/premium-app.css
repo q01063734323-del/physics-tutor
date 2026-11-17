@@ -60,3 +60,14 @@ body { background:#060b18;color:#edf3ff;color-scheme:dark; }
 .invite-page .primary:hover,.pt-offline .primary:hover { background:#558df8; }
 .invite-page :where(a,button,input):focus-visible,.pt-offline :where(a,button):focus-visible { outline:2px solid #8bd6ff;outline-offset:4px; }
 @media(max-width:650px) { .invite-page,.pt-offline { padding:18px; }.invite-page .invite-card,.pt-offline section { min-width:0;overflow-wrap:break-word; } }
+/* Complete reference, loading and recovery surfaces. */
+.pt-dashboard :is(.reference-card,.reference-details) { background:#101d32;color:#dbe8fb;border-color:#304563;box-shadow:none; }
+.pt-dashboard .reference-formula { background:#183452;color:#c1deff;font-family:Georgia,"Times New Roman",serif;letter-spacing:normal;line-height:1.6;overflow-wrap:break-word; }
+.pt-dashboard :is(.reference-tabs button,.formula-copy) { background:#132740;color:#b7d9ff;border-color:#37577b;min-height:44px; }
+.pt-dashboard .reference-tabs button.selected { background:#254e7c;color:white; }
+.loading-page,.error-page { background:radial-gradient(ellipse at 50% 40%,#172b50,#060b18 65%);color:#edf3ff; }
+.error-page .error-card { background:#111e33;color:#edf3ff;border:1px solid #344965;box-shadow:0 20px 60px #0003;border-radius:16px; }
+.error-page .error-card h1 { font-family:var(--font-display),Arial,sans-serif;font-size:var(--type-h1);line-height:1.2; }
+.error-page .primary { background:#417beb;color:white;min-height:44px; }
+.loading-orbit { border-color:#395a85; }.loading-orbit i { background:#7dd3fc; }
+@media(prefers-reduced-motion:reduce) { .loading-orbit,.loading-orbit i { animation:none!important; } }
