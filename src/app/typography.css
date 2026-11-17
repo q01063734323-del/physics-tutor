@@ -15,3 +15,10 @@ body { font-size:var(--type-body);line-height:1.6; }
 @keyframes premium-gradient { to { background-position:100% 50%; } }
 @media(max-width:650px) { .pt-site h1 { font-size:clamp(34px,8.8vw,52px)!important; }.pt-site h1 { overflow-wrap:normal!important;hyphens:manual; }.pt-dashboard p { line-height:1.7; } }
 @media(prefers-reduced-motion:reduce) { .premium-word,.pt-site h1 em { animation:none!important; }.pt-site [data-reveal] h2 { opacity:1;filter:none;transform:none;transition:none; } }
+/* Stronger editorial rhythm for the premium display face. */
+.pt-site h1 { font-weight:800!important;font-variation-settings:"wght" 800;letter-spacing:-.065em!important;line-height:1.08!important; }
+.pt-site h1 .premium-word { font:inherit; }
+.pt-site h1 em { font-style:normal;font-weight:800;font-variation-settings:"wght" 800; }
+.pt-site h2 { font-weight:750!important;font-variation-settings:"wght" 750;letter-spacing:-.05em!important;line-height:1.15!important; }
+.pt-site h3 { font-weight:700;letter-spacing:-.035em; }
+@media(max-width:650px) { .pt-site h1 { letter-spacing:-.05em!important;line-height:1.13!important; }.pt-site h2 { letter-spacing:-.035em!important; } }
