@@ -1,10 +1,10 @@
-/* eslint-disable @next/next/no-img-element -- Private source scans bypass public image optimization. */
 "use client";
 
 import { useMemo, useState } from "react";
 import { draftKindLabels, filterPdfDrafts, initialPdfDraftFilters, privatePdfAsset, type PdfDraftBank, type PdfDraftFilters } from "@/lib/pdf-drafts";
 import { displayTrainerAnswer, physicsSections } from "@/lib/trainer-bank";
 import { MathText } from "./QuestionTrainer";
+import SourceScan from "./SourceScan";
 import styles from "./QuestionTrainer.module.css";
 
 const pageSize = 30;
@@ -16,8 +16,6 @@ export default function PdfBankReview({ bank }: { bank: PdfDraftBank }) {
   const [bookPage, setBookPage] = useState<number | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
-  const [brokenImages, setBrokenImages] = useState<string[]>([]);
-  const [zoom, setZoom] = useState<Record<string, number>>({});
   const visible = useMemo(() => filterPdfDrafts(bank.questions, filters), [bank.questions, filters]);
   const counts = useMemo(() => new Map(Array.from({ length: 26 }, (_, index) => [index + 1, bank.questions.filter(question => question.sourceExamNumber === index + 1).length])), [bank.questions]);
   const current = selected ? visible.find(question => question.id === selected) : null;
@@ -34,8 +32,7 @@ export default function PdfBankReview({ bank }: { bank: PdfDraftBank }) {
   function select(id: string) { setSelected(id); setBookPage(null); setShowAnswer(false); }
 
   function sourceImage(asset: string, alt: string) {
-    const scale = zoom[asset] || 1;
-    return <><div className={styles.scanZoom}><button type="button" aria-label={`Уменьшить скан: ${alt}`} disabled={scale <= 1} onClick={() => setZoom(previous => ({ ...previous, [asset]: Math.max(1, scale - 0.5) }))}>−</button><span>{Math.round(scale * 100)}%</span><button type="button" aria-label={`Увеличить скан: ${alt}`} disabled={scale >= 4} onClick={() => setZoom(previous => ({ ...previous, [asset]: Math.min(4, scale + 0.5) }))}>+</button><a href={privatePdfAsset(asset)} target="_blank" rel="noreferrer">Открыть крупно ↗</a></div>{brokenImages.includes(asset) ? <div role="alert" className={styles.feedback}>Скан не загрузился. Открой полный оригинал страницы или обнови предпросмотр.</div> : <div className={`${styles.scanViewport} ${scale > 1 ? styles.scanViewportZoomed : ""}`}><img src={privatePdfAsset(asset)} alt={alt} style={{ width: `${scale * 100}%`, maxWidth: "none" }} loading="lazy" onError={() => setBrokenImages(previous => [...previous, asset])} /></div>}</>;
+    return <SourceScan key={asset} src={privatePdfAsset(asset)} alt={alt} />;
   }
 
   return <section className={styles.trainer} aria-label="Закрытый банк PDF">
