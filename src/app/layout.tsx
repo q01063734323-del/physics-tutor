@@ -8,8 +8,8 @@ import "./physics-design.css";
 import "./premium-app.css";
 import "./typography.css";
 
-const manrope = localFont({ src: "./fonts/Manrope-Variable.ttf", variable: "--font-display", weight: "200 800", display: "optional", adjustFontFallback: "Arial" });
-const inter = localFont({ src: "./fonts/Inter-Variable.ttf", variable: "--font-body", weight: "100 900", display: "optional", adjustFontFallback: "Arial" });
+const manrope = localFont({ src: "./fonts/Manrope.woff2", variable: "--font-display", weight: "200 800", display: "optional", adjustFontFallback: "Arial" });
+const inter = localFont({ src: "./fonts/Inter.woff2", variable: "--font-body", weight: "100 900", display: "optional", adjustFontFallback: "Arial" });
 
 export const metadata: Metadata = {
   title: "Physics Tutor — физика с Егором",

@@ -46,3 +46,10 @@ body { background:#060b18;color:#edf3ff;color-scheme:dark; }
 .pt-dashboard .modal-backdrop { background:#020611b8; }
 .landing .login-error { color:#ffc1ce;background:#4b2032; }
 .invite-page .login-card { background:#111e33;color:#e6efff;border-color:#344965; }
+.pt-dashboard :is(.theory-panel,.resources-panel,.official-resources,.resource-card,.theory-section,.materials-panel,.reference-panel,.notice-item,.profile-panel,.lab-panel) { background:#101d32;color:#e6efff;border:1px solid #293a57;border-radius:13px; }
+.pt-dashboard :is(.resource-card a,.official-resources a,.resource-link) { color:#a4d3ff; }
+.pt-dashboard :is(.exam-timer,.tag:not(.ready)) { color:#f1d4a3;background:#3b2c20; }
+.pt-dashboard :is(.secondary,.role-switch) { color:#c4dbf7;background:#152b47;border-color:#344965; }
+.pt-dashboard .theory-library { background:#101d32;color:#e6efff;border:1px solid #293a57;border-radius:13px; }
+.pt-dashboard .official-resources a { color:#b4d9ff; }
+.pt-dashboard .official-resources p { color:#9eafc9; }
