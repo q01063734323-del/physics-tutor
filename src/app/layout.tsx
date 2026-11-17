@@ -1,9 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
 import { Suspense } from "react";
 import { PwaRegistration } from "@/components/PwaRegistration";
 import "./globals.css";
 import "./physics-design.css";
 import "./premium-app.css";
+import "./typography.css";
+
+const manrope = localFont({ src: "./fonts/Manrope-Variable.ttf", variable: "--font-display", weight: "200 800", display: "optional", adjustFontFallback: "Arial" });
+const inter = localFont({ src: "./fonts/Inter-Variable.ttf", variable: "--font-body", weight: "100 900", display: "optional", adjustFontFallback: "Arial" });
 
 export const metadata: Metadata = {
   title: "Physics Tutor — физика с Егором",
@@ -27,7 +32,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ru" data-scroll-behavior="smooth">
+    <html className={`${manrope.variable} ${inter.variable}`} lang="ru" data-scroll-behavior="smooth">
       <body>{children}<Suspense fallback={null}><PwaRegistration /></Suspense></body>
     </html>
   );
