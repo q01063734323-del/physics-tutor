@@ -1,0 +1,1059 @@
+{
+  "year": 2027,
+  "reviewedAt": "2026-11-18",
+  "archiveUrl": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
+  "archiveSha256": "56830c0c7c7264bc6da9a354a551ccddd9878c79141464d469d200545e882546",
+  "elements": [
+    {
+      "code": "1.1.1",
+      "title": "Механическое движение. Относительность механического",
+      "printedPage": 7,
+      "requiredFormulas": []
+    },
+    {
+      "code": "1.1.2",
+      "title": "Материальная точка",
+      "printedPage": 7,
+      "requiredFormulas": [
+        "displacement",
+        "displacement-add",
+        "position-vector"
+      ]
+    },
+    {
+      "code": "1.1.3",
+      "title": "Скорость материальной точки",
+      "printedPage": 7,
+      "requiredFormulas": [
+        "velocity",
+        "velocity-projection",
+        "velocity-add"
+      ]
+    },
+    {
+      "code": "1.1.4",
+      "title": "Ускорение материальной точки",
+      "printedPage": 7,
+      "requiredFormulas": [
+        "acceleration"
+      ]
+    },
+    {
+      "code": "1.1.5",
+      "title": "Равномерное прямолинейное движение",
+      "printedPage": 7,
+      "requiredFormulas": [
+        "uniform-coordinate"
+      ]
+    },
+    {
+      "code": "1.1.6",
+      "title": "Равноускоренное прямолинейное движение",
+      "printedPage": 7,
+      "requiredFormulas": [
+        "accelerated-coordinate",
+        "accelerated-velocity",
+        "accelerated-displacement",
+        "average-unidirectional"
+      ]
+    },
+    {
+      "code": "1.1.7",
+      "title": "Свободное падение. Ускорение свободного падения",
+      "printedPage": 8,
+      "requiredFormulas": [
+        "projectile-x",
+        "projectile-y",
+        "projectile-vx",
+        "projectile-vy"
+      ]
+    },
+    {
+      "code": "1.1.8",
+      "title": "Криволинейное движение. Движение материальной точки по",
+      "printedPage": 8,
+      "requiredFormulas": [
+        "circle-speed",
+        "angular-period",
+        "angular-frequency",
+        "circle-period",
+        "centripetal",
+        "centripetal-angular"
+      ]
+    },
+    {
+      "code": "1.1.9",
+      "title": "Твёрдое тело. Поступательное и вращательное движение",
+      "printedPage": 8,
+      "requiredFormulas": []
+    },
+    {
+      "code": "1.2.1",
+      "title": "Инерциальные системы отсчёта. Первый закон Ньютона",
+      "printedPage": 8,
+      "requiredFormulas": []
+    },
+    {
+      "code": "1.2.2",
+      "title": "Масса тела. Плотность вещества",
+      "printedPage": 8,
+      "requiredFormulas": [
+        "density"
+      ]
+    },
+    {
+      "code": "1.2.3",
+      "title": "Сила. Принцип суперпозиции сил",
+      "printedPage": 8,
+      "requiredFormulas": [
+        "force-superposition"
+      ]
+    },
+    {
+      "code": "1.2.4",
+      "title": "Второй закон Ньютона",
+      "printedPage": 8,
+      "requiredFormulas": [
+        "newton-second",
+        "force-impulse"
+      ]
+    },
+    {
+      "code": "1.2.5",
+      "title": "Третий закон Ньютона",
+      "printedPage": 8,
+      "requiredFormulas": [
+        "newton-third"
+      ]
+    },
+    {
+      "code": "1.2.6",
+      "title": "Закон всемирного тяготения",
+      "printedPage": 8,
+      "requiredFormulas": [
+        "gravitation"
+      ]
+    },
+    {
+      "code": "1.2.7",
+      "title": "Сила упругости. Закон Гука",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "hooke"
+      ]
+    },
+    {
+      "code": "1.2.8",
+      "title": "Сила трения. Сухое трение",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "sliding-friction",
+        "static-friction"
+      ]
+    },
+    {
+      "code": "1.2.9",
+      "title": "Давление",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "pressure"
+      ]
+    },
+    {
+      "code": "1.3.1",
+      "title": "Момент силы относительно оси",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "torque"
+      ]
+    },
+    {
+      "code": "1.3.2",
+      "title": "Центр масс тела. Центр масс системы материальных точек",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "center-mass"
+      ]
+    },
+    {
+      "code": "1.3.3",
+      "title": "Условия равновесия твёрдого тела",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "force-balance",
+        "torque-balance"
+      ]
+    },
+    {
+      "code": "1.3.4",
+      "title": "Закон Паскаля  БУ, УУ",
+      "printedPage": 9,
+      "requiredFormulas": []
+    },
+    {
+      "code": "1.3.5",
+      "title": "Давление в жидкости, покоящейся в ИСО",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "hydrostatic"
+      ]
+    },
+    {
+      "code": "1.3.6",
+      "title": "Закон Архимеда",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "archimedes"
+      ]
+    },
+    {
+      "code": "1.4.1",
+      "title": "Импульс материальной точки",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "momentum"
+      ]
+    },
+    {
+      "code": "1.4.2",
+      "title": "Импульс системы тел",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "system-momentum"
+      ]
+    },
+    {
+      "code": "1.4.3",
+      "title": "Закон изменения и сохранения импульса",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "momentum-conservation",
+        "system-impulse-change"
+      ]
+    },
+    {
+      "code": "1.4.4",
+      "title": "Работа силы на малом перемещении",
+      "printedPage": 9,
+      "requiredFormulas": [
+        "work"
+      ]
+    },
+    {
+      "code": "1.4.5",
+      "title": "Мощность силы",
+      "printedPage": 10,
+      "requiredFormulas": [
+        "instant-power"
+      ]
+    },
+    {
+      "code": "1.4.6",
+      "title": "Кинетическая энергия материальной точки",
+      "printedPage": 10,
+      "requiredFormulas": [
+        "kinetic",
+        "kinetic-momentum",
+        "kinetic-theorem"
+      ]
+    },
+    {
+      "code": "1.4.7",
+      "title": "Потенциальная энергия",
+      "printedPage": 10,
+      "requiredFormulas": [
+        "gravity-energy",
+        "spring-energy",
+        "potential-work"
+      ]
+    },
+    {
+      "code": "1.4.8",
+      "title": "Закон изменения и сохранения механической энергии",
+      "printedPage": 10,
+      "requiredFormulas": [
+        "mechanical-energy",
+        "mechanical-conservation",
+        "nonconservative-work"
+      ]
+    },
+    {
+      "code": "1.5.1",
+      "title": "Гармонические колебания: кинематика, динамика и энергия",
+      "printedPage": 10,
+      "requiredFormulas": [
+        "oscillation-position",
+        "oscillation-acceleration",
+        "oscillation-equation",
+        "oscillation-vmax",
+        "oscillation-amax",
+        "oscillation-a-v",
+        "oscillation-energy",
+        "oscillation-energy-v",
+        "oscillator-stiffness",
+        "oscillator-energy-sum"
+      ]
+    },
+    {
+      "code": "1.5.2",
+      "title": "Период и частота колебаний",
+      "printedPage": 10,
+      "requiredFormulas": [
+        "period-frequency",
+        "pendulum-period",
+        "spring-period",
+        "pendulum-angular",
+        "spring-angular"
+      ]
+    },
+    {
+      "code": "1.5.3",
+      "title": "Вынужденные колебания. Резонанс. Резонансная кривая УУ",
+      "printedPage": 11,
+      "requiredFormulas": []
+    },
+    {
+      "code": "1.5.4",
+      "title": "Поперечные и продольные волны. Скорость распространения",
+      "printedPage": 11,
+      "requiredFormulas": [
+        "wave-speed",
+        "wave-length"
+      ]
+    },
+    {
+      "code": "1.5.5",
+      "title": "Звук. Скорость звука БУ, УУ",
+      "printedPage": 11,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.1.1",
+      "title": "Модели строения газов, жидкостей и твёрдых тел",
+      "printedPage": 11,
+      "requiredFormulas": [
+        "amount-particles",
+        "amount-mass"
+      ]
+    },
+    {
+      "code": "2.1.2",
+      "title": "Тепловое движение атомов и молекул вещества  БУ, УУ",
+      "printedPage": 11,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.1.3",
+      "title": "Взаимодействие частиц вещества  БУ, УУ",
+      "printedPage": 11,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.1.4",
+      "title": "Диффузия. Броуновское движение БУ, УУ",
+      "printedPage": 11,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.1.5",
+      "title": "Модель идеального газа в МКТ БУ, УУ",
+      "printedPage": 11,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.1.6",
+      "title": "Связь между давлением и средней кинетической энергией",
+      "printedPage": 11,
+      "requiredFormulas": [
+        "molecule-mass",
+        "concentration",
+        "mkt-pressure",
+        "mkt-energy"
+      ]
+    },
+    {
+      "code": "2.1.7",
+      "title": "Абсолютная температура",
+      "printedPage": 11,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.1.8",
+      "title": "Связь температуры газа со средней кинетической энергией",
+      "printedPage": 11,
+      "requiredFormulas": [
+        "molecule-energy"
+      ]
+    },
+    {
+      "code": "2.1.9",
+      "title": "Уравнение pnkT БУ, УУ",
+      "printedPage": 11,
+      "requiredFormulas": [
+        "gas-concentration"
+      ]
+    },
+    {
+      "code": "2.1.10",
+      "title": "Модель идеального газа в термодинамике",
+      "printedPage": 11,
+      "requiredFormulas": [
+        "ideal-gas",
+        "ideal-gas-mass",
+        "ideal-gas-particles",
+        "gas-combined",
+        "internal-energy",
+        "internal-energy-pv",
+        "internal-energy-particles",
+        "internal-energy-mass",
+        "internal-energy-cv"
+      ]
+    },
+    {
+      "code": "2.1.11",
+      "title": "Закон Дальтона для давления смеси разреженных газов",
+      "printedPage": 12,
+      "requiredFormulas": [
+        "dalton"
+      ]
+    },
+    {
+      "code": "2.1.12",
+      "title": "Изопроцессы в разреженном газе с постоянным числом",
+      "printedPage": 12,
+      "requiredFormulas": [
+        "isothermal",
+        "isochoric",
+        "isobaric"
+      ]
+    },
+    {
+      "code": "2.1.13",
+      "title": "Насыщенные и ненасыщенные пары. Качественная",
+      "printedPage": 12,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.1.14",
+      "title": "Влажность воздуха",
+      "printedPage": 12,
+      "requiredFormulas": [
+        "humidity-pressure",
+        "humidity-density"
+      ]
+    },
+    {
+      "code": "2.1.15",
+      "title": "Изменение агрегатных состояний вещества",
+      "printedPage": 12,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.1.16",
+      "title": "Изменение агрегатных состояний вещества",
+      "printedPage": 12,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.1.17",
+      "title": "Преобразование энергии в фазовых переходах  БУ, УУ",
+      "printedPage": 12,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.2.1",
+      "title": "Тепловое равновесие и температура БУ, УУ",
+      "printedPage": 12,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.2.2",
+      "title": "Внутренняя энергия БУ, УУ",
+      "printedPage": 12,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.2.3",
+      "title": "Теплопередача как способ изменения внутренней энергии без",
+      "printedPage": 12,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.2.4",
+      "title": "Количество теплоты",
+      "printedPage": 12,
+      "requiredFormulas": [
+        "heat"
+      ]
+    },
+    {
+      "code": "2.2.5",
+      "title": "Удельная теплота парообразования L",
+      "printedPage": 12,
+      "requiredFormulas": [
+        "vaporization",
+        "fusion",
+        "combustion"
+      ]
+    },
+    {
+      "code": "2.2.6",
+      "title": "Элементарная работа в термодинамике",
+      "printedPage": 12,
+      "requiredFormulas": [
+        "gas-work"
+      ]
+    },
+    {
+      "code": "2.2.7",
+      "title": "Первый закон термодинамики",
+      "printedPage": 12,
+      "requiredFormulas": [
+        "first-law",
+        "adiabatic"
+      ]
+    },
+    {
+      "code": "2.2.8",
+      "title": "Второй закон термодинамики. Необратимые процессы БУ, УУ",
+      "printedPage": 13,
+      "requiredFormulas": []
+    },
+    {
+      "code": "2.2.9",
+      "title": "Принципы действия тепловых машин. КПД",
+      "printedPage": 13,
+      "requiredFormulas": [
+        "heat-engine",
+        "heat-engine-loss"
+      ]
+    },
+    {
+      "code": "2.2.10",
+      "title": "Максимальное значение КПД. Цикл Карно",
+      "printedPage": 13,
+      "requiredFormulas": [
+        "carnot"
+      ]
+    },
+    {
+      "code": "2.2.11",
+      "title": "Уравнение теплового баланса",
+      "printedPage": 13,
+      "requiredFormulas": [
+        "thermal-balance"
+      ]
+    },
+    {
+      "code": "3.1.1",
+      "title": "Электризация тел и её проявления. Электрический заряд. Два",
+      "printedPage": 13,
+      "requiredFormulas": [
+        "charge-conservation"
+      ]
+    },
+    {
+      "code": "3.1.2",
+      "title": "Взаимодействие зарядов. Точечные заряды. Закон Кулона",
+      "printedPage": 13,
+      "requiredFormulas": [
+        "coulomb"
+      ]
+    },
+    {
+      "code": "3.1.3",
+      "title": "Электрическое поле. Его действие на электрические заряды БУ, УУ",
+      "printedPage": 13,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.1.4",
+      "title": "Напряжённость электрического поля",
+      "printedPage": 13,
+      "requiredFormulas": [
+        "field-definition",
+        "point-field"
+      ]
+    },
+    {
+      "code": "3.1.5",
+      "title": "Потенциальность электростатического поля",
+      "printedPage": 13,
+      "requiredFormulas": [
+        "electric-work",
+        "potential-difference",
+        "electric-potential",
+        "electric-energy",
+        "electric-energy-change",
+        "uniform-field-voltage"
+      ]
+    },
+    {
+      "code": "3.1.6",
+      "title": "Принцип суперпозиции электрических полей",
+      "printedPage": 13,
+      "requiredFormulas": [
+        "field-superposition",
+        "potential-superposition"
+      ]
+    },
+    {
+      "code": "3.1.7",
+      "title": "Проводники в электростатическом поле. Условие равновесия",
+      "printedPage": 13,
+      "requiredFormulas": [
+        "conductor-field",
+        "conductor-potential"
+      ]
+    },
+    {
+      "code": "3.1.8",
+      "title": "Диэлектрики в электростатическом поле. Диэлектрическая",
+      "printedPage": 14,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.1.9",
+      "title": "Конденсатор. Электроёмкость конденсатора",
+      "printedPage": 14,
+      "requiredFormulas": [
+        "capacity",
+        "plane-capacity",
+        "air-capacity"
+      ]
+    },
+    {
+      "code": "3.1.10",
+      "title": "Параллельное соединение конденсаторов",
+      "printedPage": 14,
+      "requiredFormulas": [
+        "parallel-capacity",
+        "series-capacity",
+        "capacitor-parallel-charge",
+        "capacitor-parallel-voltage",
+        "capacitor-series-voltage",
+        "capacitor-series-charge"
+      ]
+    },
+    {
+      "code": "3.1.11",
+      "title": "Энергия заряженного конденсатора",
+      "printedPage": 14,
+      "requiredFormulas": [
+        "capacitor-energy",
+        "capacitor-energy-charge",
+        "capacitor-energy-product"
+      ]
+    },
+    {
+      "code": "3.2.1",
+      "title": "Сила тока",
+      "printedPage": 14,
+      "requiredFormulas": [
+        "current",
+        "current-charge"
+      ]
+    },
+    {
+      "code": "3.2.2",
+      "title": "Условия существования электрического тока",
+      "printedPage": 14,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.2.3",
+      "title": "Закон Ома для участка цепи",
+      "printedPage": 14,
+      "requiredFormulas": [
+        "ohm"
+      ]
+    },
+    {
+      "code": "3.2.4",
+      "title": "Электрическое сопротивление. Зависимость сопротивления",
+      "printedPage": 14,
+      "requiredFormulas": [
+        "wire-resistance"
+      ]
+    },
+    {
+      "code": "3.2.5",
+      "title": "Источники тока. ЭДС и внутреннее сопротивление",
+      "printedPage": 14,
+      "requiredFormulas": [
+        "emf"
+      ]
+    },
+    {
+      "code": "3.2.6",
+      "title": "Закон Ома для полной (замкнутой)",
+      "printedPage": 14,
+      "requiredFormulas": [
+        "full-ohm",
+        "source-emf-balance"
+      ]
+    },
+    {
+      "code": "3.2.7",
+      "title": "Параллельное соединение проводников",
+      "printedPage": 14,
+      "requiredFormulas": [
+        "series-resistance",
+        "parallel-resistance",
+        "resistor-parallel-current",
+        "resistor-parallel-voltage",
+        "resistor-series-current",
+        "resistor-series-voltage"
+      ]
+    },
+    {
+      "code": "3.2.8",
+      "title": "Работа постоянного электрического тока",
+      "printedPage": 14,
+      "requiredFormulas": [
+        "current-work",
+        "joule-lenz",
+        "joule-voltage",
+        "resistor-heat-product"
+      ]
+    },
+    {
+      "code": "3.2.9",
+      "title": "Мощность электрического тока",
+      "printedPage": 15,
+      "requiredFormulas": [
+        "electric-power",
+        "resistor-power-current",
+        "resistor-power-voltage",
+        "source-power"
+      ]
+    },
+    {
+      "code": "3.2.10",
+      "title": "Свободные носители электрических зарядов в проводниках",
+      "printedPage": 15,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.3.1",
+      "title": "Механическое взаимодействие магнитов. Магнитное поле",
+      "printedPage": 15,
+      "requiredFormulas": [
+        "magnetic-superposition"
+      ]
+    },
+    {
+      "code": "3.3.2",
+      "title": "Опыт Эрстеда. Магнитное поле проводника с током. Картина",
+      "printedPage": 15,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.3.3",
+      "title": "Сила Ампера, её направление и величина",
+      "printedPage": 15,
+      "requiredFormulas": [
+        "ampere"
+      ]
+    },
+    {
+      "code": "3.3.4",
+      "title": "Сила Лоренца, её направление и величина",
+      "printedPage": 15,
+      "requiredFormulas": [
+        "lorentz"
+      ]
+    },
+    {
+      "code": "3.4.1",
+      "title": "Поток вектора",
+      "printedPage": 15,
+      "requiredFormulas": [
+        "magnetic-flux"
+      ]
+    },
+    {
+      "code": "3.4.2",
+      "title": "Явление электромагнитной индукции. ЭДС индукции БУ, УУ",
+      "printedPage": 15,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.4.3",
+      "title": "Закон электромагнитной индукции Фарадея",
+      "printedPage": 15,
+      "requiredFormulas": [
+        "faraday"
+      ]
+    },
+    {
+      "code": "3.4.4",
+      "title": "ЭДС индукции в прямом проводнике длиной l, движущемся",
+      "printedPage": 16,
+      "requiredFormulas": [
+        "moving-wire",
+        "moving-wire-angle"
+      ]
+    },
+    {
+      "code": "3.4.5",
+      "title": "Правило Ленца  БУ, УУ",
+      "printedPage": 16,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.4.6",
+      "title": "Индуктивность",
+      "printedPage": 16,
+      "requiredFormulas": [
+        "inductance",
+        "self-induction"
+      ]
+    },
+    {
+      "code": "3.4.7",
+      "title": "Энергия магнитного поля катушки с током",
+      "printedPage": 16,
+      "requiredFormulas": [
+        "coil-energy",
+        "coil-energy-flux"
+      ]
+    },
+    {
+      "code": "3.5.1",
+      "title": "Колебательный контур. Свободные",
+      "printedPage": 16,
+      "requiredFormulas": [
+        "lc-charge",
+        "thomson",
+        "lc-angular",
+        "lc-current-amplitude"
+      ]
+    },
+    {
+      "code": "3.5.2",
+      "title": "Закон сохранения энергии в идеальном колебательном",
+      "printedPage": 16,
+      "requiredFormulas": [
+        "lc-energy",
+        "lc-energy-voltage",
+        "lc-energy-current"
+      ]
+    },
+    {
+      "code": "3.5.3",
+      "title": "Вынужденные электромагнитные колебания. Резонанс УУ",
+      "printedPage": 16,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.5.4",
+      "title": "Переменный ток. Производство, передача и потребление",
+      "printedPage": 16,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.5.5",
+      "title": "Свойства электромагнитных волн. Взаимная ориентация",
+      "printedPage": 16,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.5.6",
+      "title": "Шкала электромагнитных волн. Применение",
+      "printedPage": 16,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.6.1",
+      "title": "Прямолинейное распространение света в однородной среде",
+      "printedPage": 16,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.6.2",
+      "title": "Законы отражения света. ",
+      "printedPage": 17,
+      "requiredFormulas": [
+        "reflection"
+      ]
+    },
+    {
+      "code": "3.6.3",
+      "title": "Построение изображений в плоском зеркале БУ, УУ",
+      "printedPage": 17,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.6.4",
+      "title": "Законы преломления света",
+      "printedPage": 17,
+      "requiredFormulas": [
+        "snell",
+        "refractive-index",
+        "relative-index",
+        "light-frequency-boundary",
+        "light-wavelength-boundary"
+      ]
+    },
+    {
+      "code": "3.6.5",
+      "title": "Полное внутреннее отражение",
+      "printedPage": 17,
+      "requiredFormulas": [
+        "critical-angle"
+      ]
+    },
+    {
+      "code": "3.6.6",
+      "title": "Собирающие и рассеивающие линзы. Тонкая линза. Фокусное",
+      "printedPage": 17,
+      "requiredFormulas": [
+        "optical-power"
+      ]
+    },
+    {
+      "code": "3.6.7",
+      "title": "Формула тонкой линзы",
+      "printedPage": 17,
+      "requiredFormulas": [
+        "lens",
+        "lens-magnification"
+      ]
+    },
+    {
+      "code": "3.6.8",
+      "title": "Ход луча, прошедшего линзу под произвольным углом к её",
+      "printedPage": 17,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.6.9",
+      "title": "Фотоаппарат как оптический прибор. Глаз как оптическая",
+      "printedPage": 17,
+      "requiredFormulas": []
+    },
+    {
+      "code": "3.6.10",
+      "title": "Интерференция света. Когерентные источники. Условия",
+      "printedPage": 17,
+      "requiredFormulas": [
+        "interference-max",
+        "interference-min"
+      ]
+    },
+    {
+      "code": "3.6.11",
+      "title": "Дифракция света. Дифракционная решётка. Условие",
+      "printedPage": 18,
+      "requiredFormulas": [
+        "grating"
+      ]
+    },
+    {
+      "code": "3.6.12",
+      "title": "Дисперсия света БУ, УУ",
+      "printedPage": 18,
+      "requiredFormulas": []
+    },
+    {
+      "code": "4.1.1",
+      "title": "Гипотеза М. Планка о квантах. Формула Планка",
+      "printedPage": 18,
+      "requiredFormulas": [
+        "planck"
+      ]
+    },
+    {
+      "code": "4.1.2",
+      "title": "Фотоны. Энергия фотона",
+      "printedPage": 18,
+      "requiredFormulas": [
+        "photon-wavelength",
+        "photon-energy-momentum",
+        "photon-momentum",
+        "photon-momentum-energy",
+        "photon-momentum-frequency"
+      ]
+    },
+    {
+      "code": "4.1.3",
+      "title": "Фотоэффект. Опыты А.Г. Столетова. Законы фотоэффекта УУ",
+      "printedPage": 18,
+      "requiredFormulas": []
+    },
+    {
+      "code": "4.1.4",
+      "title": "Уравнение Эйнштейна для фотоэффекта",
+      "printedPage": 18,
+      "requiredFormulas": [
+        "photoelectric",
+        "photoelectric-speed",
+        "photoelectric-stop",
+        "photoelectric-red-frequency",
+        "photoelectric-red-wavelength",
+        "photoelectric-work",
+        "photoelectric-work-wavelength"
+      ]
+    },
+    {
+      "code": "4.1.5",
+      "title": "Давление света. Давление света на полностью отражающую",
+      "printedPage": 18,
+      "requiredFormulas": []
+    },
+    {
+      "code": "4.2.1",
+      "title": "Планетарная модель атома БУ, УУ",
+      "printedPage": 18,
+      "requiredFormulas": []
+    },
+    {
+      "code": "4.2.2",
+      "title": "Постулаты Бора. Излучение и поглощение фотонов при",
+      "printedPage": 18,
+      "requiredFormulas": [
+        "atomic-transition"
+      ]
+    },
+    {
+      "code": "4.2.3",
+      "title": "Линейчатые спектры",
+      "printedPage": 18,
+      "requiredFormulas": [
+        "hydrogen-level"
+      ]
+    },
+    {
+      "code": "4.3.1",
+      "title": "Нуклонная модель ядра Гейзенберга – Иваненко. Заряд ядра",
+      "printedPage": 18,
+      "requiredFormulas": []
+    },
+    {
+      "code": "4.3.2",
+      "title": "Радиоактивность",
+      "printedPage": 18,
+      "requiredFormulas": [
+        "alpha-decay",
+        "beta-minus",
+        "beta-plus"
+      ]
+    },
+    {
+      "code": "4.3.3",
+      "title": "Закон радиоактивного распада",
+      "printedPage": 19,
+      "requiredFormulas": [
+        "radioactive",
+        "radioactive-mass"
+      ]
+    },
+    {
+      "code": "4.3.4",
+      "title": "Ядерные реакции. Деление и синтез ядер БУ, УУ",
+      "printedPage": 19,
+      "requiredFormulas": []
+    }
+  ]
+}
