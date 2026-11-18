@@ -1,5 +1,5 @@
 import { publishedTrainerById, publishedTrainerCatalog, publishedTrainerVersion } from "@/lib/published-trainer-server";
-import { checkPublishedAnswer } from "@/lib/trainer-public";
+import { checkPublishedAnswer, trainerOriginAllowed } from "@/lib/trainer-public";
 
 function reply(body: object, status = 200) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
@@ -11,7 +11,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin) return reply({ error: "Открой тренажёр на сайте Физика с Егором." }, 403);
+  const publicUrls = ["https://physics-tutor-6ytz.onrender.com", ...(process.env.INVITATION_PUBLIC_ORIGIN ? [process.env.INVITATION_PUBLIC_ORIGIN] : [])];
+  if (!publicUrls.some(publicUrl => trainerOriginAllowed(origin, request.url, publicUrl))) return reply({ error: "Открой тренажёр на сайте Физика с Егором." }, 403);
   if (!request.headers.get("content-type")?.startsWith("application/json")) return reply({ error: "Ожидается JSON." }, 415);
   if (Number(request.headers.get("content-length")) > 8192) return reply({ error: "Слишком большой ответ." }, 413);
   const text = await request.text();

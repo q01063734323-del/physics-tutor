@@ -8,6 +8,16 @@ export type TrainerCheckResult = {
   assets: TrainerAsset[];
 };
 
+// A reverse proxy can give Next.js an internal request URL. Compare with an
+// explicitly configured public origin too, never with arbitrary forwarded headers.
+export function trainerOriginAllowed(origin: string | null, requestUrl: string, publicUrl: string): boolean {
+  if (!origin) return true;
+  try {
+    if (origin === new URL(requestUrl).origin) return true;
+    return origin === new URL(publicUrl).origin;
+  } catch { return false; }
+}
+
 // Answer descriptors let the existing form choose its input and units, while
 // the actual key and source solution stay on the server until an attempt.
 export function publicTrainerQuestion(question: TrainerQuestion): TrainerQuestion {

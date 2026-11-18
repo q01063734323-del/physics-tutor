@@ -14,7 +14,14 @@ try {
   }
   const require = createRequire(import.meta.url);
   const { canPublishQuestion, validateTrainerQuestion } = require(path.join(temporary, "trainer-bank.js"));
-  const { publicTrainerQuestion, checkPublishedAnswer } = require(path.join(temporary, "trainer-public.js"));
+  const { publicTrainerQuestion, checkPublishedAnswer, trainerOriginAllowed } = require(path.join(temporary, "trainer-public.js"));
+  const publicUrl = "https://physics-tutor-6ytz.onrender.com";
+  const internalUrl = "http://0.0.0.0:10000/api/trainer";
+  assert.equal(trainerOriginAllowed(publicUrl, internalUrl, publicUrl), true, "Render proxy must accept its public site");
+  assert.equal(trainerOriginAllowed("http://localhost:3218", "http://localhost:3218/api/trainer", publicUrl), true);
+  assert.equal(trainerOriginAllowed(null, internalUrl, publicUrl), true);
+  for (const origin of ["https://example.com", "https://physics-tutor-6ytz.onrender.com.evil.example", "http://physics-tutor-6ytz.onrender.com", "null"]) assert.equal(trainerOriginAllowed(origin, internalUrl, publicUrl), false);
+  assert.equal(trainerOriginAllowed("https://example.com", internalUrl, "invalid"), false);
   const bank = JSON.parse(await fs.readFile(new URL("../data/trainer/physics-2026.json", import.meta.url), "utf8"));
   const assets = JSON.parse(await fs.readFile(new URL("../data/trainer/assets.json", import.meta.url), "utf8"));
   assert.equal(bank.questions.length, 1460);
