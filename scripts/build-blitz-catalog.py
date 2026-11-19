@@ -90,6 +90,11 @@ def main():
                              correct=correct, distractors=[wrong1, wrong2, wrong3], explanation=explanation,
                              source=dict(url=ARCHIVE, document='codifier', printedPage=by_code[code]['printedPage'])))
     formula_map = {f['id']: f for f in formulas}
+    # Keep an explicit derivation first; add nearby laws and reverse derivations.
+    for formula in formulas:
+        nearby = [other['id'] for other in formulas if other['id'] != formula['id'] and
+                  (other['code'] == formula['code'] or formula['id'] in other['related'])]
+        formula['related'] = list(dict.fromkeys(formula['related'] + nearby))
     gaps = []
     for element in source['elements']:
         missing = [id_ for id_ in element['requiredFormulas'] if id_ not in formula_map]

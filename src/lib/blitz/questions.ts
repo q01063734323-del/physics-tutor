@@ -91,7 +91,11 @@ for (const concept of concepts) questions.push({ id: `concept:${concept.id}`, le
 
 const prefixes = [["гига", "Г", 9], ["мега", "М", 6], ["кило", "к", 3], ["гекто", "г", 2], ["деци", "д", -1], ["санти", "с", -2], ["милли", "м", -3], ["микро", "мк", -6], ["нано", "н", -9], ["пико", "п", -12]] as const;
 export const examPrefixes = prefixes;
-function numberText(value: number) { return Number(value.toPrecision(10)).toString().replace(".", ","); }
+function numberText(value: number) {
+  const text = Number(value.toPrecision(10)).toString();
+  const [mantissa, exponent] = text.split("e");
+  return exponent === undefined ? text.replace(".", ",") : math(`${mantissa.replace(".", "{,}")}\\cdot10^{${Number(exponent)}}`);
+}
 function conversion(id: string, value: number, from: string, to: string, factor: number, quantityId: string, extra = "", offset = 0, difficulty = 2) {
   const quantity = quantities.find(item => item.id === quantityId)!;
   const related = quantity.relatedFormulas.flatMap(id => formulaById.get(id) || []);

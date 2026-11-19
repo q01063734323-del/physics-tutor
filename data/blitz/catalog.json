@@ -1173,7 +1173,10 @@
       "conditions": "Разность конечного и начального радиус-векторов.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "displacement-add",
+        "position-vector"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1201,7 +1204,10 @@
       "conditions": "Галилеево преобразование, классическая механика.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "displacement",
+        "position-vector"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1241,7 +1247,14 @@
       "conditions": "Производная радиус-вектора по времени.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "velocity-projection",
+        "average-speed",
+        "average-velocity",
+        "velocity-add",
+        "displacement-integral",
+        "path-integral"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1281,7 +1294,14 @@
       "conditions": "Координата дифференцируема по времени.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "velocity",
+        "average-speed",
+        "average-velocity",
+        "velocity-add",
+        "displacement-integral",
+        "path-integral"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1321,7 +1341,14 @@
       "conditions": "Путь делится на всё время движения.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "velocity",
+        "velocity-projection",
+        "average-velocity",
+        "velocity-add",
+        "displacement-integral",
+        "path-integral"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1361,7 +1388,14 @@
       "conditions": "Перемещение и путь не взаимозаменяемы.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "velocity",
+        "velocity-projection",
+        "average-speed",
+        "velocity-add",
+        "displacement-integral",
+        "path-integral"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1395,7 +1429,14 @@
       "conditions": "Для нерелятивистских скоростей, складываются векторы.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "velocity",
+        "velocity-projection",
+        "average-speed",
+        "average-velocity",
+        "displacement-integral",
+        "path-integral"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1435,7 +1476,14 @@
       "conditions": "Алгебраическая площадь под графиком; учитывается знак.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "velocity",
+        "velocity-projection",
+        "average-speed",
+        "average-velocity",
+        "velocity-add",
+        "path-integral"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1475,7 +1523,14 @@
       "conditions": "Площади ниже оси тоже дают положительный вклад в путь.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "velocity",
+        "velocity-projection",
+        "average-speed",
+        "average-velocity",
+        "velocity-add",
+        "displacement-integral"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1515,7 +1570,9 @@
       "conditions": "Производная скорости по времени.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "acceleration-constant"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1561,7 +1618,9 @@
       "conditions": "Ускорение постоянно, отсчёт времени от начального момента.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "acceleration"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1607,7 +1666,11 @@
       "conditions": "Прямолинейное движение с постоянной проекцией скорости.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "uniform-path",
+        "uniform-time",
+        "uniform-speed"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1647,7 +1710,11 @@
       "conditions": "v — модуль постоянной скорости.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "uniform-coordinate",
+        "uniform-time",
+        "uniform-speed"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1688,7 +1755,9 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "uniform-path"
+        "uniform-path",
+        "uniform-coordinate",
+        "uniform-speed"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -1730,7 +1799,9 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "uniform-path"
+        "uniform-path",
+        "uniform-coordinate",
+        "uniform-time"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -1783,7 +1854,14 @@
       "conditions": "Проекции берутся со знаками, ускорение постоянно.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "accelerated-velocity",
+        "accelerated-displacement",
+        "average-unidirectional",
+        "rest-displacement",
+        "braking-distance",
+        "braking-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1829,7 +1907,14 @@
       "conditions": "Ускорение постоянно.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "accelerated-coordinate",
+        "accelerated-displacement",
+        "average-unidirectional",
+        "rest-displacement",
+        "braking-distance",
+        "braking-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1875,7 +1960,14 @@
       "conditions": "Постоянное ускорение, движение вдоль оси x.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "accelerated-coordinate",
+        "accelerated-velocity",
+        "average-unidirectional",
+        "rest-displacement",
+        "braking-distance",
+        "braking-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1921,7 +2013,14 @@
       "conditions": "Равноускоренное движение без смены направления; скорости — модули.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "accelerated-coordinate",
+        "accelerated-velocity",
+        "accelerated-displacement",
+        "rest-displacement",
+        "braking-distance",
+        "braking-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -1961,7 +2060,14 @@
       "conditions": "Начальная скорость нулевая, ускорение направлено по движению.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "accelerated-coordinate",
+        "accelerated-velocity",
+        "accelerated-displacement",
+        "average-unidirectional",
+        "braking-distance",
+        "braking-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2001,7 +2107,14 @@
       "conditions": "a — положительный модуль постоянного замедления до остановки.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "accelerated-coordinate",
+        "accelerated-velocity",
+        "accelerated-displacement",
+        "average-unidirectional",
+        "rest-displacement",
+        "braking-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2041,7 +2154,14 @@
       "conditions": "a — модуль постоянного замедления.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "accelerated-coordinate",
+        "accelerated-velocity",
+        "accelerated-displacement",
+        "average-unidirectional",
+        "rest-displacement",
+        "braking-distance"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2081,7 +2201,16 @@
       "conditions": "Сопротивление воздуха отсутствует, g постоянно.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "fall-speed",
+        "projectile-x",
+        "projectile-y",
+        "projectile-vx",
+        "projectile-vy",
+        "projectile-range",
+        "projectile-height",
+        "projectile-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2121,7 +2250,16 @@
       "conditions": "Падение из покоя, g постоянно.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "fall-height",
+        "projectile-x",
+        "projectile-y",
+        "projectile-vx",
+        "projectile-vy",
+        "projectile-range",
+        "projectile-height",
+        "projectile-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2173,7 +2311,16 @@
       "conditions": "Ось y вверх, сопротивлением воздуха пренебрегают.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "fall-height",
+        "fall-speed",
+        "projectile-y",
+        "projectile-vx",
+        "projectile-vy",
+        "projectile-range",
+        "projectile-height",
+        "projectile-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2231,7 +2378,16 @@
       "conditions": "Ось y направлена вверх, g — положительный модуль.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "fall-height",
+        "fall-speed",
+        "projectile-x",
+        "projectile-vx",
+        "projectile-vy",
+        "projectile-range",
+        "projectile-height",
+        "projectile-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2271,7 +2427,16 @@
       "conditions": "Нет сопротивления воздуха.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "fall-height",
+        "fall-speed",
+        "projectile-x",
+        "projectile-y",
+        "projectile-vy",
+        "projectile-range",
+        "projectile-height",
+        "projectile-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2323,7 +2488,16 @@
       "conditions": "Ось y направлена вверх.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "fall-height",
+        "fall-speed",
+        "projectile-x",
+        "projectile-y",
+        "projectile-vx",
+        "projectile-range",
+        "projectile-height",
+        "projectile-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2369,7 +2543,16 @@
       "conditions": "Начальная и конечная высоты равны; сопротивления нет.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "fall-height",
+        "fall-speed",
+        "projectile-x",
+        "projectile-y",
+        "projectile-vx",
+        "projectile-vy",
+        "projectile-height",
+        "projectile-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2415,7 +2598,16 @@
       "conditions": "Высота отсчитывается от точки броска.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "fall-height",
+        "fall-speed",
+        "projectile-x",
+        "projectile-y",
+        "projectile-vx",
+        "projectile-vy",
+        "projectile-range",
+        "projectile-time"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2461,7 +2653,16 @@
       "conditions": "Возвращение на исходный горизонтальный уровень.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "fall-height",
+        "fall-speed",
+        "projectile-x",
+        "projectile-y",
+        "projectile-vx",
+        "projectile-vy",
+        "projectile-range",
+        "projectile-height"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2501,7 +2702,15 @@
       "conditions": "Движение точки по окружности радиуса R.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "angular-period",
+        "angular-frequency",
+        "circle-period",
+        "centripetal",
+        "centripetal-angular",
+        "full-acceleration",
+        "tangential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2535,7 +2744,15 @@
       "conditions": "Равномерное движение по окружности.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "circle-speed",
+        "angular-frequency",
+        "circle-period",
+        "centripetal",
+        "centripetal-angular",
+        "full-acceleration",
+        "tangential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2569,7 +2786,15 @@
       "conditions": "Один оборот соответствует 2π радиан.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "circle-speed",
+        "angular-period",
+        "circle-period",
+        "centripetal",
+        "centripetal-angular",
+        "full-acceleration",
+        "tangential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2609,7 +2834,15 @@
       "conditions": "Равномерное движение, v больше нуля.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "circle-speed",
+        "angular-period",
+        "angular-frequency",
+        "centripetal",
+        "centripetal-angular",
+        "full-acceleration",
+        "tangential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2649,7 +2882,15 @@
       "conditions": "Нормальная составляющая ускорения.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "circle-speed",
+        "angular-period",
+        "angular-frequency",
+        "circle-period",
+        "centripetal-angular",
+        "full-acceleration",
+        "tangential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2689,7 +2930,15 @@
       "conditions": "Движение по окружности.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "circle-speed",
+        "angular-period",
+        "angular-frequency",
+        "circle-period",
+        "centripetal",
+        "full-acceleration",
+        "tangential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2729,7 +2978,15 @@
       "conditions": "Нормальная и касательная составляющие перпендикулярны.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "circle-speed",
+        "angular-period",
+        "angular-frequency",
+        "circle-period",
+        "centripetal",
+        "centripetal-angular",
+        "tangential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2769,7 +3026,15 @@
       "conditions": "v — модуль скорости; знак определяется выбором касательной оси.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "circle-speed",
+        "angular-period",
+        "angular-frequency",
+        "circle-period",
+        "centripetal",
+        "centripetal-angular",
+        "full-acceleration"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2809,7 +3074,10 @@
       "conditions": "Однородное вещество либо средняя плотность.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "mass-density",
+        "volume-density"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -2850,7 +3118,8 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "density"
+        "density",
+        "volume-density"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -2892,7 +3161,8 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "density"
+        "density",
+        "mass-density"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -2961,7 +3231,11 @@
       "conditions": "Материальная точка постоянной массы, инерциальная система отсчёта.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "newton-acceleration",
+        "newton-mass",
+        "force-impulse"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3002,7 +3276,9 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "newton-second"
+        "newton-second",
+        "newton-mass",
+        "force-impulse"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -3044,7 +3320,9 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "newton-second"
+        "newton-second",
+        "newton-acceleration",
+        "force-impulse"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -3085,7 +3363,11 @@
       "conditions": "Равнодействующая постоянна; инерциальная система.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "newton-second",
+        "newton-acceleration",
+        "newton-mass"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3171,7 +3453,11 @@
       "conditions": "Точечные массы или сферически симметричные тела без перекрытия.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "gravity",
+        "gravity-height",
+        "orbit-speed"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3211,7 +3497,11 @@
       "conditions": "Область с практически постоянным g.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "gravitation",
+        "gravity-height",
+        "orbit-speed"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3263,7 +3553,11 @@
       "conditions": "Сферически симметричная планета, h отсчитывается от поверхности.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "gravitation",
+        "gravity",
+        "orbit-speed"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3309,7 +3603,11 @@
       "conditions": "Круговая орбита, r — расстояние до центра; малая масса спутника.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "gravitation",
+        "gravity",
+        "gravity-height"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3349,7 +3647,13 @@
       "conditions": "Малые упругие деформации, x от равновесия.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "hooke-modulus",
+        "stiffness",
+        "weight-rest",
+        "weight-up",
+        "weight-down"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3389,7 +3693,13 @@
       "conditions": "Линейная упругая деформация.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "hooke",
+        "stiffness",
+        "weight-rest",
+        "weight-up",
+        "weight-down"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3430,7 +3740,11 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "hooke-modulus"
+        "hooke-modulus",
+        "hooke",
+        "weight-rest",
+        "weight-up",
+        "weight-down"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -3471,7 +3785,13 @@
       "conditions": "Горизонтальная неподвижная опора в инерциальной системе.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "hooke",
+        "hooke-modulus",
+        "stiffness",
+        "weight-up",
+        "weight-down"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3517,7 +3837,13 @@
       "conditions": "Опора горизонтальна, ускорение направлено вверх.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "hooke",
+        "hooke-modulus",
+        "stiffness",
+        "weight-rest",
+        "weight-down"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3563,7 +3889,13 @@
       "conditions": "Ускорение вниз, 0 ≤ a ≤ g; контакт с опорой сохраняется.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "hooke",
+        "hooke-modulus",
+        "stiffness",
+        "weight-rest",
+        "weight-up"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3603,7 +3935,10 @@
       "conditions": "Сухое скольжение; N — нормальная реакция.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "static-friction",
+        "friction-coefficient"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3643,7 +3978,10 @@
       "conditions": "Трение покоя подстраивается до максимума, не всегда равно μN.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "sliding-friction",
+        "friction-coefficient"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3684,7 +4022,8 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "sliding-friction"
+        "sliding-friction",
+        "static-friction"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -3725,7 +4064,9 @@
       "conditions": "Берётся нормальная составляющая силы.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "pressure-force"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3807,7 +4148,9 @@
       "conditions": "l — перпендикулярное плечо силы относительно оси.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "torque-angle"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3853,7 +4196,9 @@
       "conditions": "Модуль момента; α между радиус-вектором и силой.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "torque"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3921,7 +4266,10 @@
       "conditions": "Тело покоится или движется поступательно равномерно в ИСО.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "torque-balance",
+        "lever"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3949,7 +4297,10 @@
       "conditions": "Алгебраическая сумма моментов относительно одной оси.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "force-balance",
+        "lever"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -3995,7 +4346,10 @@
       "conditions": "Два противоположных момента, собственный вес учтён или пренебрежимо мал.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "force-balance",
+        "torque-balance"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4093,7 +4447,10 @@
       "conditions": "Однородная покоящаяся жидкость, g постоянно.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "hydrostatic-gauge",
+        "communicating"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4139,7 +4496,10 @@
       "conditions": "Давление сверх давления на свободной поверхности.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "hydrostatic",
+        "communicating"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4185,7 +4545,10 @@
       "conditions": "Одинаковое внешнее давление, несмешивающиеся жидкости в равновесии.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "hydrostatic",
+        "hydrostatic-gauge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4231,7 +4594,10 @@
       "conditions": "ρ — плотность жидкости, V — погружённый объём.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "floating",
+        "floating-fraction"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4277,7 +4643,10 @@
       "conditions": "Только тяжесть и выталкивающая сила; вертикальное равновесие.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "archimedes",
+        "floating-fraction"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4311,7 +4680,10 @@
       "conditions": "Однородное плавающее тело, плотность тела не больше плотности жидкости.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "archimedes",
+        "floating"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4351,7 +4723,9 @@
       "conditions": "Нерелятивистская материальная точка.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "momentum-speed"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4461,7 +4835,10 @@
       "conditions": "Суммарный внешний импульс равен нулю.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "inelastic-collision",
+        "system-impulse-change"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4513,7 +4890,10 @@
       "conditions": "Тела слипаются; скорости — проекции на одну ось; внешний импульс нулевой.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "momentum-conservation",
+        "system-impulse-change"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4559,7 +4939,9 @@
       "conditions": "Сила постоянна, перемещение прямолинейно.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "work-graph"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4599,7 +4981,9 @@
       "conditions": "Алгебраическая площадь под графиком проекции силы.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "work"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4639,7 +5023,9 @@
       "conditions": "Средняя мощность на заданном промежутке.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "instant-power"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4685,7 +5071,9 @@
       "conditions": "α — угол между силой и скоростью.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "mechanical-power"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4725,7 +5113,11 @@
       "conditions": "v значительно меньше скорости света.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "kinetic-momentum",
+        "kinetic-theorem",
+        "kinetic-speed"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4765,7 +5157,11 @@
       "conditions": "Нерелятивистское движение.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "kinetic",
+        "kinetic-theorem",
+        "kinetic-speed"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4799,7 +5195,11 @@
       "conditions": "Работа всех сил в инерциальной системе.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "kinetic",
+        "kinetic-momentum",
+        "kinetic-speed"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4840,7 +5240,9 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "kinetic"
+        "kinetic",
+        "kinetic-momentum",
+        "kinetic-theorem"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -4887,7 +5289,10 @@
       "conditions": "Однородное поле, выбран нулевой уровень высоты.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "spring-energy",
+        "potential-work"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4927,7 +5332,10 @@
       "conditions": "Линейная упругость, энергия нулевая при x=0.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "gravity-energy",
+        "potential-work"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -4961,7 +5369,10 @@
       "conditions": "Одна выбранная потенциальная сила.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "gravity-energy",
+        "spring-energy"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5001,7 +5412,10 @@
       "conditions": "Сумма кинетической и потенциальной энергий.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "mechanical-conservation",
+        "nonconservative-work"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5035,7 +5449,10 @@
       "conditions": "Суммарная работа непотенциальных сил нулевая.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "mechanical-energy",
+        "nonconservative-work"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5069,7 +5486,10 @@
       "conditions": "Учитываются все непотенциальные силы.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "mechanical-energy",
+        "mechanical-conservation"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5121,7 +5541,18 @@
       "conditions": "Фаза отсчитывается для косинусной формы.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "oscillation-velocity",
+        "oscillation-acceleration",
+        "oscillation-equation",
+        "oscillation-vmax",
+        "oscillation-amax",
+        "oscillation-a-v",
+        "oscillation-energy",
+        "oscillation-energy-v",
+        "oscillator-stiffness",
+        "oscillator-energy-sum"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5173,7 +5604,18 @@
       "conditions": "Производная косинусной формы координаты.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "oscillation-position",
+        "oscillation-acceleration",
+        "oscillation-equation",
+        "oscillation-vmax",
+        "oscillation-amax",
+        "oscillation-a-v",
+        "oscillation-energy",
+        "oscillation-energy-v",
+        "oscillator-stiffness",
+        "oscillator-energy-sum"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5213,7 +5655,18 @@
       "conditions": "x — смещение от положения равновесия.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "oscillation-position",
+        "oscillation-velocity",
+        "oscillation-equation",
+        "oscillation-vmax",
+        "oscillation-amax",
+        "oscillation-a-v",
+        "oscillation-energy",
+        "oscillation-energy-v",
+        "oscillator-stiffness",
+        "oscillator-energy-sum"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5247,7 +5700,18 @@
       "conditions": "Свободные колебания без затухания.",
       "difficulty": 3,
       "kind": "law",
-      "related": [],
+      "related": [
+        "oscillation-position",
+        "oscillation-velocity",
+        "oscillation-acceleration",
+        "oscillation-vmax",
+        "oscillation-amax",
+        "oscillation-a-v",
+        "oscillation-energy",
+        "oscillation-energy-v",
+        "oscillator-stiffness",
+        "oscillator-energy-sum"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5287,7 +5751,18 @@
       "conditions": "Гармонические колебания.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "oscillation-position",
+        "oscillation-velocity",
+        "oscillation-acceleration",
+        "oscillation-equation",
+        "oscillation-amax",
+        "oscillation-a-v",
+        "oscillation-energy",
+        "oscillation-energy-v",
+        "oscillator-stiffness",
+        "oscillator-energy-sum"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5327,7 +5802,18 @@
       "conditions": "Гармонические колебания.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "oscillation-position",
+        "oscillation-velocity",
+        "oscillation-acceleration",
+        "oscillation-equation",
+        "oscillation-vmax",
+        "oscillation-a-v",
+        "oscillation-energy",
+        "oscillation-energy-v",
+        "oscillator-stiffness",
+        "oscillator-energy-sum"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5367,7 +5853,18 @@
       "conditions": "Гармонические колебания одной частоты.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "oscillation-position",
+        "oscillation-velocity",
+        "oscillation-acceleration",
+        "oscillation-equation",
+        "oscillation-vmax",
+        "oscillation-amax",
+        "oscillation-energy",
+        "oscillation-energy-v",
+        "oscillator-stiffness",
+        "oscillator-energy-sum"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5407,7 +5904,18 @@
       "conditions": "Пружинный маятник без потерь.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "oscillation-position",
+        "oscillation-velocity",
+        "oscillation-acceleration",
+        "oscillation-equation",
+        "oscillation-vmax",
+        "oscillation-amax",
+        "oscillation-a-v",
+        "oscillation-energy-v",
+        "oscillator-stiffness",
+        "oscillator-energy-sum"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5447,7 +5955,18 @@
       "conditions": "В положении равновесия вся энергия кинетическая.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "oscillation-position",
+        "oscillation-velocity",
+        "oscillation-acceleration",
+        "oscillation-equation",
+        "oscillation-vmax",
+        "oscillation-amax",
+        "oscillation-a-v",
+        "oscillation-energy",
+        "oscillator-stiffness",
+        "oscillator-energy-sum"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5481,7 +6000,14 @@
       "conditions": "ν — число полных колебаний в секунду.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "frequency-period",
+        "pendulum-period",
+        "spring-period",
+        "pendulum-angular",
+        "spring-angular",
+        "pendulum-length"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5516,7 +6042,12 @@
       "difficulty": 1,
       "kind": "derive",
       "related": [
-        "period-frequency"
+        "period-frequency",
+        "pendulum-period",
+        "spring-period",
+        "pendulum-angular",
+        "spring-angular",
+        "pendulum-length"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -5557,7 +6088,14 @@
       "conditions": "Малые углы, невесомая нерастяжимая нить, точечный груз.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "period-frequency",
+        "frequency-period",
+        "spring-period",
+        "pendulum-angular",
+        "spring-angular",
+        "pendulum-length"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5597,7 +6135,14 @@
       "conditions": "Масса пружины пренебрежимо мала, линейная упругость.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "period-frequency",
+        "frequency-period",
+        "pendulum-period",
+        "pendulum-angular",
+        "spring-angular",
+        "pendulum-length"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5637,7 +6182,14 @@
       "conditions": "Малые свободные колебания.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "period-frequency",
+        "frequency-period",
+        "pendulum-period",
+        "spring-period",
+        "spring-angular",
+        "pendulum-length"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5677,7 +6229,14 @@
       "conditions": "Свободные гармонические колебания.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "period-frequency",
+        "frequency-period",
+        "pendulum-period",
+        "spring-period",
+        "pendulum-angular",
+        "pendulum-length"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5718,7 +6277,12 @@
       "difficulty": 3,
       "kind": "derive",
       "related": [
-        "pendulum-period"
+        "pendulum-period",
+        "period-frequency",
+        "frequency-period",
+        "spring-period",
+        "pendulum-angular",
+        "spring-angular"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -5759,7 +6323,10 @@
       "conditions": "Одна и та же среда и одна гармоническая волна.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "wave-length",
+        "wave-phase"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5799,7 +6366,10 @@
       "conditions": "Расстояние, пройденное волной за период.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "wave-speed",
+        "wave-phase"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5839,7 +6409,10 @@
       "conditions": "Когерентные синфазные источники, одинаковая среда.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "wave-speed",
+        "wave-length"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5879,7 +6452,9 @@
       "conditions": "N — число частиц одного сорта.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "amount-mass"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5919,7 +6494,9 @@
       "conditions": "M — молярная масса в кг/моль.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "amount-particles"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5959,7 +6536,12 @@
       "conditions": "Молекулы одного сорта.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "concentration",
+        "mkt-pressure",
+        "mkt-energy",
+        "mkt-density"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -5999,7 +6581,12 @@
       "conditions": "Число частиц в единице объёма.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "molecule-mass",
+        "mkt-pressure",
+        "mkt-energy",
+        "mkt-density"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6045,7 +6632,12 @@
       "conditions": "Идеальный газ в равновесии; средний квадрат скорости, не квадрат средней скорости.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "molecule-mass",
+        "concentration",
+        "mkt-energy",
+        "mkt-density"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6085,7 +6677,12 @@
       "conditions": "Средняя энергия поступательного движения одной молекулы.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "molecule-mass",
+        "concentration",
+        "mkt-pressure",
+        "mkt-density"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6125,7 +6722,12 @@
       "conditions": "Равновесный идеальный газ.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "molecule-mass",
+        "concentration",
+        "mkt-pressure",
+        "mkt-energy"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6199,7 +6801,9 @@
       "conditions": "Идеальный газ; поступательные степени свободы.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "rms-speed"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6245,7 +6849,9 @@
       "conditions": "T — абсолютная температура, M в кг/моль.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "molecule-energy"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6343,7 +6949,19 @@
       "conditions": "Разреженный равновесный газ, температура в кельвинах.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "ideal-gas-mass",
+        "ideal-gas-particles",
+        "gas-density",
+        "gas-temperature",
+        "gas-combined",
+        "internal-energy",
+        "internal-energy-pv",
+        "internal-energy-particles",
+        "internal-energy-mass",
+        "internal-energy-change",
+        "internal-energy-cv"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6401,7 +7019,19 @@
       "conditions": "M в кг/моль, T в кельвинах.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "ideal-gas",
+        "ideal-gas-particles",
+        "gas-density",
+        "gas-temperature",
+        "gas-combined",
+        "internal-energy",
+        "internal-energy-pv",
+        "internal-energy-particles",
+        "internal-energy-mass",
+        "internal-energy-change",
+        "internal-energy-cv"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6453,7 +7083,19 @@
       "conditions": "N — число молекул, а не количество вещества.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "ideal-gas",
+        "ideal-gas-mass",
+        "gas-density",
+        "gas-temperature",
+        "gas-combined",
+        "internal-energy",
+        "internal-energy-pv",
+        "internal-energy-particles",
+        "internal-energy-mass",
+        "internal-energy-change",
+        "internal-energy-cv"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6506,7 +7148,17 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "ideal-gas-mass"
+        "ideal-gas-mass",
+        "ideal-gas",
+        "ideal-gas-particles",
+        "gas-temperature",
+        "gas-combined",
+        "internal-energy",
+        "internal-energy-pv",
+        "internal-energy-particles",
+        "internal-energy-mass",
+        "internal-energy-change",
+        "internal-energy-cv"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -6560,7 +7212,17 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "ideal-gas"
+        "ideal-gas",
+        "ideal-gas-mass",
+        "ideal-gas-particles",
+        "gas-density",
+        "gas-combined",
+        "internal-energy",
+        "internal-energy-pv",
+        "internal-energy-particles",
+        "internal-energy-mass",
+        "internal-energy-change",
+        "internal-energy-cv"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -6601,7 +7263,19 @@
       "conditions": "Количество вещества неизменно, обе температуры абсолютные.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "ideal-gas",
+        "ideal-gas-mass",
+        "ideal-gas-particles",
+        "gas-density",
+        "gas-temperature",
+        "internal-energy",
+        "internal-energy-pv",
+        "internal-energy-particles",
+        "internal-energy-mass",
+        "internal-energy-change",
+        "internal-energy-cv"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6647,7 +7321,19 @@
       "conditions": "Только одноатомный идеальный газ.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "ideal-gas",
+        "ideal-gas-mass",
+        "ideal-gas-particles",
+        "gas-density",
+        "gas-temperature",
+        "gas-combined",
+        "internal-energy-pv",
+        "internal-energy-particles",
+        "internal-energy-mass",
+        "internal-energy-change",
+        "internal-energy-cv"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6687,7 +7373,19 @@
       "conditions": "Одноатомный идеальный газ.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "ideal-gas",
+        "ideal-gas-mass",
+        "ideal-gas-particles",
+        "gas-density",
+        "gas-temperature",
+        "gas-combined",
+        "internal-energy",
+        "internal-energy-particles",
+        "internal-energy-mass",
+        "internal-energy-change",
+        "internal-energy-cv"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6733,7 +7431,19 @@
       "conditions": "Одноатомный идеальный газ.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "ideal-gas",
+        "ideal-gas-mass",
+        "ideal-gas-particles",
+        "gas-density",
+        "gas-temperature",
+        "gas-combined",
+        "internal-energy",
+        "internal-energy-pv",
+        "internal-energy-mass",
+        "internal-energy-change",
+        "internal-energy-cv"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6785,7 +7495,19 @@
       "conditions": "M в кг/моль.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "ideal-gas",
+        "ideal-gas-mass",
+        "ideal-gas-particles",
+        "gas-density",
+        "gas-temperature",
+        "gas-combined",
+        "internal-energy",
+        "internal-energy-pv",
+        "internal-energy-particles",
+        "internal-energy-change",
+        "internal-energy-cv"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6831,7 +7553,19 @@
       "conditions": "Одноатомный газ, постоянное количество вещества.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "ideal-gas",
+        "ideal-gas-mass",
+        "ideal-gas-particles",
+        "gas-density",
+        "gas-temperature",
+        "gas-combined",
+        "internal-energy",
+        "internal-energy-pv",
+        "internal-energy-particles",
+        "internal-energy-mass",
+        "internal-energy-cv"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6877,7 +7611,19 @@
       "conditions": "Идеальный газ с постоянной молярной теплоёмкостью; выбран соответствующий ноль энергии.",
       "difficulty": 3,
       "kind": "law",
-      "related": [],
+      "related": [
+        "ideal-gas",
+        "ideal-gas-mass",
+        "ideal-gas-particles",
+        "gas-density",
+        "gas-temperature",
+        "gas-combined",
+        "internal-energy",
+        "internal-energy-pv",
+        "internal-energy-particles",
+        "internal-energy-mass",
+        "internal-energy-change"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6939,7 +7685,10 @@
       "conditions": "Постоянны температура и количество вещества.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "isochoric",
+        "isobaric"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -6973,7 +7722,10 @@
       "conditions": "Постоянны объём и количество вещества.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "isothermal",
+        "isobaric"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7007,7 +7759,10 @@
       "conditions": "Постоянны давление и количество вещества.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "isothermal",
+        "isochoric"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7047,7 +7802,9 @@
       "conditions": "Давления пара и насыщенного пара берутся при одной температуре; доля, не проценты.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "humidity-density"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7087,7 +7844,9 @@
       "conditions": "Одна температура; для процентов результат умножается на 100.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "humidity-pressure"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7133,7 +7892,10 @@
       "conditions": "Нет фазового перехода, c постоянно; Q имеет знак изменения температуры.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "heat-capacity",
+        "specific-heat"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7173,7 +7935,10 @@
       "conditions": "Без фазового перехода, выбран способ нагревания.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "heat",
+        "specific-heat"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7220,7 +7985,8 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "heat"
+        "heat",
+        "heat-capacity"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -7261,7 +8027,10 @@
       "conditions": "Полное испарение при температуре фазового перехода.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "fusion",
+        "combustion"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7301,7 +8070,10 @@
       "conditions": "Плавление при температуре фазового перехода.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "vaporization",
+        "combustion"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7341,7 +8113,10 @@
       "conditions": "Полное сгорание, q — удельная теплота сгорания.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "vaporization",
+        "fusion"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7381,7 +8156,9 @@
       "conditions": "Квазистатический изобарный процесс; расширение даёт положительную работу газа.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "gas-work-graph"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7421,7 +8198,9 @@
       "conditions": "Квазистатический процесс; алгебраическая площадь под графиком.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "gas-work"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7461,7 +8240,11 @@
       "conditions": "A — работа газа, Q — полученная газом теплота.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "first-law-energy",
+        "adiabatic",
+        "isochoric-heat"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7502,7 +8285,9 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "first-law"
+        "first-law",
+        "adiabatic",
+        "isochoric-heat"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -7537,7 +8322,11 @@
       "conditions": "Теплообмена нет: Q=0.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "first-law",
+        "first-law-energy",
+        "isochoric-heat"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7571,7 +8360,11 @@
       "conditions": "Работа газа при постоянном объёме равна нулю.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "first-law",
+        "first-law-energy",
+        "adiabatic"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7611,7 +8404,10 @@
       "conditions": "Полный цикл, Qh — полученная от нагревателя теплота.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "heat-engine-loss",
+        "engine-work"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7651,7 +8447,10 @@
       "conditions": "Qh положительно, Qc — теплота холодильнику.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "heat-engine",
+        "engine-work"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7691,7 +8490,10 @@
       "conditions": "После цикла изменение внутренней энергии нулевое.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "heat-engine",
+        "heat-engine-loss"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7787,7 +8589,9 @@
       "conditions": "Электрически изолированная система.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "charge-quantization"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7827,7 +8631,9 @@
       "conditions": "N — целое со знаком; макроскопическая модель зарядов.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "charge-conservation"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7885,7 +8691,9 @@
       "conditions": "Неподвижные точечные заряды в однородном диэлектрике.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "coulomb-constant"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -7919,7 +8727,9 @@
       "conditions": "Соотношение и значение приведены в справочных данных ЕГЭ.",
       "difficulty": 1,
       "kind": "provided",
-      "related": [],
+      "related": [
+        "coulomb"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "demo-reference",
@@ -7959,7 +8769,10 @@
       "conditions": "Пробный заряд не искажает поле, знак заряда существенен.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "field-force",
+        "point-field"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8000,7 +8813,8 @@
       "difficulty": 1,
       "kind": "derive",
       "related": [
-        "field-definition"
+        "field-definition",
+        "point-field"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -8053,7 +8867,10 @@
       "conditions": "Модуль поля в однородном диэлектрике.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "field-definition",
+        "field-force"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8093,7 +8910,14 @@
       "conditions": "U — начальный потенциал минус конечный.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "potential-difference",
+        "electric-potential",
+        "electric-energy",
+        "electric-energy-change",
+        "uniform-field-voltage",
+        "point-potential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8127,7 +8951,14 @@
       "conditions": "Напряжение для перемещения от точки 1 к точке 2.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "electric-work",
+        "electric-potential",
+        "electric-energy",
+        "electric-energy-change",
+        "uniform-field-voltage",
+        "point-potential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8167,7 +8998,14 @@
       "conditions": "W — потенциальная энергия заряда при выбранном нулевом потенциале.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "electric-work",
+        "potential-difference",
+        "electric-energy",
+        "electric-energy-change",
+        "uniform-field-voltage",
+        "point-potential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8207,7 +9045,14 @@
       "conditions": "Потенциальная энергия зависит от выбранного нуля потенциала.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "electric-work",
+        "potential-difference",
+        "electric-potential",
+        "electric-energy-change",
+        "uniform-field-voltage",
+        "point-potential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8241,7 +9086,14 @@
       "conditions": "Электростатическое поле потенциально.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "electric-work",
+        "potential-difference",
+        "electric-potential",
+        "electric-energy",
+        "uniform-field-voltage",
+        "point-potential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8281,7 +9133,14 @@
       "conditions": "d — расстояние вдоль направления поля между эквипотенциальными плоскостями.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "electric-work",
+        "potential-difference",
+        "electric-potential",
+        "electric-energy",
+        "electric-energy-change",
+        "point-potential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8333,7 +9192,14 @@
       "conditions": "Нуль потенциала на бесконечности; однородный диэлектрик.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "electric-work",
+        "potential-difference",
+        "electric-potential",
+        "electric-energy",
+        "electric-energy-change",
+        "uniform-field-voltage"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8361,7 +9227,9 @@
       "conditions": "Поля складываются векторно.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "potential-superposition"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8389,7 +9257,9 @@
       "conditions": "Общий нулевой уровень потенциала.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "field-superposition"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8417,7 +9287,9 @@
       "conditions": "Электростатическое равновесие, внутри материала проводника.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "conductor-potential"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8445,7 +9317,9 @@
       "conditions": "Электростатическое равновесие: проводник эквипотенциален.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "conductor-field"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8485,7 +9359,11 @@
       "conditions": "q — модуль заряда одной обкладки, U — напряжение между обкладками.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "capacitor-charge",
+        "plane-capacity",
+        "air-capacity"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8526,7 +9404,9 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "capacity"
+        "capacity",
+        "plane-capacity",
+        "air-capacity"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -8579,7 +9459,11 @@
       "conditions": "Краевые эффекты пренебрежимо малы, диэлектрик заполняет зазор.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "capacity",
+        "capacitor-charge",
+        "air-capacity"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8625,7 +9509,11 @@
       "conditions": "Относительная проницаемость воздуха приближённо равна 1.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "capacity",
+        "capacitor-charge",
+        "plane-capacity"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8665,7 +9553,14 @@
       "conditions": "Одинаковое напряжение, суммируются заряды.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "series-capacity",
+        "series-capacity-pair",
+        "capacitor-parallel-charge",
+        "capacitor-parallel-voltage",
+        "capacitor-series-voltage",
+        "capacitor-series-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8705,7 +9600,14 @@
       "conditions": "Изначально незаряженные промежуточные узлы, одинаковый модуль заряда.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "parallel-capacity",
+        "series-capacity-pair",
+        "capacitor-parallel-charge",
+        "capacitor-parallel-voltage",
+        "capacitor-series-voltage",
+        "capacitor-series-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8746,7 +9648,12 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "series-capacity"
+        "series-capacity",
+        "parallel-capacity",
+        "capacitor-parallel-charge",
+        "capacitor-parallel-voltage",
+        "capacitor-series-voltage",
+        "capacitor-series-charge"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -8787,7 +9694,10 @@
       "conditions": "Линейный идеальный конденсатор.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "capacitor-energy-charge",
+        "capacitor-energy-product"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8827,7 +9737,10 @@
       "conditions": "Линейный идеальный конденсатор.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "capacitor-energy",
+        "capacitor-energy-product"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8867,7 +9780,10 @@
       "conditions": "U и q относятся к одному состоянию конденсатора.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "capacitor-energy",
+        "capacitor-energy-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8907,7 +9823,10 @@
       "conditions": "Для мгновенного тока отношение берут в пределе малого времени.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "current-charge",
+        "current-integral"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8947,7 +9866,10 @@
       "conditions": "Ток постоянен, направление выбрано.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "current",
+        "current-integral"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -8987,7 +9909,10 @@
       "conditions": "Алгебраическая площадь под графиком тока.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "current",
+        "current-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9027,7 +9952,10 @@
       "conditions": "Однородный участок без ЭДС, омический проводник.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "ohm-voltage",
+        "ohm-resistance"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9068,7 +9996,8 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "ohm"
+        "ohm",
+        "ohm-resistance"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -9110,7 +10039,8 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "ohm"
+        "ohm",
+        "ohm-voltage"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -9157,7 +10087,9 @@
       "conditions": "Однородный проводник постоянного сечения и температуры.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "wire-resistivity"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9291,7 +10223,11 @@
       "conditions": "Один источник, внешняя и внутренняя цепи омические.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "terminal-voltage",
+        "short-circuit",
+        "source-emf-balance"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9337,7 +10273,11 @@
       "conditions": "Источник отдаёт энергию во внешнюю цепь.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "full-ohm",
+        "short-circuit",
+        "source-emf-balance"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9377,7 +10317,11 @@
       "conditions": "Внешнее сопротивление приближённо нулевое, r больше нуля.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "full-ohm",
+        "terminal-voltage",
+        "source-emf-balance"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9417,7 +10361,16 @@
       "conditions": "Одинаковый ток, суммируются напряжения.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "parallel-resistance",
+        "parallel-resistance-pair",
+        "series-voltage",
+        "parallel-current",
+        "resistor-parallel-current",
+        "resistor-parallel-voltage",
+        "resistor-series-current",
+        "resistor-series-voltage"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9457,7 +10410,16 @@
       "conditions": "Одинаковое напряжение, суммируются токи.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "series-resistance",
+        "parallel-resistance-pair",
+        "series-voltage",
+        "parallel-current",
+        "resistor-parallel-current",
+        "resistor-parallel-voltage",
+        "resistor-series-current",
+        "resistor-series-voltage"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9498,7 +10460,14 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "parallel-resistance"
+        "parallel-resistance",
+        "series-resistance",
+        "series-voltage",
+        "parallel-current",
+        "resistor-parallel-current",
+        "resistor-parallel-voltage",
+        "resistor-series-current",
+        "resistor-series-voltage"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -9545,7 +10514,16 @@
       "conditions": "Резисторы соединены последовательно, внешняя нагрузка отсутствует.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "series-resistance",
+        "parallel-resistance",
+        "parallel-resistance-pair",
+        "parallel-current",
+        "resistor-parallel-current",
+        "resistor-parallel-voltage",
+        "resistor-series-current",
+        "resistor-series-voltage"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9591,7 +10569,16 @@
       "conditions": "Общее напряжение на ветвях.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "series-resistance",
+        "parallel-resistance",
+        "parallel-resistance-pair",
+        "series-voltage",
+        "resistor-parallel-current",
+        "resistor-parallel-voltage",
+        "resistor-series-current",
+        "resistor-series-voltage"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9637,7 +10624,11 @@
       "conditions": "Напряжение и ток постоянны.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "joule-lenz",
+        "joule-voltage",
+        "resistor-heat-product"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9683,7 +10674,11 @@
       "conditions": "Неизменные ток и сопротивление.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "current-work",
+        "joule-voltage",
+        "resistor-heat-product"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9729,7 +10724,11 @@
       "conditions": "Омический резистор, U и R постоянны.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "current-work",
+        "joule-lenz",
+        "resistor-heat-product"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9769,7 +10768,12 @@
       "conditions": "Мгновенная мощность либо постоянный ток.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "resistor-power-current",
+        "resistor-power-voltage",
+        "source-power",
+        "source-efficiency"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9809,7 +10813,12 @@
       "conditions": "Омический резистор.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "electric-power",
+        "resistor-power-voltage",
+        "source-power",
+        "source-efficiency"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9849,7 +10858,12 @@
       "conditions": "Омический резистор.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "electric-power",
+        "resistor-power-current",
+        "source-power",
+        "source-efficiency"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9889,7 +10903,12 @@
       "conditions": "Источник отдаёт энергию цепи.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "electric-power",
+        "resistor-power-current",
+        "resistor-power-voltage",
+        "source-efficiency"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -9929,7 +10948,12 @@
       "conditions": "Один источник с постоянными R и r, полезна внешняя тепловая мощность.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "electric-power",
+        "resistor-power-current",
+        "resistor-power-voltage",
+        "source-power"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10009,7 +11033,9 @@
       "conditions": "Прямой проводник в однородном поле; α между током и полем.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "magnetic-induction"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10109,7 +11135,10 @@
       "conditions": "Магнитная часть силы; v — скорость заряда.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "charge-orbit",
+        "charge-orbit-period"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10161,7 +11190,10 @@
       "conditions": "Нерелятивистская скорость перпендикулярна однородному полю.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "lorentz",
+        "charge-orbit-period"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10207,7 +11239,10 @@
       "conditions": "Нерелятивистский заряд в однородном магнитном поле.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "lorentz",
+        "charge-orbit"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10293,7 +11328,10 @@
       "conditions": "Один виток, согласованный выбор нормали и обхода.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "faraday-average",
+        "faraday-coil"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10333,7 +11371,10 @@
       "conditions": "Среднее за интервал; при линейном изменении совпадает с мгновенной.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "faraday",
+        "faraday-coil"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10379,7 +11420,10 @@
       "conditions": "Каждый из N витков пронизывает один и тот же поток Φ.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "faraday",
+        "faraday-average"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10425,7 +11469,9 @@
       "conditions": "B, проводник и скорость взаимно перпендикулярны; модуль ЭДС.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "moving-wire-angle"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10477,7 +11523,9 @@
       "conditions": "l перпендикулярно v; α между B и плоскостью, содержащей l и v; модуль.",
       "difficulty": 3,
       "kind": "law",
-      "related": [],
+      "related": [
+        "moving-wire"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10517,7 +11565,9 @@
       "conditions": "Φ — собственный поток или потокосцепление в согласованном определении L.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "self-induction"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10563,7 +11613,9 @@
       "conditions": "Индуктивность постоянна.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "inductance"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10603,7 +11655,9 @@
       "conditions": "Линейная катушка с постоянной индуктивностью.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "coil-energy-flux"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10643,7 +11697,9 @@
       "conditions": "Φ=LI в согласованном определении индуктивности.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "coil-energy"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10689,7 +11745,13 @@
       "conditions": "Идеальный контур, выбрана косинусная форма заряда.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "lc-current",
+        "thomson",
+        "lc-frequency",
+        "lc-angular",
+        "lc-current-amplitude"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10741,7 +11803,13 @@
       "conditions": "I=dq/dt при выбранном направлении тока.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "lc-charge",
+        "thomson",
+        "lc-frequency",
+        "lc-angular",
+        "lc-current-amplitude"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10781,7 +11849,13 @@
       "conditions": "Идеальный LC-контур, потери отсутствуют.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "lc-charge",
+        "lc-current",
+        "lc-frequency",
+        "lc-angular",
+        "lc-current-amplitude"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10822,7 +11896,11 @@
       "difficulty": 2,
       "kind": "derive",
       "related": [
-        "thomson"
+        "thomson",
+        "lc-charge",
+        "lc-current",
+        "lc-angular",
+        "lc-current-amplitude"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -10863,7 +11941,13 @@
       "conditions": "Свободные колебания идеального контура.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "lc-charge",
+        "lc-current",
+        "thomson",
+        "lc-frequency",
+        "lc-current-amplitude"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10903,7 +11987,13 @@
       "conditions": "Свободные гармонические колебания.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "lc-charge",
+        "lc-current",
+        "thomson",
+        "lc-frequency",
+        "lc-angular"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10949,7 +12039,11 @@
       "conditions": "Сумма электрической и магнитной энергий сохраняется.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "lc-amplitudes",
+        "lc-energy-voltage",
+        "lc-energy-current"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -10995,7 +12089,11 @@
       "conditions": "Максимумы достигаются в разные моменты, потери отсутствуют.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "lc-energy",
+        "lc-energy-voltage",
+        "lc-energy-current"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11023,7 +12121,11 @@
       "conditions": "Синусоидальный ток, действующее значение по тепловому действию.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "ac-rms-voltage",
+        "transformer",
+        "transmission-loss"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11051,7 +12153,11 @@
       "conditions": "Синусоидальное напряжение.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "ac-rms-current",
+        "transformer",
+        "transmission-loss"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11097,7 +12203,11 @@
       "conditions": "Идеальный трансформатор, напряжения — действующие значения.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "ac-rms-current",
+        "ac-rms-voltage",
+        "transmission-loss"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11137,7 +12247,11 @@
       "conditions": "Активное сопротивление линии; для переменного тока I — действующее значение.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "ac-rms-current",
+        "ac-rms-voltage",
+        "transformer"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11285,7 +12399,12 @@
       "conditions": "Углы от нормали, среды прозрачны и однородны.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "refractive-index",
+        "relative-index",
+        "light-frequency-boundary",
+        "light-wavelength-boundary"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11325,7 +12444,12 @@
       "conditions": "Фазовая скорость света в среде для выбранной частоты.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "snell",
+        "relative-index",
+        "light-frequency-boundary",
+        "light-wavelength-boundary"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11359,7 +12483,12 @@
       "conditions": "Одна и та же частота света.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "snell",
+        "refractive-index",
+        "light-frequency-boundary",
+        "light-wavelength-boundary"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11387,7 +12516,12 @@
       "conditions": "Неподвижная граница сред.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "snell",
+        "refractive-index",
+        "relative-index",
+        "light-wavelength-boundary"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11421,7 +12555,12 @@
       "conditions": "Частота на границе сохраняется.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "snell",
+        "refractive-index",
+        "relative-index",
+        "light-frequency-boundary"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11535,7 +12674,10 @@
       "conditions": "Алгебраические расстояния: действительный предмет d>0, мнимое изображение f<0.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "lens-magnification",
+        "lens-image-distance"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11587,7 +12729,10 @@
       "conditions": "Действительный предмет; высоты взяты положительными.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "lens",
+        "lens-image-distance"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11628,7 +12773,8 @@
       "difficulty": 3,
       "kind": "derive",
       "related": [
-        "lens"
+        "lens",
+        "lens-magnification"
       ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
@@ -11709,7 +12855,9 @@
       "conditions": "Синфазные когерентные источники, m — целое.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "interference-min"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11749,7 +12897,9 @@
       "conditions": "Синфазные когерентные источники, m — целое.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "interference-max"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11795,7 +12945,10 @@
       "conditions": "Нормальное падение монохроматического света.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "grating-spacing",
+        "grating-order"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11835,7 +12988,10 @@
       "conditions": "N — число равных периодов на длине l.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "grating",
+        "grating-order"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11875,7 +13031,10 @@
       "conditions": "Формальная граница из условия модуля синуса не больше 1; предельный луч вдоль решётки может быть ненаблюдаем.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "grating",
+        "grating-spacing"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -11961,7 +13120,12 @@
       "conditions": "Длина волны в вакууме.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photon-energy-momentum",
+        "photon-momentum",
+        "photon-momentum-energy",
+        "photon-momentum-frequency"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12001,7 +13165,12 @@
       "conditions": "Фотон в вакууме.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photon-wavelength",
+        "photon-momentum",
+        "photon-momentum-energy",
+        "photon-momentum-frequency"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12041,7 +13210,12 @@
       "conditions": "Длина волны в вакууме.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photon-wavelength",
+        "photon-energy-momentum",
+        "photon-momentum-energy",
+        "photon-momentum-frequency"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12081,7 +13255,12 @@
       "conditions": "Фотон в вакууме.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photon-wavelength",
+        "photon-energy-momentum",
+        "photon-momentum",
+        "photon-momentum-frequency"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12127,7 +13306,12 @@
       "conditions": "Фотон в вакууме.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photon-wavelength",
+        "photon-energy-momentum",
+        "photon-momentum",
+        "photon-momentum-energy"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12173,7 +13357,14 @@
       "conditions": "Однофотонный внешний фотоэффект.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photoelectric-speed",
+        "photoelectric-stop",
+        "photoelectric-red-frequency",
+        "photoelectric-red-wavelength",
+        "photoelectric-work",
+        "photoelectric-work-wavelength"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12213,7 +13404,14 @@
       "conditions": "Нерелятивистские фотоэлектроны.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photoelectric",
+        "photoelectric-stop",
+        "photoelectric-red-frequency",
+        "photoelectric-red-wavelength",
+        "photoelectric-work",
+        "photoelectric-work-wavelength"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12253,7 +13451,14 @@
       "conditions": "e — положительный модуль заряда электрона.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photoelectric",
+        "photoelectric-speed",
+        "photoelectric-red-frequency",
+        "photoelectric-red-wavelength",
+        "photoelectric-work",
+        "photoelectric-work-wavelength"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12293,7 +13498,14 @@
       "conditions": "Минимальная частота для начала фотоэффекта.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photoelectric",
+        "photoelectric-speed",
+        "photoelectric-stop",
+        "photoelectric-red-wavelength",
+        "photoelectric-work",
+        "photoelectric-work-wavelength"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12339,7 +13551,14 @@
       "conditions": "Максимальная вакуумная длина волны.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photoelectric",
+        "photoelectric-speed",
+        "photoelectric-stop",
+        "photoelectric-red-frequency",
+        "photoelectric-work",
+        "photoelectric-work-wavelength"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12379,7 +13598,14 @@
       "conditions": "Работа выхода положительна.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photoelectric",
+        "photoelectric-speed",
+        "photoelectric-stop",
+        "photoelectric-red-frequency",
+        "photoelectric-red-wavelength",
+        "photoelectric-work-wavelength"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12419,7 +13645,9 @@
       "conditions": "Нормальное падение в вакууме, полное поглощение, I — интенсивность.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "light-pressure-reflect"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12459,7 +13687,9 @@
       "conditions": "Нормальное падение в вакууме, идеальное зеркальное отражение.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "light-pressure-absorb"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12579,7 +13809,9 @@
       "conditions": "Z — протоны, N — нейтроны.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "nucleus-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12619,7 +13851,9 @@
       "conditions": "Z — число протонов, e — модуль элементарного заряда.",
       "difficulty": 1,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "nucleus-mass-number"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12653,7 +13887,10 @@
       "conditions": "Сохраняются заряд и число нуклонов.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "beta-minus",
+        "beta-plus"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12687,7 +13924,10 @@
       "conditions": "Массовое число не меняется, заряд дочернего ядра возрастает на 1.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "alpha-decay",
+        "beta-plus"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12721,7 +13961,10 @@
       "conditions": "Массовое число не меняется, заряд дочернего ядра уменьшается на 1.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "alpha-decay",
+        "beta-minus"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12767,7 +14010,12 @@
       "conditions": "Большое число независимых радиоактивных ядер.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "radioactive-mass",
+        "radioactive-decayed",
+        "decay-constant",
+        "activity"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12813,7 +14061,12 @@
       "conditions": "Масса именно исходного радионуклида, а не всех продуктов распада.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "radioactive",
+        "radioactive-decayed",
+        "decay-constant",
+        "activity"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12853,7 +14106,12 @@
       "conditions": "Число выбывших исходных ядер.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "radioactive",
+        "radioactive-mass",
+        "decay-constant",
+        "activity"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12887,7 +14145,12 @@
       "conditions": "Независимый радиоактивный распад.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "radioactive",
+        "radioactive-mass",
+        "radioactive-decayed",
+        "activity"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12927,7 +14190,12 @@
       "conditions": "Мгновенное среднее число распадов в секунду.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "radioactive",
+        "radioactive-mass",
+        "radioactive-decayed",
+        "decay-constant"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -12967,7 +14235,14 @@
       "conditions": "Согласованно используют ядерные либо атомные массы с учётом электронов.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "binding-energy",
+        "specific-binding",
+        "electronvolt",
+        "atomic-mass-energy",
+        "reaction-nucleons",
+        "reaction-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13031,7 +14306,14 @@
       "conditions": "m_nuc — масса ядра без электронов.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "reaction-energy",
+        "specific-binding",
+        "electronvolt",
+        "atomic-mass-energy",
+        "reaction-nucleons",
+        "reaction-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13071,7 +14353,14 @@
       "conditions": "A — число нуклонов, результат — энергия на нуклон.",
       "difficulty": 3,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "reaction-energy",
+        "binding-energy",
+        "electronvolt",
+        "atomic-mass-energy",
+        "reaction-nucleons",
+        "reaction-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13099,7 +14388,14 @@
       "conditions": "Экзаменационное округление из справочных данных.",
       "difficulty": 1,
       "kind": "provided",
-      "related": [],
+      "related": [
+        "reaction-energy",
+        "binding-energy",
+        "specific-binding",
+        "atomic-mass-energy",
+        "reaction-nucleons",
+        "reaction-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "demo-reference",
@@ -13139,7 +14435,14 @@
       "conditions": "Экзаменационное соотношение из справочных данных.",
       "difficulty": 2,
       "kind": "provided",
-      "related": [],
+      "related": [
+        "reaction-energy",
+        "binding-energy",
+        "specific-binding",
+        "electronvolt",
+        "reaction-nucleons",
+        "reaction-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "demo-reference",
@@ -13185,7 +14488,10 @@
       "conditions": "Координаты относительно выбранного начала отсчёта.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "displacement",
+        "displacement-add"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13225,7 +14531,10 @@
       "conditions": "Внешние силы постоянны на интервале; внутренние импульсы взаимно компенсируются.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "momentum-conservation",
+        "inelastic-collision"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13265,7 +14574,18 @@
       "conditions": "Пружинный гармонический осциллятор.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "oscillation-position",
+        "oscillation-velocity",
+        "oscillation-acceleration",
+        "oscillation-equation",
+        "oscillation-vmax",
+        "oscillation-amax",
+        "oscillation-a-v",
+        "oscillation-energy",
+        "oscillation-energy-v",
+        "oscillator-energy-sum"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13317,7 +14637,18 @@
       "conditions": "Свободные колебания без потерь.",
       "difficulty": 3,
       "kind": "law",
-      "related": [],
+      "related": [
+        "oscillation-position",
+        "oscillation-velocity",
+        "oscillation-acceleration",
+        "oscillation-equation",
+        "oscillation-vmax",
+        "oscillation-amax",
+        "oscillation-a-v",
+        "oscillation-energy",
+        "oscillation-energy-v",
+        "oscillator-stiffness"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13357,7 +14688,14 @@
       "conditions": "Общий заряд соединённых обкладок.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "parallel-capacity",
+        "series-capacity",
+        "series-capacity-pair",
+        "capacitor-parallel-voltage",
+        "capacitor-series-voltage",
+        "capacitor-series-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13397,7 +14735,14 @@
       "conditions": "Подключены к одной паре узлов.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "parallel-capacity",
+        "series-capacity",
+        "series-capacity-pair",
+        "capacitor-parallel-charge",
+        "capacitor-series-voltage",
+        "capacitor-series-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13437,7 +14782,14 @@
       "conditions": "Согласованный обход цепи.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "parallel-capacity",
+        "series-capacity",
+        "series-capacity-pair",
+        "capacitor-parallel-charge",
+        "capacitor-parallel-voltage",
+        "capacitor-series-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13477,7 +14829,14 @@
       "conditions": "Модули зарядов при изначально нейтральном промежуточном узле.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "parallel-capacity",
+        "series-capacity",
+        "series-capacity-pair",
+        "capacitor-parallel-charge",
+        "capacitor-parallel-voltage",
+        "capacitor-series-voltage"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13523,7 +14882,11 @@
       "conditions": "Один источник, омические сопротивления.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "full-ohm",
+        "terminal-voltage",
+        "short-circuit"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13563,7 +14926,16 @@
       "conditions": "Сохранение заряда в узле, установившийся ток.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "series-resistance",
+        "parallel-resistance",
+        "parallel-resistance-pair",
+        "series-voltage",
+        "parallel-current",
+        "resistor-parallel-voltage",
+        "resistor-series-current",
+        "resistor-series-voltage"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13603,7 +14975,16 @@
       "conditions": "Одна пара узлов цепи.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "series-resistance",
+        "parallel-resistance",
+        "parallel-resistance-pair",
+        "series-voltage",
+        "parallel-current",
+        "resistor-parallel-current",
+        "resistor-series-current",
+        "resistor-series-voltage"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13643,7 +15024,16 @@
       "conditions": "Между резисторами нет разветвлений.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "series-resistance",
+        "parallel-resistance",
+        "parallel-resistance-pair",
+        "series-voltage",
+        "parallel-current",
+        "resistor-parallel-current",
+        "resistor-parallel-voltage",
+        "resistor-series-voltage"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13683,7 +15073,16 @@
       "conditions": "Сумма падений напряжения на резисторах.",
       "difficulty": 1,
       "kind": "law",
-      "related": [],
+      "related": [
+        "series-resistance",
+        "parallel-resistance",
+        "parallel-resistance-pair",
+        "series-voltage",
+        "parallel-current",
+        "resistor-parallel-current",
+        "resistor-parallel-voltage",
+        "resistor-series-current"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13729,7 +15128,11 @@
       "conditions": "Вся работа тока превращается в теплоту на омическом резисторе.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "current-work",
+        "joule-lenz",
+        "joule-voltage"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13769,7 +15172,11 @@
       "conditions": "Идеальный контур; ток равен нулю в момент максимума напряжения.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "lc-energy",
+        "lc-amplitudes",
+        "lc-energy-current"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13809,7 +15216,11 @@
       "conditions": "Идеальный контур; конденсатор разряжен в момент максимума тока.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "lc-energy",
+        "lc-amplitudes",
+        "lc-energy-voltage"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13855,7 +15266,14 @@
       "conditions": "Вакуумная максимальная длина волны начала фотоэффекта.",
       "difficulty": 2,
       "kind": "law",
-      "related": [],
+      "related": [
+        "photoelectric",
+        "photoelectric-speed",
+        "photoelectric-stop",
+        "photoelectric-red-frequency",
+        "photoelectric-red-wavelength",
+        "photoelectric-work"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13883,7 +15301,14 @@
       "conditions": "Ядерные реакции в пределах школьных моделей.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "reaction-energy",
+        "binding-energy",
+        "specific-binding",
+        "electronvolt",
+        "atomic-mass-energy",
+        "reaction-charge"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -13911,7 +15336,14 @@
       "conditions": "В суммах учитывают зарядовые числа всех частиц, включая электроны и позитроны.",
       "difficulty": 2,
       "kind": "derive",
-      "related": [],
+      "related": [
+        "reaction-energy",
+        "binding-energy",
+        "specific-binding",
+        "electronvolt",
+        "atomic-mass-energy",
+        "reaction-nucleons"
+      ],
       "source": {
         "url": "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/fi_11_2027.zip",
         "document": "codifier",
@@ -16694,5 +18126,5 @@
       }
     }
   ],
-  "version": "2bc80cb726deca86"
+  "version": "be9454d1d547a56b"
 }

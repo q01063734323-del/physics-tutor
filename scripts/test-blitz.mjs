@@ -82,7 +82,7 @@ try {
   assert.equal(questions.questionById.get("conversion:temp-back").correct, "0");
   assert.equal(questions.questionById.get("conversion:temp-difference").correct, "20");
   assert.equal(questions.questionById.get("conversion:mass-mg").correct, "0,000005");
-  assert.equal(questions.questionById.get("conversion:energy-ev").correct, "8e-19");
+  assert.equal(questions.questionById.get("conversion:energy-ev").correct, "$8\\cdot10^{-19}$");
   const now = Date.parse("2026-11-18T12:00:00Z");
   let state = engine.emptyStudyState();
   for (const mode of ["classic", "guess", "assemble", "unknown", "units", "traps", "flash", "exam", "timed"]) {
@@ -151,5 +151,6 @@ try {
   const before = firestore.calls.create; await sync.syncExamResults("guest", user, true); assert.equal(firestore.calls.create, before);
   const synced = await sync.syncExamResults(user.uid, user, false); assert.equal(synced.pending, 0);
   assert(storage.records.get("exam-outbox:student-a").every(record => record.synced));
+  console.log("Blitz mode pools:", Object.fromEntries(["classic", "guess", "assemble", "unknown", "units", "traps", "flash", "exam", "timed"].map(mode => [mode, questions.filterQuestions({ ...questions.defaultSettings, mode }).length])));
   console.log(`blitz checks passed: ${catalog.formulas.length} formulas; ${catalog.quantities.length} SI quantities; ${questions.allQuestions.length} unique questions; 127 FIPI codes; KaTeX; dimensions; conversions; modes and filters; no repeats; timer; spaced repetition; progress replay; durable queue; guest isolation; idempotent cloud retries`);
 } finally { await fs.rm(root, { recursive: true, force: true }); }
