@@ -8,6 +8,10 @@ import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { classroomRequest } from "@/lib/classroom-client";
 import { isClassroomId, type ClassroomRole, type ClassroomSession, type ClassroomStudent } from "@/lib/classroom";
+import { StudioPrejoin } from "./StudioPrejoin";
+import { StudioPreview } from "./StudioPreview";
+import type { MediaPreferences } from "@/lib/studio/model";
+import s from "./PhysicsStudio.module.css";
 import { ClassroomWorkspace } from "./ClassroomWorkspace";
 import { DemoClassroom } from "./DemoClassroom";
 
@@ -17,6 +21,11 @@ const ClassroomLesson = dynamic(() => import("./ClassroomLesson").then(module =>
 });
 
 export function ClassroomEntry() {
+  const params = useSearchParams();
+  return params.get("preview") === "studio" ? <StudioPreview/> : <ClassroomAccess/>;
+}
+
+function ClassroomAccess() {
   const params = useSearchParams();
   const invite = params.get("room");
   const [user, setUser] = useState<User | null>();
@@ -28,12 +37,15 @@ export function ClassroomEntry() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [demoRole, setDemoRole] = useState<ClassroomRole | null>(null);
+  const [preferences, setPreferences] = useState<MediaPreferences | null>(null);
+  const [localWorkspace, setLocalWorkspace] = useState(false);
   const autoJoinAttempted = useRef(false);
 
   useEffect(() => onAuthStateChanged(auth, nextUser => {
     setUser(nextUser);
     setAccount(null);
     setSession(null);
+    setPreferences(null);
     const demo = window.localStorage.getItem("physics-tutor-demo");
     if (process.env.NEXT_PUBLIC_ENABLE_DEMO === "true" && (demo === "teacher" || demo === "student")) setDemoRole(demo);
   }), []);
@@ -72,6 +84,7 @@ export function ClassroomEntry() {
     try {
       const next = await classroomRequest<ClassroomSession>(user, create ? { action: "create", studentId } : { action: "join", roomId });
       if (auth.currentUser?.uid !== user.uid) return;
+      setPreferences(null);
       setSession(next);
       setCode(next.roomId);
       window.history.replaceState(null, "", `/classroom?room=${next.roomId}`);
@@ -82,6 +95,7 @@ export function ClassroomEntry() {
 
   const leave = useCallback((message: string, resume?: boolean) => {
     setSession(null);
+    setPreferences(null);
     setNotice(message);
     if (!resume) {
       setCode("");
@@ -89,12 +103,13 @@ export function ClassroomEntry() {
     }
   }, []);
 
-  if (session && user) return <ClassroomLesson key={session.roomId} session={session} user={user} onLeave={leave} />;
+  if (session && user) return preferences
+    ? <ClassroomLesson key={session.roomId} session={session} user={user} preferences={preferences} onLeave={leave}/>
+    : <StudioPrejoin name={user.displayName || (session.role === "teacher" ? "Егор" : "Ученик")} lesson={session.role === "teacher" ? `Индивидуальный урок · ${account?.students.find(student => student.id === studentId)?.name || "приглашённый ученик"}` : "Индивидуальный урок с преподавателем"} onJoin={setPreferences} onCancel={() => leave("Подготовка отменена.", true)}/>;
   if (process.env.NEXT_PUBLIC_ENABLE_DEMO === "true" && (params.has("guest") || (!user && demoRole))) return <DemoClassroom />;
 
-  return (
-    <ClassroomWorkspace lobby={
-      <section className="pt-lesson-lobby" aria-labelledby="pt-lesson-title">
+  const lobby = (
+      <section className={s.lobbyForms} aria-labelledby="pt-lesson-title">
         <div><h2 id="pt-lesson-title">Онлайн-урок</h2><p>Видеосвязь, показ экрана и общая доска для двух участников.</p></div>
         {user === undefined && <p role="status">Проверяем вход…</p>}
         {user === null && <Link className="pt-action" href={isClassroomId(invite) ? `/?classroom=${invite}#login` : "/#login"}>Войти в Physics Tutor</Link>}
@@ -119,6 +134,7 @@ export function ClassroomEntry() {
         {error && <p className="pt-lesson-error" role="alert">{error}</p>}
         {notice && <p role="status">{notice}</p>}
       </section>
-    } />
   );
+  if (localWorkspace) return <ClassroomWorkspace lobby={<><button type="button" onClick={() => setLocalWorkspace(false)}>Вернуться в PHYSICS STUDIO</button>{lobby}</>}/>;
+  return <main className={s.prejoin}><header className={s.brand}><span className={s.brandMark}>φ</span><div><b>PHYSICS STUDIO</b><small>MIDNIGHT LABORATORY</small></div></header><section className={s.lobby}><div><p className={s.eyebrow}>ОДИН УРОК. МНОГО ОТКРЫТИЙ.</p><h1>Место, где физика<br/>становится яснее.</h1></div><p>Видеосвязь, презентация PowerPoint и общая доска. Всё внимание — тому, что вы изучаете вместе.</p>{lobby}<div className={s.entryActions}><Link href="/">В кабинет</Link><button type="button" onClick={() => setLocalWorkspace(true)}>Доска без звонка</button></div></section></main>;
 }

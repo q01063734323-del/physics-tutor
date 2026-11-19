@@ -6,6 +6,9 @@ import {
   type ClassroomBoardState, type ClassroomRole,
 } from "@/lib/classroom";
 
+import { createRoomCreationLimit } from "@/lib/studio/creation-limit";
+const allowCreate = createRoomCreationLimit();
+
 const duration = 4 * 60 * 60 * 1000;
 const roomOptions = { maxParticipants: 2, emptyTimeout: 300, departureTimeout: 120 };
 type DemoLesson = {
@@ -58,8 +61,8 @@ async function session(roomId: string, role: ClassroomRole, expiresAt: number) {
   token.roomConfig = new RoomConfiguration(roomOptions);
   token.addGrant({
     room: `pt-guest-${roomId}`, roomJoin: true, canSubscribe: true, canPublish: true,
-    canPublishData: false, canUpdateOwnMetadata: false,
-    canPublishSources: [TrackSource.CAMERA, TrackSource.MICROPHONE, TrackSource.SCREEN_SHARE],
+    canPublishData: true, canUpdateOwnMetadata: false,
+    canPublishSources: role === "teacher" ? [TrackSource.CAMERA, TrackSource.MICROPHONE, TrackSource.SCREEN_SHARE] : [TrackSource.CAMERA, TrackSource.MICROPHONE],
   });
   return { roomId, role, url: provider.url, token: await token.toJwt(), expiresAt };
 }
@@ -82,6 +85,9 @@ export async function POST(request: Request) {
     } catch { throw new DemoError("Некорректный запрос.", 400); }
     const { adminDb } = getFirebaseAdmin();
     if (input.action === "create") {
+      // Hash the proxy-provided address for a short-lived, in-memory burst guard.
+      const address = (request.headers.get("x-forwarded-for")?.split(",").at(-1)?.trim() || "local").slice(0, 200);
+      if (!allowCreate(fingerprint(address))) throw new DemoError("Слишком много новых уроков. Используйте открытую комнату или подождите несколько минут.", 429);
       const provider = config();
       const roomId = randomUUID();
       await provider.rooms.createRoom({ name: `pt-guest-${roomId}`, ...roomOptions });

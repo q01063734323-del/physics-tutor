@@ -7,6 +7,9 @@ import {
   type ClassroomBoardState, type ClassroomControl, type ClassroomRole,
 } from "@/lib/classroom";
 
+import { createRoomCreationLimit } from "@/lib/studio/creation-limit";
+const allowCreate = createRoomCreationLimit(6);
+
 const teacherEmail = "e.galkin07@mail.ru";
 const roomOptions = { maxParticipants: 2, emptyTimeout: 300, departureTimeout: 120 };
 const lessonDuration = 4 * 60 * 60 * 1000;
@@ -85,7 +88,7 @@ async function issueToken(account: Account, roomId: string, config: ReturnType<t
   token.roomConfig = new RoomConfiguration(roomOptions);
   token.addGrant({
     room: `pt-${roomId}`, roomJoin: true, canSubscribe: true, canPublish: true,
-    canPublishData: false, canUpdateOwnMetadata: false,
+    canPublishData: true, canUpdateOwnMetadata: false,
     canPublishSources: account.role === "teacher"
       ? [TrackSource.CAMERA, TrackSource.MICROPHONE, TrackSource.SCREEN_SHARE]
       : [TrackSource.CAMERA, TrackSource.MICROPHONE],
@@ -98,6 +101,7 @@ async function createLesson(account: Account, studentId: unknown) {
   if (typeof studentId !== "string" || !studentId || studentId.length > 128 || studentId.includes("/")) {
     throw new ClassroomError("Выберите ученика.", 400);
   }
+  if (!allowCreate(account.id)) throw new ClassroomError("Слишком много новых уроков. Вернитесь в существующий или подождите несколько минут.", 429);
   const config = liveKit();
   const [link, profile] = await Promise.all([
     account.db.collection("teacherStudents").where("teacherId", "==", account.id).where("studentId", "==", studentId).limit(1).get(),
