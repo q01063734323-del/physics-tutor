@@ -11,8 +11,8 @@ export async function validatePdf(bytes:Uint8Array){
   for(const page of pdf.getPages()){const box=page.getCropBox();if(box.width<=0 || box.height<=0 || Math.max(box.width/box.height,box.height/box.width)>10)throw new LibraryError("Неподдерживаемые пропорции страницы PDF.");}
   const seen=new Set<unknown>();let nodes=0;
   function inspect(obj:unknown,depth=0){if(seen.has(obj))return;if(++nodes>250000 || depth>100)throw new LibraryError("Слишком сложная структура PDF.");seen.add(obj);
-    if(obj instanceof PDFDict){if(["JS","JavaScript","OpenAction","AA","EmbeddedFiles","RichMedia","XFA"].some(key=>obj.has(PDFName.of(key))) || ["/JavaScript","/Launch","/GoToR","/SubmitForm","/ImportData","/Rendition","/Movie","/Sound"].includes(String(obj.get(PDFName.of("S")))))throw new LibraryError("PDF содержит активные действия или вложения. Экспортируйте статическую презентацию.");for(const [,value]of obj.entries())inspect(value,depth+1);}
-    else if(obj instanceof PDFArray)for(const value of obj.asArray())inspect(value,depth+1);
+    if(obj instanceof PDFDict){if(["JS","JavaScript","AA","EmbeddedFiles","RichMedia","XFA"].some(key=>obj.has(PDFName.of(key))) || ["/JavaScript","/Launch","/GoToR","/SubmitForm","/ImportData","/Rendition","/Movie","/Sound"].includes(String(obj.get(PDFName.of("S")))))throw new LibraryError("PDF содержит активные действия или вложения. Экспортируйте статическую презентацию.");if(String(obj.get(PDFName.of("Type")))==="/EmbeddedFile" || String(obj.get(PDFName.of("Subtype")))==="/FileAttachment")throw new LibraryError("PDF содержит вложение. Экспортируйте статическую презентацию.");for(const [,value]of obj.entries())inspect(value,depth+1);}
+    else if(obj instanceof PDFArray)for(const value of obj.asArray())inspect(value,depth+1);else if(obj && typeof obj==="object" && "dict" in obj && obj.dict instanceof PDFDict)inspect(obj.dict,depth+1);
   }
   for(const [,obj]of pdf.context.enumerateIndirectObjects())inspect(obj);
   return pdf;
@@ -36,7 +36,7 @@ export async function documentBytes(actor:LibraryActor,doc:LibraryDocument){
   const bytes=Buffer.concat(chunks.map(chunk=>Buffer.from(chunk.get("bytes"))));if(bytes.length!==doc.bytes)throw new LibraryError("Повреждённый файл.",503);return bytes;
 }
 export async function storeDocument(actor:LibraryActor,bytes:Uint8Array,name:string,folderId:string,derivedFrom?:string){
-  const pdf=await validatePdf(bytes);const id=randomUUID();const document:LibraryDocument={id,ownerId:actor.ownerId,name:libraryName(name),folderId,bytes:bytes.length,pages:pdf.getPageCount(),createdAt:new Date().toISOString(),status:"ready",kind:derivedFrom?"annotated":"original",...(derivedFrom?{derivedFrom}:{}),...(actor.guest?{expiresAt:actor.expiresAt}:{})};
+  const pdf=await validatePdf(bytes);await purgeExpiredGuestDocuments(actor).catch(()=>undefined);const id=randomUUID();const document:LibraryDocument={id,ownerId:actor.ownerId,name:libraryName(name),folderId,bytes:bytes.length,pages:pdf.getPageCount(),createdAt:new Date().toISOString(),status:"ready",kind:derivedFrom?"annotated":"original",...(derivedFrom?{derivedFrom}:{}),...(actor.guest?{expiresAt:actor.expiresAt}:{})};
   const quota=actor.db.doc(`libraryAccounts/${actor.ownerId}`);
   const hash=createHash("sha256").update(bytes).digest("hex"),hashRef=actor.db.doc(`libraryHashes/${createHash("sha256").update(actor.ownerId+":"+hash).digest("hex")}`);
   let saved=document;
@@ -70,7 +70,42 @@ export async function annotatedPdf(actor:LibraryActor,doc:LibraryDocument,fromSe
     const page=pdf.getPage(index);const box=page.getCropBox();const rotation=((page.getRotation().angle%360)+360)%360;const rw=rotation%180?box.height:box.width,rh=rotation%180?box.width:box.height;
     const map=(point:string)=>{const [x,y]=point.split(",").map(Number);const rx=x/900*rw,ry=y/(900*rh/rw)*rh;return rotation===90?{x:box.x+ry,y:box.y+rx}:rotation===180?{x:box.x+box.width-rx,y:box.y+ry}:rotation===270?{x:box.x+box.width-ry,y:box.y+box.height-rx}:{x:box.x+rx,y:box.y+box.height-ry};};
     for(const stroke of strokes){const color=rgb(parseInt(stroke.color.slice(1,3),16)/255,parseInt(stroke.color.slice(3,5),16)/255,parseInt(stroke.color.slice(5,7),16)/255);const points=stroke.points.map(map);const thickness=(stroke.width||3)*rw/900;
-      for(let p=1;p<points.length;p++)page.drawLine({start:points[p-1],end:points[p],thickness,color,opacity:stroke.tool==="marker"?.28:1,lineCap:LineCapStyle.Round});
+      const pair=(point:{x:number;y:number})=>`${point.x} ${-point.y}`;let path=`M ${pair(points[0])}`;
+      if(stroke.tool==="line" || stroke.tool==="arrow" || stroke.tool==="rectangle")for(const point of points.slice(1))path+=` L ${pair(point)}`;
+      else {for(let p=1;p<points.length-1;p++)path+=` Q ${pair(points[p])} ${pair({x:(points[p].x+points[p+1].x)/2,y:(points[p].y+points[p+1].y)/2})}`;path+=` L ${pair(points.at(-1)!)}`;}
+      page.drawSvgPath(path,{x:0,y:0,borderColor:color,borderWidth:thickness,borderOpacity:stroke.tool==="marker"?.28:1,borderLineCap:LineCapStyle.Round});
     }
   }return pdf.save();
+}
+
+export async function deleteLibraryDocument(actor:LibraryActor,id:unknown){
+  if(!actor.teacher || !isLibraryId(id))throw new LibraryError("Нет доступа к удалению.",403);
+  const ref=actor.db.doc(`libraryDocuments/${id}`),quota=actor.db.doc(`libraryAccounts/${actor.ownerId}`);
+  const document=await ref.get();if(!document.exists)return;
+  if(document.get("ownerId")!==actor.ownerId)throw new LibraryError("Это материал другого преподавателя.",403);
+  await ref.update({status:"deleted"}); // Access is revoked before storage cleanup; quota is held until bytes are removed.
+  const [chunks,grants]=await Promise.all([ref.collection("chunks").get(),actor.db.collection("libraryGrants").where("documentId","==",id).get()]);
+  const refs=[...chunks.docs,...grants.docs].map(doc=>doc.ref);
+  for(let offset=0;offset<refs.length;offset+=400){const batch=actor.db.batch();for(const item of refs.slice(offset,offset+400))batch.delete(item);await batch.commit();}
+  await actor.db.runTransaction(async tx=>{
+    const [current,used]=await Promise.all([tx.get(ref),tx.get(quota)]);if(!current.exists)return;
+    const hashRef=actor.db.doc(`libraryHashes/${createHash("sha256").update(actor.ownerId+":"+current.get("sha256")).digest("hex")}`),hash=await tx.get(hashRef);
+    tx.set(quota,{bytes:Math.max(0,(used.get("bytes")||0)-current.get("bytes")),count:Math.max(0,(used.get("count")||0)-1)});
+    if(hash.get("documentId")===id)tx.delete(hashRef);tx.delete(ref);
+  });
+}
+
+// Bounded maintenance during an authorized upload; no paid scheduler and no public cleanup endpoint.
+export async function purgeExpiredGuestDocuments(actor:LibraryActor){
+  const expired=await actor.db.collection("libraryDocuments").where("expiresAt","<=",Date.now()).limit(2).get();
+  for(const doc of expired.docs){const owner=doc.get("ownerId"),expires=doc.get("expiresAt");if(typeof owner==="string" && /^guest-[a-f0-9-]{36}-teacher$/.test(owner) && typeof expires==="number" && expires<=Date.now())await endGuestLibrary(actor.db,owner.slice(6,-8));}
+}
+export async function endGuestLibrary(db:LibraryActor["db"],roomId:string){
+  const ownerId=`guest-${roomId}-teacher`;
+  const actor:LibraryActor={db,id:ownerId,ownerId,teacher:true,roomId,guest:true,studentId:`guest-${roomId}-student`,expiresAt:Date.now()};
+  const documents=await db.collection("libraryDocuments").where("ownerId","==",ownerId).limit(5).get();
+  for(const document of documents.docs)await deleteLibraryDocument(actor,document.id);
+  const ref=db.doc(`librarySessions/guest-${roomId}`),pages=await ref.collection("pages").get();
+  for(let offset=0;offset<pages.docs.length;offset+=400){const batch=db.batch();for(const page of pages.docs.slice(offset,offset+400))batch.delete(page.ref);await batch.commit();}
+  const batch=db.batch();batch.delete(ref);await batch.commit();
 }

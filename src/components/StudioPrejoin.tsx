@@ -29,7 +29,7 @@ export function StudioPrejoin({ name, lesson, onJoin, onCancel }: { name: string
     setBusy(true); setError(""); release(); setLevel(0);
     if (!navigator.mediaDevices?.getUserMedia) { setError("Устройства недоступны. Открой HTTPS-версию сайта в поддерживаемом браузере."); setBusy(false); return; }
     const capture = await Promise.allSettled([
-      next.camera ? withMediaTimeout(navigator.mediaDevices.getUserMedia({ video: { deviceId: next.cameraId ? { exact: next.cameraId } : undefined, width: { ideal: 1280 }, height: { ideal: 720 } } })) : Promise.resolve(null),
+      next.camera ? withMediaTimeout(navigator.mediaDevices.getUserMedia({ video: { deviceId: next.cameraId ? { exact: next.cameraId } : undefined, width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30, max: 30 } } })) : Promise.resolve(null),
       next.microphone ? withMediaTimeout(navigator.mediaDevices.getUserMedia({ audio: { deviceId: next.microphoneId ? { exact: next.microphoneId } : undefined, echoCancellation: true, noiseSuppression: true } })) : Promise.resolve(null),
     ]);
     const tracks = capture.flatMap(result => result.status === "fulfilled" ? result.value?.getTracks() || [] : []);

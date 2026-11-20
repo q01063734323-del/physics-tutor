@@ -1,5 +1,5 @@
 import { libraryActor, requireTeacher, linkedStudent, grantId, LibraryError } from "@/lib/library/access";
-import { annotatedPdf, documentBytes, ownedDocument, readableDocument, readAnnotations, readPresentation, sessionId, storeDocument } from "@/lib/library/server";
+import { annotatedPdf, deleteLibraryDocument, documentBytes, ownedDocument, readableDocument, readAnnotations, readPresentation, sessionId, storeDocument } from "@/lib/library/server";
 import { libraryFolders, libraryLimits, libraryName, isLibraryId, type LibraryFolder } from "@/lib/library/model";
 import { canonicalStroke, isClassroomStroke } from "@/lib/classroom";
 const privateHeaders={"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"};
@@ -27,7 +27,7 @@ export async function GET(request:Request){try{
   }
   if(actor.teacher){
     const [documents,folderList,grants]=await Promise.all([actor.db.collection("libraryDocuments").where("ownerId","==",actor.ownerId).limit(101).get(),folders(actor),actor.db.collection("libraryGrants").where("ownerId","==",actor.ownerId).limit(500).get()]);
-    return reply({role:"teacher",documents:documents.docs.map(doc=>doc.data()).filter(doc=>doc.status==="ready" && (!doc.expiresAt || doc.expiresAt>Date.now())),folders:folderList,grants:grants.docs.map(doc=>({id:doc.id,...doc.data()})),limits:libraryLimits,guest:actor.guest});
+    return reply({role:"teacher",pendingDeletions:documents.docs.filter(doc=>doc.get("status")==="deleted").map(doc=>({id:doc.id,name:doc.get("name")})),documents:documents.docs.map(doc=>doc.data()).filter(doc=>doc.status==="ready" && (!doc.expiresAt || doc.expiresAt>Date.now())),folders:folderList,grants:grants.docs.map(doc=>({id:doc.id,...doc.data()})),limits:libraryLimits,guest:actor.guest});
   }
   const grants=await actor.db.collection("libraryGrants").where("studentId","==",actor.id).limit(200).get();
   const documents=await Promise.all(grants.docs.filter(doc=>doc.get("active")).map(doc=>ownedDocument(actor,doc.get("documentId")).catch(()=>null)));
@@ -65,8 +65,22 @@ export async function POST(request:Request){try{
       const source=await actor.db.doc(`librarySessions/${input.fromSession}`).get();
       if(actor.guest || source.get("ownerId")!==actor.ownerId || source.get("studentId")!==actor.studentId)throw new LibraryError("Урок другого ученика недоступен.",403);
       const document=await ownedDocument(actor,source.get("documentId"));if(document.ownerId!==actor.ownerId)throw new LibraryError("Нет доступа.",403);
-      const baseDepth=Number(source.get("baseDepth")||0)+1;if(baseDepth>5)throw new LibraryError("Слишком длинная цепочка восстановления. Откройте исходный материал и сохраните PDF с пометками.");
-      await ref.set({ownerId:actor.ownerId,studentId:actor.studentId,documentId:document.id,page:source.get("page")||1,active:true,revision:1,baseSessionId:input.fromSession,baseDepth,annotationBytes:source.get("annotationBytes")||0,updatedAt:new Date().toISOString(),lessonDate:new Date().toISOString()});return reply({saved:true});
+      const copied=new Map<string,FirebaseFirestore.DocumentData>();let cursor=String(input.fromSession);
+      for(let depth=0;cursor && depth<6;depth++){
+        const parent=await actor.db.doc(`librarySessions/${cursor}`).get();if(parent.get("ownerId")!==actor.ownerId || parent.get("studentId")!==actor.studentId)throw new LibraryError("Недоступный прошлый урок.",403);
+        const pages=await parent.ref.collection("pages").limit(301).get();if(pages.size>300)throw new LibraryError("В старом уроке слишком много страниц для восстановления.");
+        for(const page of pages.docs)if(page.id.startsWith(document.id+"_") && !copied.has(page.id))copied.set(page.id,page.data());
+        cursor=parent.get("baseSessionId")||"";
+      }
+      if(cursor)throw new LibraryError("Слишком длинная цепочка старого урока. Сохраните PDF с пометками.");
+      const oldPages=await ref.collection("pages").limit(301).get();if(oldPages.size>300)throw new LibraryError("В текущем уроке слишком много страниц.");
+      const current=await ref.get();
+      const removed=oldPages.docs.filter(page=>!copied.has(page.id));
+      if(removed.length+copied.size+1>500)throw new LibraryError("Слишком много страниц для замены в текущем уроке. Откройте новый урок и восстановите пометки там.");
+      // Replace pages and session metadata atomically; a failed write leaves the current lesson intact.
+      const restore=actor.db.batch();for(const page of removed)restore.delete(page.ref);let annotationBytes=0;
+      for(const [key,value]of copied){restore.set(ref.collection("pages").doc(key),value);annotationBytes+=Number(value.bytes||0);}
+      restore.set(ref,{ownerId:actor.ownerId,studentId:actor.studentId,documentId:document.id,page:source.get("page")||1,active:true,revision:(current.get("revision")||0)+1,annotationBytes,annotationPages:copied.size,updatedAt:new Date().toISOString(),lessonDate:new Date().toISOString(),restoredFrom:input.fromSession});await restore.commit();return reply({saved:true});
     }
     await actor.db.runTransaction(async tx=>{
       const snapshot=await tx.get(ref);if(snapshot.get("ownerId")!==actor.ownerId || snapshot.get("studentId")!==actor.studentId)throw new LibraryError("Презентация не открыта.",403);
@@ -75,19 +89,15 @@ export async function POST(request:Request){try{
       if(typeof input.page!=="number" || !Number.isInteger(input.page) || input.page<1 || input.page>document.get("pages"))throw new LibraryError("Нет такой страницы.");
       if(input.action==="page"){tx.update(ref,{page:input.page,revision:(snapshot.get("revision")||0)+1,updatedAt:new Date().toISOString()});return;}
       if(input.documentId!==snapshot.get("documentId") || !Array.isArray(input.strokes) || input.strokes.length>libraryLimits.strokes || !input.strokes.every(isClassroomStroke))throw new LibraryError("Некорректные пометки.");
-      const pageRef=ref.collection("pages").doc(`${input.documentId}_${input.page}`),old=await tx.get(pageRef);const size=Buffer.byteLength(JSON.stringify(input.strokes));const total=(snapshot.get("annotationBytes")||0)-(old.get("bytes")||0)+size;if(total>4*1024*1024)throw new LibraryError("Пометки урока достигли 4 МБ. Сохраните PDF и начните новый урок.");
-      tx.set(pageRef,{strokes:input.strokes.map(stroke=>canonicalStroke(stroke,actor.id)),bytes:size});tx.update(ref,{annotationBytes:total,revision:(snapshot.get("revision")||0)+1,updatedAt:new Date().toISOString()});
+      const pageRef=ref.collection("pages").doc(`${input.documentId}_${input.page}`),old=await tx.get(pageRef);const size=Buffer.byteLength(JSON.stringify(input.strokes));const annotationPages=(snapshot.get("annotationPages")||0)+(old.exists?0:1);if(annotationPages>300)throw new LibraryError("В уроке уже 300 страниц с пометками. Сохраните PDF и начните новый урок.");const total=(snapshot.get("annotationBytes")||0)-(old.get("bytes")||0)+size;if(total>4*1024*1024)throw new LibraryError("Пометки урока достигли 4 МБ. Сохраните PDF и начните новый урок.");
+      tx.set(pageRef,{strokes:input.strokes.map(stroke=>canonicalStroke(stroke,actor.id)),bytes:size});tx.update(ref,{annotationBytes:total,annotationPages,revision:(snapshot.get("revision")||0)+1,updatedAt:new Date().toISOString()});
     });return reply({saved:true});
   }
+  if(input.action==="delete"){await deleteLibraryDocument(actor,input.documentId);return reply({saved:true});}
   const document=await ownedDocument(actor,input.documentId);if(document.ownerId!==actor.ownerId)throw new LibraryError("Это материал другого преподавателя.",403);
   if(input.action==="rename"){
-    const name=libraryName(input.name);if(!name)throw new LibraryError("Введите название.");const folderId=typeof input.folderId==="string"?input.folderId:document.folderId;if(!(await folders(actor)).some(folder=>folder.id===folderId))throw new LibraryError("Папка недоступна.");
+    const rawName=libraryName(input.name);const name=rawName && /\.pdf$/i.test(rawName)?rawName:rawName?rawName+".pdf":"";if(!name)throw new LibraryError("Введите название.");const folderId=typeof input.folderId==="string"?input.folderId:document.folderId;if(!(await folders(actor)).some(folder=>folder.id===folderId))throw new LibraryError("Папка недоступна.");
     await actor.db.doc(`libraryDocuments/${document.id}`).update({name,folderId});return reply({saved:true});
-  }
-  if(input.action==="delete"){
-    const ref=actor.db.doc(`libraryDocuments/${document.id}`),quota=actor.db.doc(`libraryAccounts/${actor.ownerId}`);
-    await actor.db.runTransaction(async tx=>{const [current,used]=await Promise.all([tx.get(ref),tx.get(quota)]);if(current.get("status")!=="ready")return;tx.update(ref,{status:"deleted"});tx.set(quota,{bytes:Math.max(0,(used.get("bytes")||0)-document.bytes),count:Math.max(0,(used.get("count")||0)-1)});});
-    const [chunks,grants]=await Promise.all([ref.collection("chunks").get(),actor.db.collection("libraryGrants").where("documentId","==",document.id).get()]);const batch=actor.db.batch();chunks.docs.forEach(doc=>batch.delete(doc.ref));grants.docs.forEach(doc=>batch.delete(doc.ref));await batch.commit();return reply({saved:true});
   }
   if(input.action==="share" || input.action==="revoke"){
     const studentId=input.action==="revoke" && isLibraryId(input.studentId)?input.studentId:await linkedStudent(actor,input.studentId);let shared=document;

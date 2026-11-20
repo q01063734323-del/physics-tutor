@@ -1,6 +1,8 @@
 import type { User } from "firebase/auth";
+import { auth } from "./firebase";
 
 export async function classroomRequest<T>(user: User, body?: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
+  if (auth.currentUser?.uid !== user.uid) throw new Error("Аккаунт изменился. Откройте урок заново.");
   const response = await fetch("/api/classroom", {
     method: body ? "POST" : "GET",
     headers: {

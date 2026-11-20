@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ConnectionState, Room, RoomEvent, Track, type Participant } from "livekit-client";
+import { cameraCapture, enableStudioCamera } from "./studio/quality";
 import type { MediaPreferences } from "./studio/model";
 import type { ClassroomSession } from "./classroom";
 
@@ -54,9 +55,10 @@ export function useClassroomMedia(session: ClassroomSession, notice: (message: s
   useEffect(() => {
     let active = true;
     const preferences = typeof enableDevices === "boolean" ? { camera: enableDevices, microphone: enableDevices } : enableDevices;
-    const room = new Room({ adaptiveStream: true, dynacast: true,
+    const room = new Room({ adaptiveStream: {pixelDensity:"screen"}, dynacast: true,
+      videoCaptureDefaults: cameraCapture,
       audioOutput: preferences.speakerId ? { deviceId: preferences.speakerId } : undefined,
-      publishDefaults: { screenShareEncoding: { maxBitrate: 4_000_000, maxFramerate: 15 }, degradationPreference: "maintain-resolution" },
+      publishDefaults: { videoEncoding: { maxBitrate: 1_800_000, maxFramerate: 30 }, screenShareEncoding: { maxBitrate: 4_000_000, maxFramerate: 15 } },
     });
     function release() {
       for (const publication of room.localParticipant.trackPublications.values()) publication.track?.stop();
@@ -90,7 +92,7 @@ export function useClassroomMedia(session: ClassroomSession, notice: (message: s
       if (!active) { release(); return; }
       if (preferences.camera || preferences.microphone) {
         const results = await Promise.allSettled([
-          preferences.camera ? room.localParticipant.setCameraEnabled(true, { deviceId: preferences.cameraId }) : Promise.resolve(),
+          preferences.camera ? enableStudioCamera(room,true,preferences.cameraId) : Promise.resolve(),
           preferences.microphone ? room.localParticipant.setMicrophoneEnabled(true, { deviceId: preferences.microphoneId, echoCancellation: true, noiseSuppression: true }) : Promise.resolve(),
         ]);
         if (!active) { release(); return; }

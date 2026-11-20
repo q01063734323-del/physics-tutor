@@ -1,4 +1,4 @@
-export type StudioMode = "studio" | "cinema" | "free";
+export type StudioMode = "studio" | "cinema" | "free" | "whiteboard";
 export type Point = { x: number; y: number };
 export type StudioLayout = { mode: StudioMode; railWidth: number; cameraWidth: number; cameras: boolean; hidden: string[]; positions: Record<string, Point> };
 export const defaultLayout: StudioLayout = { mode: "studio", railWidth: 248, cameraWidth: 216, cameras: true, hidden: [], positions: {} };
@@ -9,7 +9,7 @@ export function normalizeLayout(value: unknown): StudioLayout {
   if (data.positions && typeof data.positions === "object") for (const [id, point] of Object.entries(data.positions).slice(0, 4)) {
     if (["teacher", "student", "local", "peer"].includes(id) && point && Number.isFinite(point.x) && Number.isFinite(point.y)) positions[id] = { x: clamp(point.x, 0, 1), y: clamp(point.y, 0, 1) };
   }
-  return { mode: ["studio", "cinema", "free"].includes(data.mode || "") ? data.mode! : "studio",
+  return { mode: ["studio", "cinema", "free", "whiteboard"].includes(data.mode || "") ? data.mode! : "studio",
     railWidth: Number.isFinite(data.railWidth) ? clamp(data.railWidth!, 180, 340) : 248,
     cameraWidth: Number.isFinite(data.cameraWidth) ? clamp(data.cameraWidth!, 140, 300) : 216,
     hidden: Array.isArray(data.hidden) ? [...new Set(data.hidden.filter(key => ["teacher", "student", "local", "peer"].includes(key)))] : [],

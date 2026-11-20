@@ -1,5 +1,6 @@
 import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { AccessToken, RoomConfiguration, RoomServiceClient, TrackSource } from "livekit-server-sdk";
+import { endGuestLibrary } from "@/lib/library/server";
 import { getFirebaseAdmin } from "@/lib/firebase-admin";
 import {
   canonicalStroke, classroomNotesLimit, classroomStrokeLimit, emptyClassroomBoard, isClassroomId, isClassroomStroke,
@@ -113,6 +114,7 @@ export async function POST(request: Request) {
       if (role !== "teacher") throw new DemoError("Завершить урок может преподаватель.", 403);
       await ref.update({ status: "ended" });
       await config().rooms.deleteRoom(`pt-guest-${roomId}`);
+      await endGuestLibrary(adminDb,roomId).catch(()=>undefined);
       return response({ ok: true });
     }
     if (!["stroke", "erase", "undo", "notes", "clear"].includes(String(input.action))) throw new DemoError("Неизвестное действие.", 400);

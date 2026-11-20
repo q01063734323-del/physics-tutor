@@ -75,7 +75,8 @@ try {
   }
   const pages=new Map();global.window={addEventListener:(k,v)=>pages.set(k,v),removeEventListener:k=>pages.delete(k)};
   const transpiled=ts.transpileModule(mediaSource,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-  const mediaExports={}; const fakeRequire=name=>name==='react'?hooks:name==='livekit-client'?{Room:MockRoom,RoomEvent:events,Track:{Source:{}},ConnectionState:{Connecting:'connecting',Disconnected:'disconnected'}}:{};
+  const qualityExports={};new Function('exports','require',ts.transpileModule(await fs.readFile('src/lib/studio/quality.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(qualityExports,()=>({LocalVideoTrack:class{},Track:{Source:{}}}));
+  const mediaExports={}; const fakeRequire=name=>name==='react'?hooks:name==='./studio/quality'?qualityExports:name==='livekit-client'?{Room:MockRoom,RoomEvent:events,Track:{Source:{}},ConnectionState:{Connecting:'connecting',Disconnected:'disconnected'}}:{};
   new Function('require','exports',transpiled)(fakeRequire,mediaExports);
   mediaExports.useClassroomMedia({url:'wss://rooms.example.test',token:'test'},()=>{},()=>{},false);
   let dispose=effect();await new Promise(resolve=>setImmediate(resolve));assert.equal(instances.at(-1).cameraCalls,0);assert.equal(instances.at(-1).micCalls,0);pages.get('pagehide')();assert(instances.at(-1).stops>0);dispose();assert(instances.at(-1).removed);assert.equal(pages.size,0);

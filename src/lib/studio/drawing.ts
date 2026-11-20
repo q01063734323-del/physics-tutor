@@ -20,3 +20,5 @@ export function smoothStroke(context:CanvasRenderingContext2D,stroke:ClassroomSt
   context.stroke();context.restore();
 }
 export function hitStroke(stroke:ClassroomStroke,point:string){const [x,y]=xy(point);for(let i=1;i<stroke.points.length;i++){const [a,b]=xy(stroke.points[i-1]),[c,d]=xy(stroke.points[i]);const t=Math.max(0,Math.min(1,((x-a)*(c-a)+(y-b)*(d-b))/((c-a)**2+(d-b)**2||1)));if(Math.hypot(x-a-t*(c-a),y-b-t*(d-b))<Math.max(8,(stroke.width||3)/2))return true;}return false;}
+
+export const drawingPerformance:{localPaintMs:number|null;remotePaintMs:number|null}={localPaintMs:null,remotePaintMs:null};
