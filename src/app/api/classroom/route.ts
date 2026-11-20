@@ -3,7 +3,7 @@ import { AccessToken, RoomConfiguration, RoomServiceClient, TrackSource } from "
 import type { Firestore, Timestamp } from "firebase-admin/firestore";
 import { getFirebaseAdmin } from "@/lib/firebase-admin";
 import {
-  classroomNotesLimit, classroomStrokeLimit, emptyClassroomBoard, isClassroomId, isClassroomStroke,
+  canonicalStroke, classroomNotesLimit, classroomStrokeLimit, emptyClassroomBoard, isClassroomId, isClassroomStroke,
   type ClassroomBoardState, type ClassroomControl, type ClassroomRole,
 } from "@/lib/classroom";
 
@@ -147,10 +147,10 @@ async function mutateBoard(account: Account, roomId: string, input: Record<strin
       if (state.strokes.length >= classroomStrokeLimit) {
         throw new ClassroomError("Доска заполнена. Сотрите лишние штрихи.", 409);
       }
-      const { id, color, points } = input.stroke;
-      transaction.update(board, { strokes: [...state.strokes, { id, color, points, author: account.id }] });
+      transaction.update(board, { strokes: [...state.strokes, canonicalStroke(input.stroke,account.id)] });
       return;
     }
+    if(input.action === "clear"){if(account.role!=="teacher")throw new ClassroomError("Очистить доску может преподаватель.",403);transaction.update(board,{strokes:[]});return;}
     const target = input.action === "undo"
       ? state.strokes.findLast(stroke => stroke.author === account.id)
       : state.strokes.find(stroke => stroke.id === input.strokeId);
@@ -242,7 +242,7 @@ export async function POST(request: Request) {
       lessonFor(snapshot.data(), account);
       return await issueToken(account, input.roomId, liveKit());
     }
-    if (["stroke", "erase", "undo", "notes"].includes(String(input.action))) {
+    if (["stroke", "erase", "undo", "notes", "clear"].includes(String(input.action))) {
       return await mutateBoard(account, input.roomId, input);
     }
     if (["drawing", "mute", "remove", "end"].includes(String(input.action))) {

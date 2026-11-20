@@ -47,3 +47,6 @@ next-env.d.ts
 /tmp/pdfs/
 
 /scripts/pdf/__pycache__/
+
+# Reproducible PDF.js worker/fonts prepared by postinstall
+/public/pdf-assets/

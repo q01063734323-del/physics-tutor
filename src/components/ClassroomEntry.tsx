@@ -28,6 +28,7 @@ export function ClassroomEntry() {
 function ClassroomAccess() {
   const params = useSearchParams();
   const invite = params.get("room");
+  const material=params.get("material");
   const [user, setUser] = useState<User | null>();
   const [account, setAccount] = useState<{ role: ClassroomRole; students: ClassroomStudent[] } | null>(null);
   const [studentId, setStudentId] = useState("");
@@ -87,7 +88,7 @@ function ClassroomAccess() {
       setPreferences(null);
       setSession(next);
       setCode(next.roomId);
-      window.history.replaceState(null, "", `/classroom?room=${next.roomId}`);
+      window.history.replaceState(null, "", `/classroom?room=${next.roomId}${material?`&material=${encodeURIComponent(material)}`:""}`);
     } catch (problem) {
       setError(problem instanceof Error ? problem.message : "Не удалось открыть урок.");
     } finally { setBusy(false); }

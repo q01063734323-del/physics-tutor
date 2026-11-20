@@ -2,7 +2,7 @@ import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { AccessToken, RoomConfiguration, RoomServiceClient, TrackSource } from "livekit-server-sdk";
 import { getFirebaseAdmin } from "@/lib/firebase-admin";
 import {
-  classroomNotesLimit, classroomStrokeLimit, emptyClassroomBoard, isClassroomId, isClassroomStroke,
+  canonicalStroke, classroomNotesLimit, classroomStrokeLimit, emptyClassroomBoard, isClassroomId, isClassroomStroke,
   type ClassroomBoardState, type ClassroomRole,
 } from "@/lib/classroom";
 
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
       await config().rooms.deleteRoom(`pt-guest-${roomId}`);
       return response({ ok: true });
     }
-    if (!["stroke", "erase", "undo", "notes"].includes(String(input.action))) throw new DemoError("Неизвестное действие.", 400);
+    if (!["stroke", "erase", "undo", "notes", "clear"].includes(String(input.action))) throw new DemoError("Неизвестное действие.", 400);
     await adminDb.runTransaction(async transaction => {
       const current = (await transaction.get(ref)).data() as DemoLesson | undefined;
       roleFor(current, access);
@@ -131,10 +131,10 @@ export async function POST(request: Request) {
         const incoming = input.stroke;
         if (board.strokes.some(stroke => stroke.id === incoming.id)) return;
         if (board.strokes.length >= classroomStrokeLimit) throw new DemoError("Доска заполнена. Сотрите лишние штрихи.", 409);
-        const { id, color, points } = input.stroke;
-        transaction.update(ref, { "board.strokes": [...board.strokes, { id, color, points, author: role }] });
+        transaction.update(ref, { "board.strokes": [...board.strokes, canonicalStroke(incoming,role)] });
         return;
       }
+      if(input.action==="clear"){if(role!=="teacher")throw new DemoError("Очистить доску может преподаватель.",403);transaction.update(ref,{"board.strokes":[]});return;}
       const target = input.action === "undo"
         ? board.strokes.findLast(stroke => stroke.author === role)
         : board.strokes.find(stroke => stroke.id === input.strokeId);

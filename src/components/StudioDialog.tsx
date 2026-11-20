@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, type ReactNode } from "react";
 import s from "./PhysicsStudio.module.css";
-export function StudioDialog({ title, id, children, onClose }: { title: string; id: string; children: ReactNode; onClose: () => void }) {
+export function StudioDialog({ title, id, children, onClose, wide=false }: { title: string; id: string; children: ReactNode; onClose: () => void; wide?:boolean }) {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
@@ -9,7 +9,7 @@ export function StudioDialog({ title, id, children, onClose }: { title: string; 
     (focusable || ref.current)?.focus();
     return () => { if (previous?.isConnected) previous.focus(); };
   }, []);
-  return <div className={s.modalBackdrop}><section ref={ref} className={s.modal} role="dialog" aria-modal="true" aria-labelledby={id} tabIndex={-1} onKeyDown={event => {
+  return <div className={s.modalBackdrop}><section ref={ref} className={`${s.modal} ${wide?s.modalWide:""}`} role="dialog" aria-modal="true" aria-labelledby={id} tabIndex={-1} onKeyDown={event => {
     if (event.key === "Escape") { event.stopPropagation(); onClose(); }
     if (event.key !== "Tab") return;
     const items = [...(ref.current?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex="0"]') || [])];

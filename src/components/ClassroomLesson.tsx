@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { User } from "firebase/auth";
 import { doc, onSnapshot, type Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -31,6 +31,7 @@ export function ClassroomLesson({ session, user, preferences, onLeave }: LessonP
   const noteTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const dirtyNote = useRef<string | null>(null);
   const writeQueue = useRef<Promise<unknown>>(Promise.resolve());
+  const libraryContext=useMemo(()=>({user,roomId:session.roomId}),[user,session.roomId]);
   const teacher = session.role === "teacher";
 
   useEffect(() => {
@@ -82,8 +83,8 @@ export function ClassroomLesson({ session, user, preferences, onLeave }: LessonP
     const link = new URL("/classroom", window.location.origin); link.searchParams.set("room", session.roomId); setInvite(link.href);
     try { await navigator.clipboard.writeText(link.href); setNotice("Приглашение скопировано. Доступ есть только у выбранного ученика."); } catch { setNotice("Скопируй ссылку из поля приглашения."); }
   }
-  return <><PhysicsStudio media={media} role={session.role} accountId={user.uid} error={error} notice={notice} invitation={invite} onInvite={shareInvite} onLeave={() => setConfirmExit(true)} onReconnect={async () => setAccess(await classroomRequest<ClassroomSession>(user, { action: "join", roomId: session.roomId }))}
-    board={<ClassroomBoard label={boardReady ? "Общая доска" : "Загрузка…"} strokes={[...board.strokes, ...localStrokes.filter(stroke => !board.strokes.some(saved => saved.id === stroke.id))]} accountId={user.uid} canDraw={boardReady && Boolean(control) && (teacher || Boolean(control?.studentCanDraw))} canEraseAll={teacher} onStroke={submitStroke} onErase={strokeId => void run(() => enqueue({ action: "erase", strokeId }))} onUndo={() => void run(() => enqueue({ action: "undo" }))}/>}
+  return <><PhysicsStudio libraryContext={libraryContext} media={media} role={session.role} accountId={user.uid} error={error} notice={notice} invitation={invite} onInvite={shareInvite} onLeave={() => setConfirmExit(true)} onReconnect={async () => setAccess(await classroomRequest<ClassroomSession>(user, { action: "join", roomId: session.roomId }))}
+    board={<ClassroomBoard room={media.room} peerCanDraw={teacher?Boolean(control?.studentCanDraw):true} label={boardReady ? "Общая доска" : "Загрузка…"} strokes={[...board.strokes, ...localStrokes.filter(stroke => !board.strokes.some(saved => saved.id === stroke.id))]} accountId={user.uid} canDraw={boardReady && Boolean(control) && (teacher || Boolean(control?.studentCanDraw))} canEraseAll={teacher} onStroke={submitStroke} onErase={strokeId => void run(() => enqueue({ action: "erase", strokeId }))} onUndo={() => void run(() => enqueue({ action: "undo" }))} onClear={() => void run(() => enqueue({action:"clear"}))}/>}
     resources={<>{teacher && control && <div className="pt-live-moderation" role="group" aria-label="Управление учеником"><button type="button" disabled={pending || control.studentRemoved} onClick={() => void run(() => moderate("drawing", { enabled: !control.studentCanDraw }))}>{control.studentCanDraw ? "Приостановить рисование ученика" : "Разрешить рисование ученику"}</button><button type="button" disabled={pending || !media.participants.some(participant => !participant.local && participant.microphoneOn)} onClick={() => void run(() => moderate("mute"))}>Выключить микрофон ученика</button><button type="button" disabled={pending || control.studentRemoved} onClick={() => void run(() => moderate("remove"))}>Удалить ученика из урока</button></div>}<label className="pt-room-notes">Ваши заметки<textarea value={noteDraft ?? board.notes[session.role] ?? ""} maxLength={classroomNotesLimit} disabled={!boardReady} onBlur={() => void saveNotes().catch(problem => setError(problem.message))} onChange={event => updateNotes(event.target.value)} placeholder="Условие, формулы или ход решения…"/>{savingNote && <small role="status">Сохраняем…</small>}</label><div className="pt-peer-note"><b>Заметки {teacher ? "ученика" : "преподавателя"}</b><p>{board.notes[teacher ? "student" : "teacher"] || "Пока пусто."}</p></div></>}/>
     {confirmExit && <StudioDialog title="Выйти из студии?" id="studio-exit-title" onClose={() => setConfirmExit(false)}><p>{teacher ? "Можно выйти и вернуться по ссылке или завершить урок для обоих участников." : "Ты сможешь вернуться по той же ссылке, пока урок открыт."}</p>{error && <p role="alert" className={s.error}>{error}</p>}<button type="button" onClick={() => setConfirmExit(false)}>Остаться</button><button type="button" disabled={pending} onClick={() => void run(async () => { await saveNotes(); onLeave("Вы вышли из урока.", true); })}>Выйти из звонка</button>{teacher && <button type="button" className={s.leave} disabled={pending} onClick={() => void run(async () => { await saveNotes(); await moderate("end"); onLeave("Урок завершён."); })}>Завершить урок для всех</button>}</StudioDialog>}
   </>;

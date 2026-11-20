@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ClassroomBoard } from "./ClassroomBoard";
 import { StudioPrejoin } from "./StudioPrejoin";
 import { StudioDialog } from "./StudioDialog";
@@ -30,6 +30,7 @@ function DemoRoom({ initialSession, preferences, onLeave }: { initialSession: Gu
   const [invite, setInvite] = useState("");
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   const media = useClassroomMedia(session, setNotice, setError, preferences);
+  const libraryContext=useMemo(()=>({roomId:session.roomId,guestAccess:session.access}),[session.roomId,session.access]);
   const teacher = session.role === "teacher";
   const request = useCallback(<T,>(body: Record<string, unknown>, signal?: AbortSignal) => guestRequest<T>({ ...body, roomId: session.roomId }, session.access, signal), [session.access, session.roomId]);
   useEffect(() => {
@@ -65,8 +66,8 @@ function DemoRoom({ initialSession, preferences, onLeave }: { initialSession: Gu
     url.hash = new URLSearchParams({ access }).toString(); setInvite(url.href);
     try { await navigator.clipboard.writeText(url.href); setNotice("Личная ссылка скопирована. Передай её только ученику."); } catch { setNotice("Скопируй приглашение из поля выше."); }
   }
-  return <><PhysicsStudio media={media} role={session.role} accountId={`guest-${session.role}`} error={error} notice={notice} invitation={invite} onInvite={shareInvite} onLeave={() => setConfirmExit(true)} onReconnect={async () => { const next = await request<ClassroomSession>({ action: "join" }); setSession({ ...session, ...next }); }}
-    board={<ClassroomBoard label={ready ? "Общая доска" : "Загружаем…"} strokes={[...board.strokes, ...strokes.filter(stroke => !board.strokes.some(saved => saved.id === stroke.id))]} accountId={session.role} canDraw={ready} canEraseAll={teacher} onStroke={submitStroke} onErase={strokeId => void run(() => enqueue({ action: "erase", strokeId }))} onUndo={() => void run(() => enqueue({ action: "undo" }))}/>}
+  return <><PhysicsStudio libraryContext={libraryContext} media={media} role={session.role} accountId={`guest-${session.role}`} error={error} notice={notice} invitation={invite} onInvite={shareInvite} onLeave={() => setConfirmExit(true)} onReconnect={async () => { const next = await request<ClassroomSession>({ action: "join" }); setSession({ ...session, ...next }); }}
+    board={<ClassroomBoard room={media.room} label={ready ? "Общая доска" : "Загружаем…"} strokes={[...board.strokes, ...strokes.filter(stroke => !board.strokes.some(saved => saved.id === stroke.id))]} accountId={session.role} canDraw={ready} canEraseAll={teacher} onStroke={submitStroke} onErase={strokeId => void run(() => enqueue({ action: "erase", strokeId }))} onUndo={() => void run(() => enqueue({ action: "undo" }))} onClear={() => void run(() => enqueue({action:"clear"}))}/>}
     resources={<><label className="pt-room-notes">Ваши заметки<textarea maxLength={6000} value={note ?? board.notes[session.role] ?? ""} disabled={!ready} onChange={event => setNote(event.target.value)} onBlur={() => void run(saveNote)} placeholder="Условие, формулы, решение…"/></label><div className="pt-peer-note"><b>Заметки {teacher ? "ученика" : "преподавателя"}</b><p>{board.notes[teacher ? "student" : "teacher"] || "Пока пусто."}</p></div><p className={s.muted}>Гостевой урок защищён личной ссылкой и действует четыре часа. Для постоянных уроков используй аккаунт.</p></>}/>
     {confirmExit && <StudioDialog title="Выйти из студии?" id="studio-guest-exit" onClose={() => setConfirmExit(false)}><p>Можно вернуться по той же личной ссылке, пока урок открыт.</p>{error && <p role="alert" className={s.error}>{error}</p>}<button type="button" onClick={() => setConfirmExit(false)}>Остаться</button><button type="button" disabled={pending} onClick={() => void run(async () => { await saveNote(); onLeave(); })}>Выйти из звонка</button>{teacher && <button type="button" disabled={pending} onClick={() => void run(async () => { await saveNote(); await request({ action: "end" }); onLeave(); })}>Завершить урок для всех</button>}</StudioDialog>}
   </>;
