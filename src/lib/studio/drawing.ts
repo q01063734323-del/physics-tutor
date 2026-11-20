@@ -17,7 +17,10 @@ export function smoothStroke(context:CanvasRenderingContext2D,stroke:ClassroomSt
   context.save();context.strokeStyle=stroke.color;context.lineWidth=stroke.width||3;context.lineCap="round";context.lineJoin="round";context.globalAlpha=stroke.tool==="marker"?.28:1;context.beginPath();context.moveTo(...points[0]);
   if(stroke.tool==="line" || stroke.tool==="arrow" || stroke.tool==="rectangle")for(const point of points.slice(1))context.lineTo(...point);
   else {for(let i=1;i<points.length-1;i++)context.quadraticCurveTo(points[i][0],points[i][1],(points[i][0]+points[i+1][0])/2,(points[i][1]+points[i+1][1])/2);context.lineTo(...points.at(-1)!);}
-  context.stroke();context.restore();
+  // A tap has no segment length: draw its round cap explicitly on every browser.
+  if(points.every(point=>point[0]===points[0][0] && point[1]===points[0][1])){
+    context.fillStyle=stroke.color;context.beginPath();context.arc(points[0][0],points[0][1],(stroke.width||3)/2,0,Math.PI*2);context.fill();
+  }else context.stroke();context.restore();
 }
 export function hitStroke(stroke:ClassroomStroke,point:string){const [x,y]=xy(point);for(let i=1;i<stroke.points.length;i++){const [a,b]=xy(stroke.points[i-1]),[c,d]=xy(stroke.points[i]);const t=Math.max(0,Math.min(1,((x-a)*(c-a)+(y-b)*(d-b))/((c-a)**2+(d-b)**2||1)));if(Math.hypot(x-a-t*(c-a),y-b-t*(d-b))<Math.max(8,(stroke.width||3)/2))return true;}return false;}
 

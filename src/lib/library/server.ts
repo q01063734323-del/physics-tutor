@@ -70,6 +70,7 @@ export async function annotatedPdf(actor:LibraryActor,doc:LibraryDocument,fromSe
     const page=pdf.getPage(index);const box=page.getCropBox();const rotation=((page.getRotation().angle%360)+360)%360;const rw=rotation%180?box.height:box.width,rh=rotation%180?box.width:box.height;
     const map=(point:string)=>{const [x,y]=point.split(",").map(Number);const rx=x/900*rw,ry=y/(900*rh/rw)*rh;return rotation===90?{x:box.x+ry,y:box.y+rx}:rotation===180?{x:box.x+box.width-rx,y:box.y+ry}:rotation===270?{x:box.x+box.width-ry,y:box.y+box.height-rx}:{x:box.x+rx,y:box.y+box.height-ry};};
     for(const stroke of strokes){const color=rgb(parseInt(stroke.color.slice(1,3),16)/255,parseInt(stroke.color.slice(3,5),16)/255,parseInt(stroke.color.slice(5,7),16)/255);const points=stroke.points.map(map);const thickness=(stroke.width||3)*rw/900;
+      if(points.every(point=>point.x===points[0].x && point.y===points[0].y)){page.drawCircle({x:points[0].x,y:points[0].y,size:thickness/2,color,opacity:stroke.tool==="marker"?.28:1});continue;}
       const pair=(point:{x:number;y:number})=>`${point.x} ${-point.y}`;let path=`M ${pair(points[0])}`;
       if(stroke.tool==="line" || stroke.tool==="arrow" || stroke.tool==="rectangle")for(const point of points.slice(1))path+=` L ${pair(point)}`;
       else {for(let p=1;p<points.length-1;p++)path+=` Q ${pair(points[p])} ${pair({x:(points[p].x+points[p+1].x)/2,y:(points[p].y+points[p+1].y)/2})}`;path+=` L ${pair(points.at(-1)!)}`;}
