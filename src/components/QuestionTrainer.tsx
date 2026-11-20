@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- Private source crops must bypass image optimization and retain scan proportions. */
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import { displayTrainerAnswer, filterTrainerQuestions, gradeTrainerAnswer, initialTrainerFilters, latestAttempt, physicsSections, trainerProgress, type TrainerAttempt, type TrainerFilters, type TrainerQuestion } from "@/lib/trainer-bank";
@@ -48,8 +48,28 @@ export default function QuestionTrainer({ questions, namespace, preview = false,
   const [saving, setSaving] = useState(false);
   const [revealed, setRevealed] = useState<Record<string, TrainerCheckResult>>({});
   const [catalogPage, setCatalogPage] = useState(0);
-  const pageSize = 30;
   const storageKey = `physics-trainer-v1:${namespace}`;
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const topic = params.get("topic"), number = Number(params.get("number")), taskId = params.get("task");
+    queueMicrotask(() => {
+      if (topic) setFilters(previous => ({ ...previous, mode: "topics", topic }));
+      else if (Number.isInteger(number) && number > 0) setFilters(previous => ({ ...previous, mode: "numbers", number }));
+      if (taskId && questions.some(question => question.id === taskId)) { setQueueIds([taskId]); setSelectedId(taskId); setView("practice"); }
+      else if (taskId) { setQueueIds([]); setSelectedId(null); setView("practice"); setMessage("Задача больше недоступна. Вернись к каталогу и выбери доступную подборку."); }
+      const limit=Number(params.get("limit"));
+      if(!taskId && Number.isInteger(limit) && limit>0 && limit<=100) {
+        const selected=filterTrainerQuestions(questions,{...initialTrainerFilters,mode:topic?"topics":"numbers",topic:topic || "all",number:Number.isInteger(number) && number>0?number:"all"});
+        let history: TrainerAttempt[] = [];
+        try { const stored = JSON.parse(readProgress(storageKey)); if (Array.isArray(stored)) history = stored.filter(attempt => attempt && typeof attempt.questionId === "string" && typeof attempt.version === "string"); } catch { /* An unreadable history leaves the recommendation queue unranked. */ }
+        const latest=new Map(history.map(attempt=>[`${attempt.questionId}:${attempt.version}`,attempt]));
+        const priority=(question:TrainerQuestion)=>{const last=latest.get(`${question.id}:${question.version}`);return last?.correct===false?0:last?2:1;};
+        const queue=selected.slice().sort((a,b)=>priority(a)-priority(b)).slice(0,limit);
+        setQueueIds(queue.map(question=>question.id));setSelectedId(queue[0]?.id || null);setView("practice");
+      }
+    });
+  }, [questions, storageKey]);
+  const pageSize = 30;
   const saved = useSyncExternalStore(subscribeProgress, () => readProgress(storageKey), () => "[]");
   const attempts = useMemo<TrainerAttempt[]>(() => {
     try {
@@ -102,18 +122,18 @@ export default function QuestionTrainer({ questions, namespace, preview = false,
       } finally { setSaving(false); }
     } else result = gradeTrainerAnswer(current, input);
     const attempt: TrainerAttempt = { id: crypto.randomUUID(), questionId: current.id, version: current.version, input, correct: result.correct, createdAt: new Date().toISOString() };
+    if (onAttempt) {
+      setSaving(true);
+      try { await onAttempt(attempt); }
+      catch { setMessage("Ответ проверен, но запись результата не подтверждена. Не закрывай вкладку и повтори сохранение кнопкой проверки."); return; }
+      finally { setSaving(false); }
+    }
     setCompleted(previous => ({ ...previous, [`${current.id}:${current.version}`]: attempt }));
     let note = result.feedback;
     try {
       window.localStorage.setItem(storageKey, JSON.stringify([...attempts, attempt].slice(-10000)));
       window.dispatchEvent(new Event("physics-trainer-progress"));
     } catch { note += " Прогресс не удалось сохранить в этом браузере."; }
-    if (onAttempt) {
-      setSaving(true);
-      try { await onAttempt(attempt); }
-      catch { note += " Синхронизация не удалась; результат остался на этом устройстве."; }
-      finally { setSaving(false); }
-    }
     setMessage(note);
   }
 
