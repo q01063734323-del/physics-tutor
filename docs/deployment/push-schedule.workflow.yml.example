@@ -1,0 +1,25 @@
+# Optional free alternative. Copy to .github/workflows/push-schedule.yml
+# on the DEFAULT branch only after deployment approval and secret configuration.
+name: Dispatch student Web Push
+on:
+  schedule:
+    - cron: '2-59/5 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: student-web-push
+  cancel-in-progress: false
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node scripts/dispatch-push.mjs
+        env:
+          PUSH_DISPATCH_ORIGIN: ${{ vars.PUSH_DISPATCH_ORIGIN }}
+          PUSH_CRON_SECRET: ${{ secrets.PUSH_CRON_SECRET }}

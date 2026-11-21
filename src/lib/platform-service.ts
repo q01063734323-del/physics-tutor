@@ -1,9 +1,10 @@
-import { addDoc, collection, getDocs, query, serverTimestamp, where, type Firestore } from "firebase/firestore";
-import type { Assignment, AssignmentStatus, Submission, UserRole } from "./models";
+import { collection, getDocs, query, where, type Firestore } from "firebase/firestore";
+import { homeworkRequest } from "./push/client";
+import type { Assignment, Submission, UserRole } from "./models";
 
 export async function createPlatformAssignment(db: Firestore, assignment: Assignment) {
-  const ref = await addDoc(collection(db, "assignments"), { ...assignment, createdAt: serverTimestamp() });
-  return ref.id;
+  void db;
+  return (await homeworkRequest<{id:string}>("create", { assignment }, { title:assignment.title, description:assignment.description, topic:assignment.topic, dueDate:assignment.dueDate, audience:assignment.audience, assignedToId:assignment.assignedToId })).id;
 }
 
 export async function listPlatformAssignments(db: Firestore, userId: string, role: UserRole) {
@@ -15,8 +16,8 @@ export async function listPlatformAssignments(db: Firestore, userId: string, rol
 }
 
 export async function createPlatformSubmission(db: Firestore, submission: Submission) {
-  const ref = await addDoc(collection(db, "submissions"), { ...submission, status: submission.status || ("submitted" as AssignmentStatus), createdAt: serverTimestamp() });
-  return ref.id;
+  void db;
+  return (await homeworkRequest<{id:string}>("submit", { submission }, { assignmentId:submission.assignmentId, fileName:(submission as Submission & {fileName?:string}).fileName, fileSize:(submission as Submission & {fileSize?:number}).fileSize })).id;
 }
 
 export async function listStudentSubmissions(db: Firestore, studentId: string) {

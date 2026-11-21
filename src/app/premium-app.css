@@ -71,3 +71,7 @@ body { background:#060b18;color:#edf3ff;color-scheme:dark; }
 .error-page .primary { background:#417beb;color:white;min-height:44px; }
 .loading-orbit { border-color:#395a85; }.loading-orbit i { background:#7dd3fc; }
 @media(prefers-reduced-motion:reduce) { .loading-orbit,.loading-orbit i { animation:none!important; } }
+
+.push-homework-controls{max-width:100%;min-width:0;font-size:.875rem}.push-homework-controls summary{cursor:pointer;padding:12px 0}.push-homework-controls form{display:grid;gap:12px;min-width:220px;max-width:100%;padding:12px 0}.push-homework-controls label{display:grid;gap:6px;white-space:normal}.push-homework-controls input:not([type=checkbox]),.push-homework-controls textarea{width:100%;min-width:0;box-sizing:border-box;padding:10px;font:inherit}.push-homework-controls button{min-height:44px}.push-homework-controls p{white-space:normal;overflow-wrap:anywhere}.push-assignment-review{border-left:3px solid #386abb;padding:12px 16px;background:#152c49;margin:16px 0}.push-assignment-review p{white-space:pre-wrap}
+
+.push-existing-reminders{margin-bottom:24px;padding:18px;border:1px solid var(--line);border-radius:12px}.push-existing-reminders button{min-height:44px}.push-existing-reminders p{font-size:.875rem;line-height:1.6;color:var(--muted)}

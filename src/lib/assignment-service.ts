@@ -1,9 +1,9 @@
-import { addDoc, collection, getDocs, serverTimestamp, type Firestore } from "firebase/firestore";
+import { createPlatformAssignment, createPlatformSubmission } from "./platform-service";
+import { collection, getDocs, type Firestore } from "firebase/firestore";
 import type { Assignment, Submission } from "./models";
 
 export async function createAssignment(db: Firestore, assignment: Assignment) {
-  const ref = await addDoc(collection(db, "assignments"), { ...assignment, createdAt: serverTimestamp() });
-  return ref.id;
+  return createPlatformAssignment(db, assignment);
 }
 
 export async function listAssignments(db: Firestore) {
@@ -12,6 +12,5 @@ export async function listAssignments(db: Firestore) {
 }
 
 export async function createSubmission(db: Firestore, submission: Submission) {
-  const ref = await addDoc(collection(db, "submissions"), { ...submission, createdAt: serverTimestamp() });
-  return ref.id;
+  return createPlatformSubmission(db, submission);
 }

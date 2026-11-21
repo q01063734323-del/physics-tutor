@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { collection, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
+import { accountRequest } from "@/lib/push/client";
+import { db } from "@/lib/firebase";
 
 type Work = { id: string; assignment?: string; score?: string; comment?: string; status?: string; fileUrl?: string; createdAt?: Date };
 type Result = { id: string; title?: string; score?: number; total?: number };
@@ -73,7 +74,7 @@ export default function StudentRecord({ studentId, teacher = false }: { studentI
             const comment = String(data.get("comment") || "");
             const status = data.get("status") === "returned" ? "Возвращено на доработку" : "Проверено";
             try {
-              await updateDoc(doc(db, "submissions", work.id), { score, comment, status, reviewedAt: serverTimestamp(), reviewedBy: auth.currentUser?.uid });
+              await accountRequest("/api/homework", { action: "review", submissionId: work.id, score, comment, status });
               setRecord(current => current && ({ ...current, work: current.work.map(item => item.id === work.id ? { ...item, score, comment, status } : item) }));
               setNotice("Проверка сохранена.");
             } catch { setNotice("Не удалось сохранить проверку."); }

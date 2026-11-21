@@ -4,7 +4,7 @@ export type UserProfile = { uid: string; email: string; role: UserRole; displayN
 export type TeacherStudentLink = { id?: string; teacherId: string; studentId: string; status: "active" | "invited" | "archived"; createdAt?: unknown };
 export type StudentProfile = UserProfile & { role: "student"; displayName?: string; status: StudentStatus; registeredAt?: unknown; lastActiveAt?: unknown };
 export type StudentInvitation = { id?: string; teacherId: string; email: string; displayName: string; tokenHash: string; status: "pending" | "accepted" | "expired" | "revoked"; expiresAt: unknown; createdAt?: unknown; acceptedAt?: unknown };
-export type AssignmentStatus = "new" | "in_progress" | "submitted" | "reviewed" | "returned" | "На проверке" | "Проверено" | "Возвращено на доработку" | "Отправлено";
+export type AssignmentStatus = "new" | "in_progress" | "submitted" | "reviewed" | "returned" | "На проверке" | "Проверено" | "Возвращено на доработку" | "Отправлено" | "cancelled";
 export type QuestionType = "single_choice" | "multi_choice" | "numeric" | "sequence" | "matching" | "ordering" | "written";
 
 export type Assignment = {
@@ -16,6 +16,7 @@ export type Assignment = {
   topic: string;
   level: string;
   due: string;
+  dueDate?: string | null;
   assignedTo: string;
   assignedToId?: string | null;
   audience?: "class" | "student";

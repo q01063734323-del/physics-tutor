@@ -53,17 +53,19 @@ service cloud.firestore {
     }
     match /assignments/{assignmentId} {
       allow read: if teacher() || (enabledAccount() && assignedToMe(resource.data));
-      allow create: if teacher() && request.resource.data.teacherId == request.auth.uid
-        && (request.resource.data.audience == 'class' && request.resource.data.assignedToId == null
-          || request.resource.data.audience == 'student' && request.resource.data.assignedToId is string);
-      allow update, delete: if teacher();
+      // Mutations now go through authenticated server handlers and an atomic push outbox.
+      allow create, update, delete: if false;
     }
     match /submissions/{submissionId} {
-      allow create: if enabledAccount() && validSubmission();
       allow read: if teacher() || (enabledAccount() && resource.data.user == request.auth.token.email);
-      allow update: if teacher();
-      allow delete: if teacher();
+      allow create, update, delete: if false;
     }
+    // Push endpoints, encryption keys and delivery state are server-only.
+    match /pushSubscriptions/{id} { allow read, write: if false; }
+    match /pushJobs/{id} { allow read, write: if false; }
+    match /pushDeliveries/{id} { allow read, write: if false; }
+    match /pushControl/{id} { allow read, write: if false; }
+    match /pushAssignmentState/{id} { allow read, write: if false; }
     match /attempts/{attemptId} {
       allow create: if enabledAccount() && request.resource.data.user == request.auth.token.email;
       allow read: if teacher() || (enabledAccount() && resource.data.user == request.auth.token.email);
