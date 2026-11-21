@@ -1,3 +1,4 @@
+import { StudioOverview } from "./studio/StudioOverview";
 import Link from "next/link";
 import { PhysicsIcon } from "./PhysicsMark";
 
@@ -5,6 +6,9 @@ type Deadline = { id: string; title: string; date: string };
 
 type OverviewProps = {
   teacher: boolean;
+  account?: string;
+  solvedToday?: number;
+  submittedToday?: number;
   items: number;
   completed: number;
   pending: number;
@@ -54,7 +58,8 @@ export function PhysicsSchedule({ deadlines, openTasks }: { deadlines: Deadline[
   );
 }
 
-export function PhysicsOverview({ teacher, items, completed, pending, average, attempts, streak, deadlines, navigate }: OverviewProps) {
+export function PhysicsOverview({ teacher, items, completed, pending, average, attempts, streak, deadlines, navigate, account="guest", solvedToday=0, submittedToday=0 }: OverviewProps) {
+  if (!teacher) return <StudioOverview account={account} average={average} attempts={attempts} streak={streak} solvedToday={solvedToday} submittedToday={submittedToday} navigate={navigate}/>;
   return <div className="pt-overview">
     <div className="pt-overview-main">
       {teacher ? (

@@ -1,5 +1,6 @@
 "use client";
 
+import { recordStudioActivity } from "@/lib/studio-progress";
 import { useMemo, useState } from "react";
 
 type Entry = { category: string; name: string; formula: string; symbols: string; units: string; use: string; example: string };
@@ -13,10 +14,10 @@ const entries: Entry[] = [
   { category: "Колебания и волны", name: "Связь периода и частоты", formula: "ν = 1/T", symbols: "ν — частота, T — период", units: "Гц, с", use: "Описание повторяющихся процессов", example: "T = 0,5 с → ν = 2 Гц" },
 ];
 
-export default function FormulaReference() {
+export default function FormulaReference({account="guest"}:{account?:string}) {
   const [category, setCategory] = useState("Все");
   const [open, setOpen] = useState<string | null>(null);
   const categories = ["Все", ...Array.from(new Set(entries.map(entry => entry.category)))];
   const visible = useMemo(() => category === "Все" ? entries : entries.filter(entry => entry.category === category), [category]);
-  return <div className="reference-panel"><div className="section-head"><div><div className="eyebrow">Справочник</div><h3>Формулы по разделам физики</h3></div><span className="results-count">{visible.length} формул</span></div><div className="reference-tabs">{categories.map(item => <button key={item} className={category === item ? "selected" : ""} onClick={() => { setCategory(item); setOpen(null); }}>{item}</button>)}</div><div className="reference-grid">{visible.map(entry => <article className="reference-card" key={entry.name}><span className="tag ready">{entry.category}</span><h4>{entry.name}</h4><div className="reference-formula">{entry.formula}</div><p>{entry.symbols}</p>{open === entry.name && <div className="reference-details"><b>Единицы:</b> {entry.units}<br /><b>Применение:</b> {entry.use}<br /><b>Пример:</b> {entry.example}</div>}<div className="reference-actions"><button className="task-action-button" onClick={() => setOpen(open === entry.name ? null : entry.name)}>{open === entry.name ? "Скрыть" : "Подробнее"}</button><button className="formula-copy" onClick={() => navigator.clipboard?.writeText(entry.formula)}>Копировать</button></div></article>)}</div></div>;
+  return <div className="reference-panel"><div className="section-head"><div><div className="eyebrow">Справочник</div><h3>Формулы по разделам физики</h3></div><span className="results-count">{visible.length} формул</span></div><div className="reference-tabs">{categories.map(item => <button key={item} className={category === item ? "selected" : ""} onClick={() => { setCategory(item); setOpen(null); }}>{item}</button>)}</div><div className="reference-grid">{visible.map(entry => <article className="reference-card" key={entry.name}><span className="tag ready">{entry.category}</span><h4>{entry.name}</h4><div className="reference-formula">{entry.formula}</div><p>{entry.symbols}</p>{open === entry.name && <div className="reference-details"><b>Единицы:</b> {entry.units}<br /><b>Применение:</b> {entry.use}<br /><b>Пример:</b> {entry.example}</div>}<div className="reference-actions"><button className="task-action-button" onClick={() => {if(open !== entry.name) recordStudioActivity(account,"topic",entry.category);setOpen(open === entry.name ? null : entry.name);}}>{open === entry.name ? "Скрыть" : "Подробнее"}</button><button className="formula-copy" onClick={() => navigator.clipboard?.writeText(entry.formula)}>Копировать</button></div></article>)}</div></div>;
 }

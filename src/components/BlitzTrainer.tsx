@@ -1,5 +1,6 @@
 "use client";
 
+import { recordStudioActivity } from "@/lib/studio-progress";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MathText } from "./QuestionTrainer";
 import { baseLatex, catalogVersion, codifier, dimensionLatex, examConstants, formulaById, formulas, groups, quantities, quantityById, sections } from "@/lib/blitz/catalog";
@@ -61,12 +62,13 @@ export default function BlitzTrainer({ account = "guest", demo = false }: { acco
   const timeLeft = active?.deadlineAt ? Math.max(0, Math.ceil((active.deadlineAt - clock) / 1000)) : null;
 
   const finish = useCallback(async () => {
-    let id = "";
+    let id = "", answered = 0;
     try {
-      await update(previous => { id = previous.active?.id || ""; return finishSession(previous, Date.now()); });
+      await update(previous => { id = previous.active?.id || ""; answered = previous.active?.reviews.length || 0; return finishSession(previous, Date.now()); });
+      if(id && answered) recordStudioActivity(account,"blitz",id);
       setResultId(id); setView("result"); setClock(Date.now()); void synchronize();
     } catch { /* The storage message remains visible and the attempt stays resumable. */ }
-  }, [update, synchronize]);
+  }, [update, synchronize, account]);
 
   const deadline = active?.deadlineAt;
   useEffect(() => {

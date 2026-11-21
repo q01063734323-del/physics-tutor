@@ -1,5 +1,6 @@
 "use client";
 
+import { recordStudioActivity } from "@/lib/studio-progress";
 import { useEffect, useMemo, useState } from "react";
 import { validateFormula } from "@/lib/formulaValidator";
 import { applyFormulaAnswer, createFormulaAttempt, type FormulaAttempt } from "@/lib/formulaTrainer";
@@ -21,7 +22,7 @@ const cards: Card[] = [
   { id: "lens", topic: "Оптика", title: "Тонкая линза", prompt: "Запиши формулу линзы", formula: "1/F = 1/d + 1/f", hint: "Оптическая сила связана с расстояниями до предмета и изображения." },
 ];
 
-export default function FormulaRecallTrainer() {
+export default function FormulaRecallTrainer({account="guest"}:{account?:string}) {
   const [mode, setMode] = useState<"recall" | "choice" | "fix">("recall");
   const [section, setSection] = useState("Все разделы");
   const [progress, setProgress] = useState<Progress>(() => { if (typeof window === "undefined") return {}; try { const saved = window.localStorage.getItem("physics-tutor-formula-progress"); return saved ? JSON.parse(saved) as Progress : {}; } catch { return {}; } });
@@ -36,7 +37,7 @@ export default function FormulaRecallTrainer() {
   const choices = useMemo(() => [card.formula, cards[(index + 2) % cards.length].formula, cards[(index + 5) % cards.length].formula, cards[(index + 7) % cards.length].formula].sort(() => 0.5 - ((index + 1) % 2)), [card, index]);
   const broken = useMemo(() => card.id === "ohm" ? "I = U · R" : card.id === "speed" ? "v = s · t" : card.id === "kinetic" ? "E = mv / 2" : `${card.formula} + 1`, [card]);
   const currentProgress = progress[card.id] || { attempts: 0, correct: 0, lastSeen: "" };
-  const saveProgress = (correct: boolean) => { const now = new Date().toISOString(); setProgress(previous => ({ ...previous, [card.id]: { attempts: (previous[card.id]?.attempts || 0) + 1, correct: (previous[card.id]?.correct || 0) + (correct ? 1 : 0), lastSeen: now } })); setStreak(previous => correct ? previous + 1 : 0); };
+  const saveProgress = (correct: boolean) => { if(correct) recordStudioActivity(account,"formula",card.id); const now = new Date().toISOString(); setProgress(previous => ({ ...previous, [card.id]: { attempts: (previous[card.id]?.attempts || 0) + 1, correct: (previous[card.id]?.correct || 0) + (correct ? 1 : 0), lastSeen: now } })); setStreak(previous => correct ? previous + 1 : 0); };
 
   useEffect(() => { try { window.localStorage.setItem("physics-tutor-formula-progress", JSON.stringify(progress)); } catch { /* storage unavailable */ } }, [progress]);
 

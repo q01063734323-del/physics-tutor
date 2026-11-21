@@ -8,6 +8,7 @@ import "./globals.css";
 import "./physics-design.css";
 import "./premium-app.css";
 import "./typography.css";
+import "./studio-theme.css";
 
 const manrope = localFont({ src: "./fonts/Manrope.woff2", variable: "--font-display", weight: "200 800", display: "optional", adjustFontFallback: "Arial" });
 const inter = localFont({ src: "./fonts/Inter.woff2", variable: "--font-body", weight: "100 900", display: "optional", adjustFontFallback: "Arial" });

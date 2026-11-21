@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="500" viewBox="0 0 620 500" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">Силы, действующие на тело на наклонной плоскости</title>
+<desc id="desc">Тело движется вниз по наклонной плоскости вправо. Сила тяжести mg направлена вертикально вниз, реакция опоры N перпендикулярна плоскости вверх и вправо, сила трения F тр направлена вдоль плоскости вверх и влево. Дополнительная сила F действует вниз вдоль плоскости.</desc>
+<defs>
+ <linearGradient id="front" x1="118" y1="275" x2="391" y2="494" gradientUnits="userSpaceOnUse"><stop stop-color="#EDF4FF"/><stop offset=".42" stop-color="#D7E7FF"/><stop offset="1" stop-color="#AAC7F6"/></linearGradient>
+ <linearGradient id="top" x1="176" y1="248" x2="337" y2="418" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF"/><stop offset=".43" stop-color="#EDF6FF"/><stop offset="1" stop-color="#D3E6FF"/></linearGradient>
+ <linearGradient id="edge" x1="546" y1="433" x2="554" y2="474" gradientUnits="userSpaceOnUse"><stop stop-color="#E4F1FF"/><stop offset=".7" stop-color="#A4C4FC"/><stop offset="1" stop-color="#7BA4E6"/></linearGradient>
+ <linearGradient id="cube" x1="238" y1="207" x2="322" y2="312" gradientUnits="userSpaceOnUse"><stop stop-color="#D5EDFF"/><stop offset=".21" stop-color="#81B8FF"/><stop offset=".55" stop-color="#4483FA"/><stop offset="1" stop-color="#2362DF"/></linearGradient>
+ <linearGradient id="cubeSide" x1="316" y1="226" x2="349" y2="293" gradientUnits="userSpaceOnUse"><stop stop-color="#7EBAFF"/><stop offset=".43" stop-color="#3477F5"/><stop offset="1" stop-color="#1B4BB8"/></linearGradient>
+ <linearGradient id="cubeTop" x1="274" y1="189" x2="298" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF"/><stop offset=".29" stop-color="#DBF1FF"/><stop offset=".69" stop-color="#8AC5FF"/><stop offset="1" stop-color="#6DABFF"/></linearGradient>
+ <linearGradient id="blueArrow" x1="210" y1="290" x2="330" y2="100" gradientUnits="userSpaceOnUse"><stop stop-color="#145BD9"/><stop offset=".46" stop-color="#008EFA"/><stop offset=".74" stop-color="#3CC8FF"/><stop offset="1" stop-color="#0086F6"/></linearGradient>
+ <linearGradient id="orangeArrow" x1="283" y1="264" x2="330" y2="440" gradientUnits="userSpaceOnUse"><stop stop-color="#FFB323"/><stop offset=".48" stop-color="#FF8A00"/><stop offset="1" stop-color="#F47900"/></linearGradient>
+ <linearGradient id="pill" x1="489" y1="41" x2="520" y2="115" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF"/><stop offset=".45" stop-color="#EEF6FF"/><stop offset="1" stop-color="#C7DDFF"/></linearGradient>
+ <radialGradient id="cubeLight" cx="0" cy="0" r="1" gradientTransform="translate(251 223) rotate(48) scale(74 31)" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF" stop-opacity=".8"/><stop offset="1" stop-color="#FFF" stop-opacity="0"/></radialGradient>
+ <radialGradient id="ground" cx="0" cy="0" r="1" gradientTransform="translate(324 460) scale(265 30)" gradientUnits="userSpaceOnUse"><stop stop-color="#487BD0" stop-opacity=".25"/><stop offset="1" stop-color="#92BBFF" stop-opacity="0"/></radialGradient>
+ <filter id="groundShadow" x="0" y="350" width="620" height="150" filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="10"/></filter>
+ <filter id="cubeShadow" x="184" y="263" width="219" height="110" filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="8"/></filter>
+ <filter id="softShadow" x="32" y="231" width="578" height="269" filterUnits="userSpaceOnUse"><feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#4979C7" flood-opacity=".2"/></filter>
+ <filter id="vectorShadow" x="110" y="62" width="387" height="396" filterUnits="userSpaceOnUse"><feDropShadow dx="1" dy="3" stdDeviation="2" flood-color="#2165C4" flood-opacity=".22"/></filter>
+ <pattern id="grid" x="0" y="0" width="53" height="24" patternUnits="userSpaceOnUse" patternTransform="matrix(1 0 -.45 1 220 350)"><path d="M53 0H0V24" stroke="#9AC3FD" stroke-opacity=".25" stroke-width="1"/></pattern>
+ <mask id="floorFade"><rect y="345" width="620" height="155" fill="url(#fade)"/></mask>
+ <linearGradient id="fade" x1="310" y1="345" x2="310" y2="500" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF" stop-opacity="0"/><stop offset="1" stop-color="#FFF"/></linearGradient>
+</defs>
+<!-- The floor and model are separate artwork, not a screenshot or page background. -->
+<rect y="345" width="620" height="155" fill="url(#grid)" mask="url(#floorFade)"/>
+<ellipse cx="326" cy="465" rx="246" ry="23" fill="url(#ground)"/>
+<path d="M83 447 529 473 574 444 121 412Z" fill="#346FD3" opacity=".15" filter="url(#groundShadow)"/>
+<g filter="url(#softShadow)">
+ <path d="M73 260Q72 254 80 252L118 241Q124 239 131 242L575 420Q582 423 578 429L546 459Q542 464 535 462Z" fill="url(#top)" stroke="#DCEBFF" stroke-width="1.8"/>
+ <path d="M73 260 537 442 546 459Q542 464 535 462L82 441Q77 440 77 433Z" fill="url(#front)"/>
+ <path d="M537 442 578 425 546 459Q542 464 535 462Z" fill="url(#edge)"/>
+ <path d="M74 259 537 442 578 425" stroke="#FFF" stroke-width="3" stroke-linejoin="round"/>
+ <path d="m82 441 453 21q7 2 11-3" stroke="#80A5DE" stroke-width="1.7"/>
+ <path d="M80 267 84 432" stroke="#FFF" stroke-opacity=".65" stroke-width="2"/>
+</g>
+<!-- The cube's lower edge and friction vector share the ramp tangent. -->
+<path d="m223 293 110 43 36-19-107-43Z" fill="#326ED4" fill-opacity=".3" filter="url(#cubeShadow)"/>
+<g>
+ <path d="m247 207 23-13q7-4 15-1l48 19q12 4 10 15l-11 70q-1 8-9 13l-17 11Z" fill="url(#cubeSide)" stroke="#518EF7" stroke-width="1.5"/>
+ <path d="m247 207 23-13q7-4 15-1l48 19q8 3 9 10l-27 15Z" fill="url(#cubeTop)" stroke="#ABD8FF" stroke-width="1.5"/>
+ <path d="m248 207 57 23q12 4 10 17l-11 66q-2 13-14 8l-53-21q-10-4-8-16l10-64q2-16 9-13Z" fill="url(#cube)" stroke="#3E82EF" stroke-width="2"/>
+ <path d="m248 211 54 22q10 3 8 14l-10 64q-1 9-10 6l-52-21q-7-3-5-12l10-62q1-12 5-11Z" stroke="#C1E7FF" stroke-opacity=".73" stroke-width="2"/>
+ <path d="m248 211 54 22q10 3 8 14l-10 64q-1 9-10 6l-52-21q-7-3-5-12l10-62q1-12 5-11Z" fill="url(#cubeLight)"/>
+ <path d="m249 207 25-12q4-2 10 0l48 19" stroke="#FFF" stroke-width="3" stroke-linecap="round"/>
+ <path d="m318 239 20-11-11 67q-1 8-7 12" stroke="#80B8FF" stroke-width="2" stroke-linecap="round"/>
+</g>
+<g filter="url(#vectorShadow)" stroke-linejoin="round">
+ <!-- Normal N: tangent=(466,183), normal=(183,-466), from the common force origin. -->
+ <path d="m282 260 65-166" stroke="#D4F8FF" stroke-width="8" stroke-linecap="round"/>
+ <path d="m282 260 65-166" stroke="url(#blueArrow)" stroke-width="5" stroke-linecap="round"/>
+ <path d="m355 73-2 30-20-8Z" fill="url(#blueArrow)" stroke="#75D5FF" stroke-width="1"/>
+ <!-- Friction: opposite the indicated downward sliding motion, parallel to the ramp. -->
+ <path d="m282 260-132-52" stroke="#C6F4FF" stroke-width="8" stroke-linecap="round"/>
+ <path d="m282 260-132-52" stroke="url(#blueArrow)" stroke-width="5" stroke-linecap="round"/>
+ <path d="m132 201 29-2-8 21Z" fill="url(#blueArrow)" stroke="#83D7FF" stroke-width="1"/>
+ <!-- Applied force F acts along the slope, with gravity kept exactly vertical. -->
+ <path d="m282 260 164 64" stroke="#FFD88D" stroke-width="8" stroke-linecap="round"/>
+ <path d="m282 260 164 64" stroke="url(#orangeArrow)" stroke-width="5" stroke-linecap="round"/>
+ <path d="m469 333-29-2 8-21Z" fill="url(#orangeArrow)" stroke="#FFBF38" stroke-width="1"/>
+ <path d="M282 260V411" stroke="#FFD08D" stroke-width="8" stroke-linecap="round"/>
+ <path d="M282 260V411" stroke="url(#orangeArrow)" stroke-width="5" stroke-linecap="round"/>
+ <path d="m282 435-12-29 12 4 12-4Z" fill="url(#orangeArrow)" stroke="#FFBC2D" stroke-width="1"/>
+</g>
+<g fill="#10192E" font-family="Arial,Helvetica,sans-serif" font-style="italic" font-weight="600">
+ <text x="368" y="77" font-size="35">N</text>
+ <text x="133" y="185" font-size="34">F<tspan font-size="20" baseline-shift="sub">тр</tspan></text>
+ <text x="449" y="301" font-size="35">F</text>
+ <text x="303" y="431" font-size="33">mg</text>
+</g>
+<path d="M445 453a67 67 0 0 1 17-43" stroke="#5278AD" stroke-width="2.5" stroke-linecap="round"/>
+<text x="467" y="449" fill="#182C50" font-family="Georgia,serif" font-style="italic" font-size="32">α</text>
+<g>
+ <rect x="427" y="35" width="167" height="67" rx="33.5" fill="url(#pill)" stroke="#FFF" stroke-width="2"/>
+ <path d="M460 100h101" stroke="#AECDFC" stroke-opacity=".7" stroke-width="1.5"/>
+ <text x="455" y="80" fill="#102C7E" font-family="Arial,Helvetica,sans-serif" font-size="33" font-style="italic" font-weight="700">F = ma</text>
+</g>
+</svg>

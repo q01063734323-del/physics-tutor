@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="230" viewBox="0 0 200 230" fill="none" role="img" aria-labelledby="title">
+<title id="title">Декоративная модель атома</title>
+<defs>
+ <radialGradient id="nucleus" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(88 98) rotate(55) scale(45)"><stop stop-color="#F0FFFF"/><stop offset=".23" stop-color="#A6E5FF"/><stop offset=".54" stop-color="#51B7FF"/><stop offset=".8" stop-color="#4485F4"/><stop offset="1" stop-color="#99CAFF"/></radialGradient>
+ <linearGradient id="orbit" x1="30" y1="50" x2="165" y2="183" gradientUnits="userSpaceOnUse"><stop stop-color="#F9FDFF"/><stop offset=".25" stop-color="#93BCFF"/><stop offset=".48" stop-color="#E7F4FF"/><stop offset=".73" stop-color="#8FB9FC"/><stop offset="1" stop-color="#DCEBFF"/></linearGradient>
+ <radialGradient id="electron" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(160 93) rotate(60) scale(15)"><stop stop-color="#FFF"/><stop offset=".35" stop-color="#A3E3FF"/><stop offset=".7" stop-color="#4B9BF5"/><stop offset="1" stop-color="#98CBFF"/></radialGradient>
+ <filter id="shadow" x="0" y="14" width="200" height="210" filterUnits="userSpaceOnUse"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#73A4E8" flood-opacity=".2"/></filter>
+</defs>
+<g filter="url(#shadow)">
+ <g stroke="url(#orbit)" stroke-width="5.5">
+  <ellipse cx="100" cy="115" rx="83" ry="29" transform="rotate(-18 100 115)"/>
+  <ellipse cx="100" cy="115" rx="83" ry="29" transform="rotate(43 100 115)"/>
+  <ellipse cx="100" cy="115" rx="83" ry="29" transform="rotate(112 100 115)"/>
+ </g>
+ <g stroke="#FFF" stroke-opacity=".8" stroke-width="1.2">
+  <ellipse cx="100" cy="114" rx="84" ry="29" transform="rotate(-18 100 114)"/>
+  <ellipse cx="100" cy="114" rx="84" ry="29" transform="rotate(43 100 114)"/>
+  <ellipse cx="100" cy="114" rx="84" ry="29" transform="rotate(112 100 114)"/>
+ </g>
+ <circle cx="100" cy="115" r="26" fill="url(#nucleus)" stroke="#DEF4FF" stroke-width="1.5"/>
+ <ellipse cx="91" cy="103" rx="10" ry="6" transform="rotate(-36 91 103)" fill="#FFF" fill-opacity=".48"/>
+ <path d="M28 142c28 5 104-20 143-48" stroke="url(#orbit)" stroke-width="5.5" stroke-linecap="round"/>
+ <path d="M28 140c28 5 104-20 143-48" stroke="#FFF" stroke-width="1.2" stroke-linecap="round" stroke-opacity=".85"/>
+ <circle cx="165" cy="94" r="10" fill="url(#electron)" stroke="#E9F6FF"/>
+ <circle cx="41" cy="157" r="5.5" fill="url(#electron)"/>
+</g>
+</svg>

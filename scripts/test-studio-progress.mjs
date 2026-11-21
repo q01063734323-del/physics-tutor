@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {studioDay,studioCounts,readStudioEvents,recordStudioActivity} from '../src/lib/studio-progress.ts';
+const values = new Map();
+globalThis.localStorage = {getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)};
+globalThis.window = new EventTarget();
+const today = new Date(2026,10,21,12), yesterday = new Date(2026,10,20,12);
+assert.equal(studioDay(today),'2026-11-21');
+assert.deepEqual(studioCounts([{kind:'task',id:'a',at:today.toISOString()},{kind:'task',id:'a',at:today.toISOString()},{kind:'task',id:'b',at:yesterday.toISOString()},{kind:'formula',id:'f',at:'invalid'}],today),{task:1,formula:0,submission:0,blitz:0,topic:0});
+recordStudioActivity('student-a','task','one');recordStudioActivity('student-a','task','one');recordStudioActivity('student-b','formula','one');
+assert.equal(readStudioEvents('student-a').length,1);assert.equal(readStudioEvents('student-b')[0].kind,'formula');assert.deepEqual(readStudioEvents('other'),[]);
+values.set('physics-studio-activity:broken','not json');assert.deepEqual(readStudioEvents('broken'),[]);
+globalThis.localStorage = {getItem(){throw Error('blocked');},setItem(){throw Error('blocked');}};
+assert.deepEqual(readStudioEvents('student-a'),[]);assert.doesNotThrow(()=>recordStudioActivity('student-a','task','two'));
+console.log('Studio daily activity: local calendar, unique daily counts, account isolation, invalid data and blocked storage passed.');

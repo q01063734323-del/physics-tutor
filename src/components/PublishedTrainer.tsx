@@ -1,5 +1,6 @@
 "use client";
 
+import { recordStudioActivity } from "@/lib/studio-progress";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
@@ -40,6 +41,7 @@ export default function PublishedTrainer() {
   }, [account]);
   async function saveAttempt(attempt: TrainerAttempt) {
     await queuePreparationAttempt(account, attempt);
+    if(attempt.correct) recordStudioActivity(account,"task",attempt.questionId);
     if ((account === "guest" || account.startsWith("demo-"))) { setSyncNotice("Гостевой прогресс хранится только на устройстве."); return; }
     try {
       const result = await flushPreparationAttempts(account, auth.currentUser, false);
