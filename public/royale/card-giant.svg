@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="320" viewBox="0 0 256 320" role="img" aria-label="Каменный великан"><defs>
+ <linearGradient id="steel" x2=".8" y2="1"><stop stop-color="#f5fcff"/><stop offset=".43" stop-color="#b7cadd"/><stop offset="1" stop-color="#556987"/></linearGradient>
+ <linearGradient id="gold" x2=".7" y2="1"><stop stop-color="#fff0a8"/><stop offset=".45" stop-color="#e0a64a"/><stop offset="1" stop-color="#8d502d"/></linearGradient>
+ <linearGradient id="cloth" x2="1" y2="1"><stop stop-color="#6c82c9"/><stop offset="1" stop-color="#252a66"/></linearGradient>
+ <linearGradient id="skin" x2="1" y2="1"><stop stop-color="#ffd3a5"/><stop offset="1" stop-color="#c67c63"/></linearGradient>
+ <linearGradient id="leaf" x2="1" y2="1"><stop stop-color="#91c8a4"/><stop offset="1" stop-color="#235b65"/></linearGradient>
+ <linearGradient id="bone" x2=".5" y2="1"><stop stop-color="#fff6d2"/><stop offset="1" stop-color="#ab987e"/></linearGradient>
+ <linearGradient id="scale" x2=".6" y2="1"><stop stop-color="#a2f2c2"/><stop offset=".5" stop-color="#40b2a4"/><stop offset="1" stop-color="#326881"/></linearGradient>
+ <radialGradient id="magic"><stop stop-color="#ffffff"/><stop offset=".25" stop-color="#c5edff"/><stop offset=".65" stop-color="#5d9eff"/><stop offset="1" stop-color="#7450db" stop-opacity=".2"/></radialGradient>
+ <linearGradient id="flame" x2=".7" y2="1"><stop stop-color="#ffeb8c"/><stop offset=".45" stop-color="#ff9d39"/><stop offset="1" stop-color="#ce3f48"/></linearGradient>
+ <filter id="soft" x="-.4" y="-.4" width="1.8" height="1.8"><feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#11182f" flood-opacity=".38"/></filter>
+</defs><defs><linearGradient id="back" x2=".7" y2="1"><stop stop-color="#58394f"/><stop offset="1" stop-color="#101b36"/></linearGradient><radialGradient id="halo"><stop stop-color="#b07c63" stop-opacity=".65"/><stop offset="1" stop-color="#58394f" stop-opacity="0"/></radialGradient></defs><rect x="4" y="4" width="248" height="312" rx="22" fill="url(#back)" stroke="#6d7796" stroke-width="2"/><path d="M16 214V40q0-23 24-23h176q24 0 24 23v174" fill="none" stroke="#e2c791" opacity=".35"/><ellipse cx="128" cy="157" rx="122" ry="141" fill="url(#halo)"/>
+ <path d="M18 274 65 236l24 20 33-39 35 38 38-32 44 47v35H18Z" fill="#1c2944" opacity=".7"/>
+ <path d="M32 239q10-80 34-111m-26 87-14-17m21-5 16-14M224 242q-5-82-24-113m20 80 15-14m-20-6-12-11" fill="none" stroke="#a2c7b7" stroke-width="2" opacity=".24"/><path d="m35 47 1 3 3 1-3 1-1 3-1-3-3-1 3-1Z" fill="#e9d9b1" opacity="0.25"/><path d="m206 67 1 3 3 1-3 1-1 3-1-3-3-1 3-1Z" fill="#e9d9b1" opacity="0.4"/><path d="m53 114 1 3 3 1-3 1-1 3-1-3-3-1 3-1Z" fill="#e9d9b1" opacity="0.55"/><path d="m218 162 1 3 3 1-3 1-1 3-1-3-3-1 3-1Z" fill="#e9d9b1" opacity="0.25"/><path d="m31 215 1 3 3 1-3 1-1 3-1-3-3-1 3-1Z" fill="#e9d9b1" opacity="0.4"/><path d="m195 260 1 3 3 1-3 1-1 3-1-3-3-1 3-1Z" fill="#e9d9b1" opacity="0.55"/>
+ <path d="m104 35 24-12 24 12-24 13Z" fill="none" stroke="#ead29b" stroke-width="1.5" opacity=".75"/><circle cx="128" cy="35" r="4" fill="#eedaa8"/><g transform="translate(12 73) scale(1.82)" filter="url(#soft)"><g stroke="#493c45" stroke-width="2.4" stroke-linejoin="round">
+<path d="m35 77-7 33 23 6 10-29m10 0 9 29 22-6-9-36" fill="#5a526d"/><path d="m27 107-5 11h30l-1-11m28 0v11h28l-6-12" fill="#593f42"/>
+<path d="M38 45Q11 44 11 79l17 12 16-29m46-18q28 3 27 34L98 92 82 58" fill="url(#skin)"/><path d="M36 45q27-17 55 0l11 40-27 16-44-13Z" fill="url(#skin)"/><path d="m39 49 8 34 33 1 10-34-2 43-51-1Z" fill="#696181"/><path d="m35 79 60 3-1 12-58-1Z" fill="#6a443b"/><rect x="57" y="80" width="16" height="12" rx="2" fill="url(#gold)"/>
+<path d="M40 28q2-20 25-20 25 1 27 23l-9 24-19 8-20-12Z" fill="url(#skin)"/><path d="M41 27Q40 6 64 6q27 0 29 24L81 19l-18 5-13-4Z" fill="#8d563d"/><path d="m49 30 12-2m9 0 12 3" stroke="#5c3840" stroke-width="4"/><path d="m54 35 2 0m20 0h1" stroke="#242938" stroke-width="3"/>
+<path d="m44 41 11 7 10-4 9 4 14-8-4 18-20 9-18-11Z" fill="#ab693f"/><path d="m56 48 16 1-4 7-9-1" fill="#f0d3a5" stroke-width="1"/>
+<path d="m6 73 24-6 7 20-27 5Z" fill="#6c4a42"/><circle cx="15" cy="79" r="3" fill="url(#gold)"/><circle cx="27" cy="77" r="3" fill="url(#gold)"/>
+<path d="m91 56 17-8 9 43-19 3Z" fill="#8e6747"/><path d="m93 60 15-5m-13 15 16-5m-13 16 15-4" stroke="#bd9361" stroke-width="3"/>
+</g></g>
+ <path d="M16 284h224v15q0 9-14 9H30q-14 0-14-9Z" fill="#101a30" opacity=".65"/><path d="M35 303h70m46 0h70" stroke="#c3ad83" opacity=".55"/><path d="m121 303 7-4 7 4-7 4Z" fill="#dcc38f"/>
+ </svg>

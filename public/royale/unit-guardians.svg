@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Щитовой караул"><defs>
+ <linearGradient id="steel" x2=".8" y2="1"><stop stop-color="#f5fcff"/><stop offset=".43" stop-color="#b7cadd"/><stop offset="1" stop-color="#556987"/></linearGradient>
+ <linearGradient id="gold" x2=".7" y2="1"><stop stop-color="#fff0a8"/><stop offset=".45" stop-color="#e0a64a"/><stop offset="1" stop-color="#8d502d"/></linearGradient>
+ <linearGradient id="cloth" x2="1" y2="1"><stop stop-color="#6c82c9"/><stop offset="1" stop-color="#252a66"/></linearGradient>
+ <linearGradient id="skin" x2="1" y2="1"><stop stop-color="#ffd3a5"/><stop offset="1" stop-color="#c67c63"/></linearGradient>
+ <linearGradient id="leaf" x2="1" y2="1"><stop stop-color="#91c8a4"/><stop offset="1" stop-color="#235b65"/></linearGradient>
+ <linearGradient id="bone" x2=".5" y2="1"><stop stop-color="#fff6d2"/><stop offset="1" stop-color="#ab987e"/></linearGradient>
+ <linearGradient id="scale" x2=".6" y2="1"><stop stop-color="#a2f2c2"/><stop offset=".5" stop-color="#40b2a4"/><stop offset="1" stop-color="#326881"/></linearGradient>
+ <radialGradient id="magic"><stop stop-color="#ffffff"/><stop offset=".25" stop-color="#c5edff"/><stop offset=".65" stop-color="#5d9eff"/><stop offset="1" stop-color="#7450db" stop-opacity=".2"/></radialGradient>
+ <linearGradient id="flame" x2=".7" y2="1"><stop stop-color="#ffeb8c"/><stop offset=".45" stop-color="#ff9d39"/><stop offset="1" stop-color="#ce3f48"/></linearGradient>
+ <filter id="soft" x="-.4" y="-.4" width="1.8" height="1.8"><feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#11182f" flood-opacity=".38"/></filter>
+</defs><g filter="url(#soft)"><g stroke="#2b354e" stroke-width="2.2" stroke-linejoin="round">
+<path d="m44 54-11 49 29 13 25-16-8-47Z" fill="#4e6d91"/><path d="m48 86-8 23 15 6 9-27m6-2 4 26 15-4-9-26" fill="url(#steel)"/><path d="m39 109-5 8h23v-7m17-1v8h23l-9-11" fill="#30394e"/>
+<path d="m43 53-13 23 11 13 13-27m24-11 15 19-7 15-14-24" fill="url(#steel)"/><path d="M43 31Q44 10 64 9q20 2 22 23l-6 24H50Z" fill="url(#steel)"/><path d="M43 31q23-12 42 1l-5 15H49Z" fill="#3e526f"/><path d="m50 35 27 1" stroke="#b4ecff" stroke-width="2"/><path d="m60 31 6 23M49 27l5-12m25 12-5-12" stroke="url(#gold)" stroke-width="3"/>
+<path d="m103 30-3 82" stroke="#6c595b" stroke-width="5"/><path d="m101 8-7 18 7 10 7-10Z" fill="url(#steel)"/><path d="m105 21 13 0-3 16-11 4Z" fill="url(#steel)"/>
+<path d="M25 61q22-10 44 0l-2 29q-6 16-20 23-20-9-24-24Z" fill="url(#gold)"/><path d="M29 66q18-8 35 0l-1 21q-4 13-16 20-15-8-18-20Z" fill="#456e9e"/><path d="m37 76 10-8 10 8-4 15-6 7-6-7Z" fill="#d2e1e6" stroke="#efd89c" stroke-width="1"/><path d="m47 73 1 21m-7-13 12 0" stroke="#6a8aa3" stroke-width="2"/>
+</g></g></svg>

@@ -19,6 +19,9 @@ try {
   const internalUrl = "http://0.0.0.0:10000/api/trainer";
   assert.equal(trainerOriginAllowed(publicUrl, internalUrl, publicUrl), true, "Render proxy must accept its public site");
   assert.equal(trainerOriginAllowed("http://localhost:3218", "http://localhost:3218/api/trainer", publicUrl), true);
+  assert.equal(trainerOriginAllowed("http://127.0.0.1:3223", "http://localhost:3223/api/royale", publicUrl), true);
+  assert.equal(trainerOriginAllowed("http://localhost:3223", "http://127.0.0.1:3223/api/royale", publicUrl), true);
+  for (const origin of ["http://localhost:3224", "https://localhost:3223", "http://localhost.evil:3223", "http://192.168.1.5:3223"]) assert.equal(trainerOriginAllowed(origin, "http://localhost:3223/api/royale", publicUrl), false);
   assert.equal(trainerOriginAllowed(null, internalUrl, publicUrl), true);
   for (const origin of ["https://example.com", "https://physics-tutor-6ytz.onrender.com.evil.example", "http://physics-tutor-6ytz.onrender.com", "null"]) assert.equal(trainerOriginAllowed(origin, internalUrl, publicUrl), false);
   assert.equal(trainerOriginAllowed("https://example.com", internalUrl, "invalid"), false);

@@ -1,0 +1,5 @@
+import type{TrainerQuestion}from'@/lib/trainer-bank';import type{TrainerCheckResult}from'@/lib/trainer-public';import type{CardId,Difficulty,Tier}from'@/lib/royale/config';import type{GameCommand}from'@/lib/royale/engine';import type{VerifiedAnswer}from'@/lib/royale/progress';
+export type GameTask=TrainerQuestion&{gameTier:Tier};
+export type MatchDescriptor={id:string;seed:number;difficulty:Difficulty;deck:CardId[];levels:Partial<Record<CardId,number>>;arena:string;startedAt:number;focusScale:number;topics:string[];section:string;practice:boolean;expiresAt?:number;version?:number;bankVersion?:string};
+export type IssuedTask={challengeId:string;question:TrainerQuestion;tier:Tier;reward:number;syncTick?:number;focusRemaining?:number;focusAllowance?:number};
+export type SavedRun={match:MatchDescriptor;commands:GameCommand[];tick:number;savedAt:number;focusActive:boolean;focusRemaining:number;questionFocus:number;used:string[];answers:VerifiedAnswer[];task:IssuedTask|null;feedback:TrainerCheckResult|null;typedAnswer:string;forfeit?:boolean};

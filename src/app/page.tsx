@@ -362,12 +362,13 @@ export default function Home() {
     { title: "Кабинет", entries: teacher
       ? [["home", "Обзор", "home"], ["tasks", "Задания", "tasks"], ["schedule", "Расписание", "calendar"], ["students", "Ученики", "people"]]
       : [["home", "Обзор", "home"], ["tasks", "Мои задания", "tasks"], ["schedule", "Расписание", "calendar"], ["progress", "Прогресс", "progress"], ["materials", "Материалы", "book"]] },
-    { title: "Практика", entries: [["preparation", "Моя подготовка", "progress"], ["library", teacher?"Мои материалы":"Библиотека", "book"], ["exam", "ЕГЭ-тренажёр", "tasks"], ["bank", "Банк задач", "book"], ["theory", "Теория", "book"], ["formulas", "Формулы", "book"], ["blitz", "Блиц", "progress"], ["lab", "Лаборатория", "lab"], ["errors", "Разбор ошибок", "progress"]] },
+    { title: "Практика", entries: [["royale", teacher ? "Задачи Physics Royale" : "Physics Royale", "progress"], ["preparation", "Моя подготовка", "progress"], ["library", teacher?"Мои материалы":"Библиотека", "book"], ["exam", "ЕГЭ-тренажёр", "tasks"], ["bank", "Банк задач", "book"], ["theory", "Теория", "book"], ["formulas", "Формулы", "book"], ["blitz", "Блиц", "progress"], ["lab", "Лаборатория", "lab"], ["errors", "Разбор ошибок", "progress"]] },
     { title: "Аккаунт", entries: [["profile", "Профиль", "profile"]] },
   ];
   const viewTitle = navGroups.flatMap(group => group.entries).find(([key]) => key === activeView)?.[1];
   function navigate(view: string) {
     setMenuOpen(false);
+    if (view === "royale") { router.push(teacher ? "/teacher/royale" : "/royale"); return; }
     if (view === "library") { router.push("/library"); return; }
     if (view === "preparation") { router.push(`/preparation${demoMode ? `?demo=${role}` : ""}`); return; }
     if (teacher && !demoMode && view === "students") window.history.pushState(null, "", "/teacher/students");

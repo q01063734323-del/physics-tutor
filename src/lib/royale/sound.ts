@@ -1,0 +1,10 @@
+export class RoyaleSound{
+ private context:AudioContext|null=null;private timer:ReturnType<typeof setInterval>|null=null;private last=0;muted=true;volume=.25;music=0;
+ unlock(){if(this.muted)return;try{this.context??=new AudioContext();void this.context.resume().catch(()=>undefined);}catch{/* The game works without Web Audio. */}}
+ play(kind:'hit'|'spawn'|'collapse'|'fire'|'correct'|'wrong'|'win'|'loss'){
+  if(this.muted||!this.context||this.context.state!=='running')return;const now=this.context.currentTime;if(now-this.last<.035&&['hit','spawn'].includes(kind))return;this.last=now;const oscillator=this.context.createOscillator(),gain=this.context.createGain();const frequency={hit:170,spawn:390,collapse:85,fire:120,correct:660,wrong:150,win:780,loss:180}[kind];oscillator.type=['fire','collapse'].includes(kind)?'sawtooth':'sine';oscillator.frequency.setValueAtTime(frequency,now);oscillator.frequency.exponentialRampToValueAtTime(kind==='correct'||kind==='win'?frequency*1.5:frequency*.5,now+.14);gain.gain.setValueAtTime(this.volume*.17,now);gain.gain.exponentialRampToValueAtTime(.001,now+.19);oscillator.connect(gain);gain.connect(this.context.destination);oscillator.start(now);oscillator.stop(now+.2);
+ }
+ startMusic(){if(this.timer||this.muted||this.music<=0)return;let note=0;const melody=[220,277.18,329.63,277.18,246.94,329.63,369.99,329.63];this.timer=setInterval(()=>{if(!this.context||this.muted||this.music<=0)return;const t=this.context.currentTime,o=this.context.createOscillator(),g=this.context.createGain();o.type='sine';o.frequency.value=melody[note++%melody.length];g.gain.setValueAtTime(this.volume*this.music*.06,t);g.gain.exponentialRampToValueAtTime(.001,t+.7);o.connect(g);g.connect(this.context.destination);o.start(t);o.stop(t+.75);},650);}
+ stopMusic(){if(this.timer)clearInterval(this.timer);this.timer=null;}
+ dispose(){this.stopMusic();void this.context?.close().catch(()=>undefined);this.context=null;}
+}

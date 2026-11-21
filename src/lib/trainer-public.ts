@@ -13,7 +13,13 @@ export type TrainerCheckResult = {
 export function trainerOriginAllowed(origin: string | null, requestUrl: string, publicUrl: string): boolean {
   if (!origin) return true;
   try {
-    if (origin === new URL(requestUrl).origin) return true;
+    const incoming = new URL(origin), target = new URL(requestUrl);
+    if (origin === target.origin) return true;
+    // Next may canonicalize a local request to localhost even when the browser
+    // opened 127.0.0.1. Limit aliasing to loopback, identical port and protocol.
+    const loopback = new Set(["localhost", "127.0.0.1", "[::1]"]);
+    if (loopback.has(incoming.hostname) && loopback.has(target.hostname)
+      && incoming.port === target.port && incoming.protocol === target.protocol) return true;
     return origin === new URL(publicUrl).origin;
   } catch { return false; }
 }

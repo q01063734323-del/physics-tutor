@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Страж лунного двора"><defs>
+ <linearGradient id="steel" x2=".8" y2="1"><stop stop-color="#f5fcff"/><stop offset=".43" stop-color="#b7cadd"/><stop offset="1" stop-color="#556987"/></linearGradient>
+ <linearGradient id="gold" x2=".7" y2="1"><stop stop-color="#fff0a8"/><stop offset=".45" stop-color="#e0a64a"/><stop offset="1" stop-color="#8d502d"/></linearGradient>
+ <linearGradient id="cloth" x2="1" y2="1"><stop stop-color="#6c82c9"/><stop offset="1" stop-color="#252a66"/></linearGradient>
+ <linearGradient id="skin" x2="1" y2="1"><stop stop-color="#ffd3a5"/><stop offset="1" stop-color="#c67c63"/></linearGradient>
+ <linearGradient id="leaf" x2="1" y2="1"><stop stop-color="#91c8a4"/><stop offset="1" stop-color="#235b65"/></linearGradient>
+ <linearGradient id="bone" x2=".5" y2="1"><stop stop-color="#fff6d2"/><stop offset="1" stop-color="#ab987e"/></linearGradient>
+ <linearGradient id="scale" x2=".6" y2="1"><stop stop-color="#a2f2c2"/><stop offset=".5" stop-color="#40b2a4"/><stop offset="1" stop-color="#326881"/></linearGradient>
+ <radialGradient id="magic"><stop stop-color="#ffffff"/><stop offset=".25" stop-color="#c5edff"/><stop offset=".65" stop-color="#5d9eff"/><stop offset="1" stop-color="#7450db" stop-opacity=".2"/></radialGradient>
+ <linearGradient id="flame" x2=".7" y2="1"><stop stop-color="#ffeb8c"/><stop offset=".45" stop-color="#ff9d39"/><stop offset="1" stop-color="#ce3f48"/></linearGradient>
+ <filter id="soft" x="-.4" y="-.4" width="1.8" height="1.8"><feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#11182f" flood-opacity=".38"/></filter>
+</defs><g filter="url(#soft)"><g stroke="#28304b" stroke-width="2.2" stroke-linejoin="round">
+<path d="M42 58 31 102 55 111 88 101 80 57Z" fill="url(#cloth)"/><path d="m47 82-6 29 15 3 7-31m4 0 2 30 15-3-5-29" fill="url(#steel)"/><path d="m40 108-3 8h20v-6m12 0v6h20l-6-9" fill="#30334e"/>
+<path d="M43 55q-12 5-15 25l12 5 9-21m30-10q13 7 16 23l-12 6-10-18" fill="url(#steel)"/><path d="m47 52-7 17 7 22h30l8-22-10-17Z" fill="url(#steel)"/><path d="m50 60 13 6 12-6-4 24H55Z" fill="#758eaa" stroke-width="1.3"/>
+<path d="M44 39q0-22 19-22t20 22l-6 16H50Z" fill="url(#steel)"/><path d="m42 39 20-6 23 6-6 7H47Z" fill="#30394e"/><path d="m48 40 9-1m12 0 9 1" stroke="#9ddaff"/><path d="m63 34 1 20M52 48l2 4m19-4-2 4" fill="none" stroke="#617086" stroke-width="1.8"/>
+<path d="M62 19Q52 4 72 6q15 0 13 12-12-9-17 4" fill="#9e74bd"/><path d="m62 21 6-1" stroke="url(#gold)" stroke-width="5"/>
+<path d="m96 72 8-39 6-14 3 16-11 39Z" fill="url(#steel)"/><path d="m94 70 15 3m-8 1-3 12" stroke="url(#gold)" stroke-width="5"/>
+<path d="M23 66q12-9 27 0l-1 25q-4 11-13 16-13-8-15-18Z" fill="url(#gold)"/><path d="m26 69 18-1-1 19-7 11-9-10Z" fill="#344b83" stroke="#f1d78c" stroke-width="1.4"/><path d="m35 73 2 8 7 2-7 2-2 8-2-8-6-2 6-2Z" fill="#f2dc99" stroke="none"/>
+</g></g></svg>

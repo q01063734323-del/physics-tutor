@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Костяной дозор"><defs>
+ <linearGradient id="steel" x2=".8" y2="1"><stop stop-color="#f5fcff"/><stop offset=".43" stop-color="#b7cadd"/><stop offset="1" stop-color="#556987"/></linearGradient>
+ <linearGradient id="gold" x2=".7" y2="1"><stop stop-color="#fff0a8"/><stop offset=".45" stop-color="#e0a64a"/><stop offset="1" stop-color="#8d502d"/></linearGradient>
+ <linearGradient id="cloth" x2="1" y2="1"><stop stop-color="#6c82c9"/><stop offset="1" stop-color="#252a66"/></linearGradient>
+ <linearGradient id="skin" x2="1" y2="1"><stop stop-color="#ffd3a5"/><stop offset="1" stop-color="#c67c63"/></linearGradient>
+ <linearGradient id="leaf" x2="1" y2="1"><stop stop-color="#91c8a4"/><stop offset="1" stop-color="#235b65"/></linearGradient>
+ <linearGradient id="bone" x2=".5" y2="1"><stop stop-color="#fff6d2"/><stop offset="1" stop-color="#ab987e"/></linearGradient>
+ <linearGradient id="scale" x2=".6" y2="1"><stop stop-color="#a2f2c2"/><stop offset=".5" stop-color="#40b2a4"/><stop offset="1" stop-color="#326881"/></linearGradient>
+ <radialGradient id="magic"><stop stop-color="#ffffff"/><stop offset=".25" stop-color="#c5edff"/><stop offset=".65" stop-color="#5d9eff"/><stop offset="1" stop-color="#7450db" stop-opacity=".2"/></radialGradient>
+ <linearGradient id="flame" x2=".7" y2="1"><stop stop-color="#ffeb8c"/><stop offset=".45" stop-color="#ff9d39"/><stop offset="1" stop-color="#ce3f48"/></linearGradient>
+ <filter id="soft" x="-.4" y="-.4" width="1.8" height="1.8"><feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#11182f" flood-opacity=".38"/></filter>
+</defs><g filter="url(#soft)"><g stroke="#514c59" stroke-width="2.1" stroke-linejoin="round">
+<path d="m54 83-7 16-8 13m30-29 9 17 8 12" stroke="url(#bone)" stroke-width="8" fill="none"/><path d="m37 110-9 7h24l-5-6m31 0-2 6h24l-12-8" fill="url(#bone)"/>
+<path d="M49 54q16-8 29 0l-4 32-12 9-13-8Z" fill="#675d65"/><path d="m61 54 1 33m-13-26 23 0m-24 9 24 0m-22 8 21 0" stroke="url(#bone)" stroke-width="5"/>
+<path d="m49 56-15 15 6 17m37-31 14 16-6 15" stroke="url(#bone)" stroke-width="8" fill="none"/><circle cx="35" cy="71" r="4" fill="#d5c5a2"/><circle cx="90" cy="72" r="4" fill="#d5c5a2"/>
+<path d="M43 28q1-18 20-18 22 0 23 21l-8 18H48Z" fill="url(#bone)"/><path d="m48 31 12 2-3 10-10-5m23-4 12-3-1 8-10 5Z" fill="#394458"/><path d="m61 40 4-1 4 8-8 1Z" fill="#706876" stroke="none"/><path d="m50 46 26 1-2 9H53Z" fill="#e5d7b6"/><path d="m57 47v7m7-7v8m7-8v7" fill="none" stroke="#73687a" stroke-width="1.4"/>
+<path d="M39 24Q45 3 64 4q20 0 27 22l-15-8-13 5-14-6Z" fill="#78658e"/><path d="m42 23 42 0" stroke="url(#gold)" stroke-width="4"/>
+<path d="m85 83 15-23 3 25-13 8Z" fill="url(#steel)"/><path d="m85 87 9 8m-5-1-6 10" stroke="url(#gold)" stroke-width="4"/>
+</g></g></svg>

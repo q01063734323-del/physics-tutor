@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "license": "Original vector artwork created for Physics Tutor. No third-party imagery, fonts, logos, or game assets.",
+  "units": {
+    "knight": {
+      "name": "Страж лунного двора",
+      "card": "/royale/card-knight.svg",
+      "unit": "/royale/unit-knight.svg",
+      "cardSize": [
+        256,
+        320
+      ],
+      "unitSize": [
+        128,
+        128
+      ],
+      "unitAnchor": [
+        64,
+        116
+      ]
+    },
+    "archers": {
+      "name": "Лесные лучницы",
+      "card": "/royale/card-archers.svg",
+      "unit": "/royale/unit-archers.svg",
+      "cardSize": [
+        256,
+        320
+      ],
+      "unitSize": [
+        128,
+        128
+      ],
+      "unitAnchor": [
+        64,
+        116
+      ]
+    },
+    "giant": {
+      "name": "Каменный великан",
+      "card": "/royale/card-giant.svg",
+      "unit": "/royale/unit-giant.svg",
+      "cardSize": [
+        256,
+        320
+      ],
+      "unitSize": [
+        128,
+        128
+      ],
+      "unitAnchor": [
+        64,
+        116
+      ]
+    },
+    "skeletons": {
+      "name": "Костяной дозор",
+      "card": "/royale/card-skeletons.svg",
+      "unit": "/royale/unit-skeletons.svg",
+      "cardSize": [
+        256,
+        320
+      ],
+      "unitSize": [
+        128,
+        128
+      ],
+      "unitAnchor": [
+        64,
+        116
+      ]
+    },
+    "dragon": {
+      "name": "Нефритовый дракон",
+      "card": "/royale/card-dragon.svg",
+      "unit": "/royale/unit-dragon.svg",
+      "cardSize": [
+        256,
+        320
+      ],
+      "unitSize": [
+        128,
+        128
+      ],
+      "unitAnchor": [
+        64,
+        116
+      ]
+    },
+    "mage": {
+      "name": "Хранитель искры",
+      "card": "/royale/card-mage.svg",
+      "unit": "/royale/unit-mage.svg",
+      "cardSize": [
+        256,
+        320
+      ],
+      "unitSize": [
+        128,
+        128
+      ],
+      "unitAnchor": [
+        64,
+        116
+      ]
+    },
+    "fireball": {
+      "name": "Солнечный разлом",
+      "card": "/royale/card-fireball.svg",
+      "unit": "/royale/unit-fireball.svg",
+      "cardSize": [
+        256,
+        320
+      ],
+      "unitSize": [
+        128,
+        128
+      ],
+      "unitAnchor": [
+        64,
+        116
+      ]
+    },
+    "guardians": {
+      "name": "Щитовой караул",
+      "card": "/royale/card-guardians.svg",
+      "unit": "/royale/unit-guardians.svg",
+      "cardSize": [
+        256,
+        320
+      ],
+      "unitSize": [
+        128,
+        128
+      ],
+      "unitAnchor": [
+        64,
+        116
+      ]
+    }
+  },
+  "structures": {
+    "tower": {
+      "src": "/royale/tower.svg",
+      "size": [
+        128,
+        160
+      ],
+      "anchor": [
+        64,
+        148
+      ]
+    },
+    "castle": {
+      "src": "/royale/castle.svg",
+      "size": [
+        160,
+        192
+      ],
+      "anchor": [
+        80,
+        178
+      ]
+    }
+  },
+  "decorations": {
+    "arena": {
+      "src": "/royale/arena.svg",
+      "size": [
+        420,
+        720
+      ],
+      "riverY": [
+        344,
+        376
+      ],
+      "bridgeCenters": [
+        110,
+        310
+      ],
+      "bridgeHalfWidth": 23
+    },
+    "energy": "/royale/crystal.svg",
+    "trophy": "/royale/trophy.svg"
+  },
+  "teamTint": "Neutral sprites. Draw a team-colored ellipse or selection outline beneath each sprite; no SVG rewriting required."
+}
