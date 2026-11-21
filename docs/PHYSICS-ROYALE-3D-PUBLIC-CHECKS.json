@@ -1,0 +1,68 @@
+[
+  {
+    "path": "/",
+    "status": 200
+  },
+  {
+    "path": "/api/health",
+    "status": 200
+  },
+  {
+    "path": "/royale",
+    "status": 200
+  },
+  {
+    "path": "/teacher/royale",
+    "status": 200
+  },
+  {
+    "path": "/trainer",
+    "status": 200
+  },
+  {
+    "path": "/classroom",
+    "status": 200
+  },
+  {
+    "path": "/library",
+    "status": 200
+  },
+  {
+    "path": "/preparation",
+    "status": 200
+  },
+  {
+    "path": "/manifest.webmanifest",
+    "status": 200,
+    "name": "Физика с Егором",
+    "icons": 3
+  },
+  {
+    "path": "/sw.js",
+    "status": 200
+  },
+  {
+    "path": "/royale/3d/citadel-crystal.glb",
+    "status": 200,
+    "valid_glb": true,
+    "bytes": 9588
+  },
+  {
+    "path": "/royale/lobby-citadel.svg",
+    "status": 200
+  },
+  {
+    "path": "/api/royale?view=catalog",
+    "status": 200,
+    "questions": 1361,
+    "answers_hidden": true
+  },
+  {
+    "path": "/api/royale",
+    "status": 401
+  },
+  {
+    "path": "/api/royale?view=active",
+    "status": 401
+  }
+]
