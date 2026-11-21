@@ -1,0 +1,78 @@
+{
+  "matches": 72,
+  "simulationMs": 438,
+  "results": [
+    {
+      "difficulty": "novice",
+      "answerSeconds": 30,
+      "wins": 8,
+      "losses": 0,
+      "draws": 0,
+      "meanAnswers": 8.25
+    },
+    {
+      "difficulty": "novice",
+      "answerSeconds": 60,
+      "wins": 3,
+      "losses": 5,
+      "draws": 0,
+      "meanAnswers": 4
+    },
+    {
+      "difficulty": "novice",
+      "answerSeconds": 90,
+      "wins": 0,
+      "losses": 8,
+      "draws": 0,
+      "meanAnswers": 2
+    },
+    {
+      "difficulty": "physicist",
+      "answerSeconds": 30,
+      "wins": 8,
+      "losses": 0,
+      "draws": 0,
+      "meanAnswers": 8.25
+    },
+    {
+      "difficulty": "physicist",
+      "answerSeconds": 60,
+      "wins": 5,
+      "losses": 3,
+      "draws": 0,
+      "meanAnswers": 4
+    },
+    {
+      "difficulty": "physicist",
+      "answerSeconds": 90,
+      "wins": 0,
+      "losses": 8,
+      "draws": 0,
+      "meanAnswers": 2
+    },
+    {
+      "difficulty": "professor",
+      "answerSeconds": 30,
+      "wins": 8,
+      "losses": 0,
+      "draws": 0,
+      "meanAnswers": 8
+    },
+    {
+      "difficulty": "professor",
+      "answerSeconds": 60,
+      "wins": 4,
+      "losses": 4,
+      "draws": 0,
+      "meanAnswers": 4
+    },
+    {
+      "difficulty": "professor",
+      "answerSeconds": 90,
+      "wins": 0,
+      "losses": 8,
+      "draws": 0,
+      "meanAnswers": 2
+    }
+  ]
+}

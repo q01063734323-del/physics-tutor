@@ -13,3 +13,7 @@ All artwork in this directory was drawn as original SVG for Physics Tutor. No ex
 Palette: jade grass and dragon scales, slate-blue/ivory armour, amber metals, dusty violet cloth. Transparent sprites intentionally use neutral colours. Team identity belongs to a coloured base ring/outline in the renderer, keeping the exact same art usable on both sides. Load sprites once and cache rasterisation when drawing many units on Canvas. SVG shadows are baked into the image rasterisation, not updated by application animation.
 
 All SVGs are self-contained XML, have fixed viewBox/dimensions and no scripts, external resources or data URLs. Shapes can be animated by translating/scaling/rotating their canvas image; no runtime SVG mutation is needed.
+
+## Ultimate Edition (version2)
+
+The collection now has16 original card portraits and16 unit/spell illustrations. Eight expansion identities and five separate arena SVG themes are reproducible with `python3 scripts/build-royale-expansion.py`. The renderer animates these vectors through direction, movement, attack recoil, spawn/death transforms and bounded procedural particles. These are transformed illustrations, not a claim of skeletal animation or hand-painted frame sequences. `manifest.json` lists the expansion paths and arena themes. All generation uses local original vector paths and the Python standard library; no downloaded or paid artwork.

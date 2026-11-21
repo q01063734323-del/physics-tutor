@@ -1,8 +1,8 @@
-export type CardId='knight'|'archers'|'giant'|'skeletons'|'dragon'|'mage'|'fireball'|'guardians';
+export type CardId='knight'|'archers'|'giant'|'skeletons'|'dragon'|'mage'|'fireball'|'guardians'|'spears'|'sentinel'|'rider'|'frost'|'ember'|'ballista'|'meteor'|'hunters';
 export type Difficulty='novice'|'physicist'|'professor';
 export type Side='player'|'bot';
 export type Tier='easy'|'medium'|'hard';
-export type CardDefinition={id:CardId;name:string;cost:number;hp:number;damage:number;speed:number;cooldown:number;range:number;radius:number;count:number;targets:'all'|'ground'|'buildings';flying?:boolean;splash?:number;armor?:number;rarity:string;description:string};
+export type CardDefinition={id:CardId;name:string;cost:number;hp:number;damage:number;speed:number;cooldown:number;range:number;radius:number;count:number;targets:'all'|'ground'|'buildings';flying?:boolean;splash?:number;armor?:number;slow?:number;suicide?:boolean;building?:boolean;lifetime?:number;charge?:number;unlockXp?:number;rarity:string;description:string};
 export const cards:Record<CardId,CardDefinition>={
  knight:{id:'knight',name:'Рыцарь рассвета',cost:3,hp:480,damage:58,speed:40,cooldown:.9,range:22,radius:13,count:1,targets:'ground',rarity:'Обычная',description:'Надёжный боец ближнего боя. Прикрывает стрелков.'},
  archers:{id:'archers',name:'Лесные лучницы',cost:3,hp:145,damage:29,speed:43,cooldown:1,range:145,radius:10,count:2,targets:'all',rarity:'Обычная',description:'Две дальние атаки. Сбивают воздушные цели.'},
@@ -12,9 +12,18 @@ export const cards:Record<CardId,CardDefinition>={
  mage:{id:'mage',name:'Хранитель искры',cost:4,hp:300,damage:73,speed:33,cooldown:1.4,range:135,radius:12,count:1,targets:'all',splash:50,rarity:'Редкая',description:'Дальние огненные снаряды против плотных отрядов.'},
  fireball:{id:'fireball',name:'Пламя кометы',cost:4,hp:0,damage:300,speed:0,cooldown:0,range:0,radius:74,count:0,targets:'all',splash:74,rarity:'Редкая',description:'Удар по выбранной области. Башни получают 35% урона.'},
  guardians:{id:'guardians',name:'Стражи янтаря',cost:3,hp:220,damage:37,speed:35,cooldown:1,range:22,radius:11,count:3,targets:'ground',armor:.22,rarity:'Эпическая',description:'Три защитника с бронёй. Останавливают наземное наступление.'},
+ spears:{id:'spears',name:'Копья ветра',cost:2,hp:95,damage:24,speed:50,cooldown:1.05,range:125,radius:8,count:3,targets:'all',unlockXp:30,rarity:'Обычная',description:'Три лёгких метателя. Дешёвая поддержка против воздуха; боятся заклинаний.'},
+ sentinel:{id:'sentinel',name:'Обсидиановый страж',cost:4,hp:720,damage:86,speed:29,cooldown:1.35,range:24,radius:16,count:1,targets:'ground',armor:.28,unlockXp:60,rarity:'Эпическая',description:'Броня и сильный одиночный удар. Уязвим к воздуху и дальнему обстрелу.'},
+ rider:{id:'rider',name:'Всадник зари',cost:4,hp:460,damage:64,speed:68,cooldown:1,range:26,radius:14,count:1,targets:'buildings',charge:1.8,unlockXp:90,rarity:'Редкая',description:'Быстро прорывается к зданиям. Первый удар с разбега усилен; отряды могут окружить его.'},
+ frost:{id:'frost',name:'Хранитель инея',cost:4,hp:260,damage:32,speed:32,cooldown:1.25,range:130,radius:11,count:1,targets:'all',splash:36,slow:2,unlockXp:120,rarity:'Эпическая',description:'Ледяные снаряды замедляют движение и атаки на две секунды. Низкий собственный урон.'},
+ ember:{id:'ember',name:'Искра феникса',cost:2,hp:100,damage:170,speed:75,cooldown:1,range:24,radius:9,count:1,targets:'ground',splash:58,suicide:true,unlockXp:150,rarity:'Редкая',description:'Достигает наземной цели и взрывается, исчезая. Контрится дальним огнём.'},
+ ballista:{id:'ballista',name:'Дозорная баллиста',cost:4,hp:610,damage:46,speed:0,cooldown:.85,range:158,radius:19,count:1,targets:'all',building:true,lifetime:28,unlockXp:180,rarity:'Редкая',description:'Неподвижная оборона на 28 секунд. Привлекает атакующих здания, не идёт в контратаку.'},
+ meteor:{id:'meteor',name:'Звёздный обвал',cost:6,hp:0,damage:490,speed:0,cooldown:0,range:0,radius:84,count:0,targets:'all',splash:84,unlockXp:210,rarity:'Эпическая',description:'Мощное заклинание по области с задержкой. Урон зданиям — 35%; требует точного момента.'},
+ hunters:{id:'hunters',name:'Сумеречные охотники',cost:4,hp:190,damage:33,speed:55,cooldown:.9,range:118,radius:10,count:3,targets:'all',unlockXp:240,rarity:'Эпическая',description:'Три мобильных стрелка. Хороши за танком, уязвимы к атаке по площади.'},
 };
 export const cardIds=Object.keys(cards) as CardId[];
-export const balance={version:1,tickMs:50,width:420,height:720,riverTop:344,riverBottom:376,bridges:[110,310],bridgeHalf:23,startEnergy:4,maxEnergy:10,rewards:{easy:2,medium:4,hard:6} as Record<Tier,number>,matchSeconds:180,botEnergyPerSecond:.16,tower:{guardHp:1650,kingHp:2400,range:170,damage:47,cooldownSeconds:1},focusScale:.2,focusBudgetSeconds:120,focusPerQuestionSeconds:35,maxUnits:100,maxCommands:400};
+export const starterDeck:CardId[]=['knight','archers','giant','skeletons','dragon','mage','fireball','guardians'];
+export const balance={version:2,tickMs:50,width:420,height:720,riverTop:344,riverBottom:376,bridges:[110,310],bridgeHalf:23,startEnergy:4,maxEnergy:10,rewards:{easy:2,medium:4,hard:6} as Record<Tier,number>,matchSeconds:180,botEnergyPerSecond:.13,tower:{guardHp:1650,kingHp:2400,range:170,damage:47,cooldownSeconds:1},focusScale:.2,focusBudgetSeconds:120,focusPerQuestionSeconds:35,maxUnits:100,maxCommands:400};
 export type RoyaleSettings={rewards:Record<Tier,number>;disabled:string[];taskTiers:Record<string,Tier>;arenaTopics:Record<string,string[]>;studentTopics:Record<string,string[]>;studentDifficulty:Record<string,Difficulty>;focusScale:number};
 export const defaultSettings:RoyaleSettings={rewards:{...balance.rewards},disabled:[],taskTiers:{},arenaTopics:{},studentTopics:{},studentDifficulty:{},focusScale:balance.focusScale};
 export const arenas=[
@@ -29,3 +38,7 @@ export function validDeck(value:unknown):value is CardId[]{return Array.isArray(
 export function cardLevel(value:unknown){return typeof value==='number'&&Number.isInteger(value)?Math.max(1,Math.min(5,value)):1;}
 export function levelScale(level:number){return 1+.04*(cardLevel(level)-1);}
 export const difficultyLabels:Record<Difficulty,string>={novice:'Новичок',physicist:'Физик',professor:'Профессор'};
+
+export function isSpell(id:CardId){return cards[id].count===0;}
+export function availableCards(xp:number){return cardIds.filter(id=>(cards[id].unlockXp||0)<=xp);}
+export const averageCost=(deck:CardId[])=>deck.length?deck.reduce((sum,id)=>sum+cards[id].cost,0)/deck.length:0;
