@@ -93,3 +93,36 @@
 @media(min-width:701px){.game[data-graphics="3d"] .arenaFrame{width:min(100%,calc((100dvh - 125px)*.75))}}
 @media(max-width:700px){.game[data-graphics="3d"] .arenaFrame{width:min(100%,max(190px,calc((100dvh - 410px)*.75)))}}
 .placementActions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.placementActions button{min-height:48px!important;line-height:1.35}.placementActions button:last-child{font-size:.8125rem;padding:8px 10px}
+
+/* Sky Arena visual system */
+.shell,.game{--gold:#f0cd86;background-color:#0d1227}
+.shell{background-image:radial-gradient(ellipse at 77% 0,#263852 0%,transparent 56%),radial-gradient(ellipse at 12% 68%,#241a42,transparent 54%)}
+.game{background:radial-gradient(ellipse at 50% 20%,#27394f,#12172f 58%,#0d1227)}
+.hero h1,.sectionHead h2{font-family:var(--font-display),var(--font-body),system-ui;font-weight:800}
+.collectionCard,.startPanel,.lessonPanel{background:linear-gradient(155deg,#212d46,#171b35);border-color:#c4a4775c}
+.collectionCard:hover{box-shadow:0 10px 38px #06091788;border-color:#d6b578a0}
+.cardArt{background:#10121f;border-bottom:1px solid #bb9a625a}
+.heroScene .citadelArt{object-fit:cover}
+.game .handCard{background:linear-gradient(#262e4c,#181e35);border-color:#987c69}
+.game .handCard.selectedCard{border-color:#f2cd80;background:#303454}
+.game .handCard>img{object-fit:cover}
+.arenaFrame{overflow:hidden;isolation:isolate}
+.assetLoading{position:absolute;inset:auto 10px 10px;z-index:2;display:flex;align-items:center;gap:9px;padding:9px 11px;background:#10152bec;border:1px solid #c5a66e8a;border-radius:12px;pointer-events:none;color:#f7e5c3;box-shadow:0 3px 22px #0a0e22aa}
+.assetLoading>div{display:grid;gap:3px;min-width:0;flex:1}
+.assetLoading .brandMark{width:27px;height:30px;color:#f2d88e}
+.assetLoading b{letter-spacing:.08em;font-size:.6875rem}
+.assetLoading small{font-size:.75rem;color:#e7ddf0}
+.assetLoading progress{width:100%;height:5px;accent-color:#e6bc76}
+.missed{text-align:left;max-width:100%}
+.missed h2{font-size:1.13rem;margin:0 0 10px}
+.repeatQuestion{padding:10px;border:1px solid #8297b26b;border-radius:9px;margin-bottom:8px}
+.repeatQuestion summary{cursor:pointer;min-height:30px;line-height:1.4}
+.repeatQuestion form{display:grid;gap:9px}
+.repeatQuestion p{overflow-wrap:anywhere}
+@media(max-width:700px){
+ .game{padding-inline:max(12px,env(safe-area-inset-left)) max(12px,env(safe-area-inset-right))}
+ .game button,.shell button{min-height:44px}
+ .game[data-graphics="3d"] .arenaFrame{width:min(100%,max(250px,calc((100dvh - 305px)*.75)))}
+ .heroCopy{background:linear-gradient(90deg,#131e38 45%,#131e38df 68%,#131e3800)}
+ .assetLoading b{letter-spacing:.035em}
+}
