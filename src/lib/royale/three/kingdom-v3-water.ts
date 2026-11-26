@@ -43,15 +43,19 @@ const fragment = `
   float lines=pow(.5+.5*sin(x*102.+5.*n(vec2(x*7.,y*13.-clock*3.))),6.);
   float coarse=n(vec2(x*6.+uSeed,y*1.6-clock*.48));
   float film=smoothstep(.26,.78,wide*.78+small*.23);
-  float crest=clamp(pow(max(0.,small),3.)*1.88+lines*.21,0.,1.);
+  float turbulence=n(vec2(x*19.+uSeed,y*31.-clock*4.));
+  float lace=smoothstep(.61,.86,small*.63+turbulence*.37);
+  float crest=clamp(pow(max(0.,small),3.)*1.70+lines*.28+lace*.46,0.,1.);
   float water=mix(.30,.82,film);
   float translucent=(1.-smoothstep(.71,1.,y))*(smoothstep(.0,.09,x)*(1.-smoothstep(.92,1.,x)));
   translucent*=mix(.64,1.,coarse);
   float angle=abs(dot(normalize(vEye),normalize(vNormal)));
   float highlight=pow(1.-clamp(angle,.0,1.),2.0)*.75;
-  vec3 blue=mix(vec3(.018,.155,.375),vec3(.075,.53,.75),water);
+  vec3 blue=mix(vec3(.016,.12,.34),vec3(.067,.49,.83),water);
   vec3 ice=mix(vec3(.39,.83,.94),vec3(1.0,.87,.68),highlight*.4);
   vec3 color=mix(blue,ice,clamp(crest*.85+highlight*.15,0.,1.));
+  float lipFoam=(1.-smoothstep(.025,.13,y))*smoothstep(.42,.76,wide*.77+turbulence*.23);
+  color=mix(color,vec3(.78,.94,1.),lipFoam*.66);
   if(uFlat>.5){
    color=mix(color,ice,pow(.5+.5*sin(x*44.+12.*y-clock*5.+6.*wide),11.)*.30);
    translucent=max(.52,translucent);
@@ -98,7 +102,7 @@ const sprayVertex=`
   p.y+=sin(phase*3.141593)*(.20+aDrop.w*.48)-phase*.41;
   vec4 view=modelViewMatrix*vec4(p,1.);
   gl_Position=projectionMatrix*view;
-  gl_PointSize=clamp((1.-phase)*.8*aDrop.y/max(.35,-view.z),1.,5.5);
+  gl_PointSize=clamp((1.-phase)*1.0*aDrop.y/max(.35,-view.z),1.,6.0);
   vAlpha=(1.-phase)*(.29+.68*sin(phase*3.141593));
  }
 `;

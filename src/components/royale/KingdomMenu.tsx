@@ -9,6 +9,7 @@ import { playerLevel } from '@/lib/royale/progress';
 import { accuracy,topicRows } from '@/lib/royale/learning';
 import { CardArtwork } from './CardArtwork';
 import { KingdomMark, LeagueBadge } from './KingdomMarks';
+import { KingdomMenuMedal } from './KingdomMenuMedal';
 import { KingdomScene } from './KingdomScene';
 import { RoyaleIcon } from './RoyaleIcon';
 import type { Preferences } from './RoyalePreferences';
@@ -44,7 +45,7 @@ export function KingdomShell({tab,profile,practice,name,onNavigate,onSettings,ch
    <div className={k.content}>{children}</div>
    <nav className={k.navigation} aria-label="Разделы игры">
     {kingdomTabs.map(([id,label])=><button type="button" key={id} aria-current={tab===id?'page':undefined} onClick={()=>onNavigate(id)}>
-     {id==='stats'?<KingdomMark name="stats"/>:<RoyaleIcon name={id==='battle'?'swords':id==='collection'?'deck':'progress'}/>}<span>{label}</span></button>)}
+     {tab==='home'?<KingdomMenuMedal name={id}/>:id==='stats'?<KingdomMark name="stats"/>:<RoyaleIcon name={id==='battle'?'swords':id==='collection'?'deck':'progress'}/>}<span>{label}</span></button>)}
    </nav>
    <footer className={k.footer}><span>{practice?'Локальная практика':'Личный профиль'}</span><Link href="/trainer">Тренажёр ЕГЭ</Link><Link href="/">Физика с Егором</Link></footer>
   </div>

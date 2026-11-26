@@ -518,3 +518,103 @@
  .shell[data-tab=home] .navigation{margin-top:7px}
  .shell[data-tab=home] .navigation button{min-height:42px;padding-block:7px}
 }
+
+/* Ultra Detail — the existing Kingdom home, with cast-metal frames. */
+.shell[data-tab=home] {
+ --royale-metal:linear-gradient(168deg,#fff6d0 0%,#bd8646 12%,#ffe6a7 23%,#74421d 49%,#f1bf69 67%,#fff2bf 78%,#98632e 96%);
+ --royale-panel:radial-gradient(115% 100% at 20% 0%,#294372 0%,#18284d 49%,#111d38 100%);
+}
+.shell[data-tab=home] .topbar {
+ position:relative;
+ box-shadow:0 1px #cba57472,0 4px 14px #080c2161;
+}
+.shell[data-tab=home] .brand>span {border-color:#eec987;box-shadow:inset 0 0 0 2px #d5a05a3f,0 4px 10px #0508158c}
+.shell[data-tab=home] .avatar {border-color:#fbd378;box-shadow:0 0 0 2px #5c371c,0 0 10px #eaa05b54}
+.shell[data-tab=home] .court {
+ border:2px solid transparent;
+ border-radius:clamp(13px,1.6vw,24px);
+ background:linear-gradient(#192b55,#192b55) padding-box,var(--royale-metal) border-box;
+ background:
+   url('/royale/kingdom-v3/sky.webp') center 55%/cover padding-box,
+   var(--royale-metal) border-box;
+ box-shadow:0 0 0 1px #110f2a,0 14px 35px #040715b0;
+}
+.shell[data-tab=home] .court::before {
+ background:linear-gradient(180deg,#101a3c57,transparent 34%,transparent 72%,#12183e7a);
+}
+.shell[data-tab=home] .court::after {
+ border:1px solid #fff1ca5c;
+ border-radius:inherit;
+ box-shadow:inset 0 0 9px #fad58c26;
+}
+.courtHeading h1 {
+ color:#fff2ce;
+ text-shadow:0 1px #ffedbc,0 3px #a36127,0 5px 2px #331e23,0 8px 22px #0a142cae;
+}
+.courtHeading h1 em {color:#ffdf90}
+.shell[data-tab=home] .courtCrown {color:#ffda80;filter:drop-shadow(0 2px 1px #713613) drop-shadow(0 0 6px #ecc97452)}
+.shell[data-tab=home] :is(.courtLeague,.courtLearning) {
+ border:2px solid transparent;
+ border-radius:4px 13px 5px 13px;
+ background:var(--royale-panel) padding-box,var(--royale-metal) border-box;
+ box-shadow:inset 0 0 0 2px #080e23,inset 0 0 0 3px #f8cb795a,0 8px 20px #10153685;
+}
+.shell[data-tab=home] :is(.courtLeague,.courtLearning) b {color:#ffe8af}
+.shell[data-tab=home] .courtLearning .learningIcon {border-radius:50%;box-shadow:inset 0 0 0 2px #d2a1ff23,0 4px 12px #090b23aa}
+.shell[data-tab=home] .courtActions .goldButton {
+ border:5px solid transparent;
+ border-radius:clamp(23px,3vw,45px);
+ min-width:clamp(226px,29vw,460px);
+ color:#fff3cd;
+ background:
+  radial-gradient(ellipse at 51% 0%,#b56add 1%,transparent 64%) padding-box,
+  linear-gradient(180deg,#68368f 1%,#471f6b 40%,#35144b 72%,#632377) padding-box,
+  var(--royale-metal) border-box;
+ box-shadow:inset 0 0 0 1px #ffe9b3,inset 0 0 0 4px #5d304b,
+   inset 0 0 0 5px #e6a754,inset 0 9px 16px #d68bff36,0 6px 0 #6a3d23,0 11px 18px #0a071f91,0 0 22px #e9954464;
+ text-shadow:0 2px #fff6a036,0 4px 1px #59274a,0 5px 3px #210b32;
+ transition:transform .18s var(--ease-reveal),filter .18s var(--ease-reveal),box-shadow .18s var(--ease-reveal);
+}
+.shell[data-tab=home] .courtActions .goldButton:hover {filter:brightness(1.12);transform:translateY(-1px)}
+.shell[data-tab=home] .courtActions .goldButton:active {transform:translateY(3px) scale(.987)}
+.shell[data-tab=home] .courtActions .goldButton::before,
+.shell[data-tab=home] .courtActions .goldButton::after {
+ width:18px;height:18px;top:calc(50% - 9px);
+ background:conic-gradient(from 15deg,#f7d47c,#9f5526,#ffe6aa,#f9b74f,#f7d47c);
+ border:1px solid #ffe2a0;
+ box-shadow:0 0 0 1px #774a2c,0 0 11px #e2a052a1;
+}
+.shell[data-tab=home] .courtActions .goldButton::before {left:-11px}
+.shell[data-tab=home] .courtActions .goldButton::after {right:-11px}
+.shell[data-tab=home] .navigation {
+ border:2px solid transparent;
+ border-radius:40px;
+ background:var(--royale-panel) padding-box,var(--royale-metal) border-box;
+ box-shadow:inset 0 0 0 2px #101a33,inset 0 0 0 3px #ffe2a252,0 10px 24px #050a19b3;
+ padding-inline:14px;
+}
+.shell[data-tab=home] .navigation button + button {position:relative}
+.shell[data-tab=home] .navigation button + button::before {
+ content:'';position:absolute;left:-3px;top:20%;height:60%;width:1px;
+ background:linear-gradient(transparent,#e2bb6a8c,transparent);
+}
+.shell[data-tab=home] .navigation button svg {width:26px;height:26px;filter:drop-shadow(0 2px 1px #241524)}
+@media(max-width:620px) {
+ .shell[data-tab=home] .court {
+  background:url('/royale/kingdom-v3/sky-portrait.webp') center 60%/cover padding-box,var(--royale-metal) border-box;
+ }
+ .shell[data-tab=home] .courtActions .goldButton {border-width:3px}
+ .shell[data-tab=home] .navigation {padding-inline:7px;border-radius:19px}
+ .shell[data-tab=home] .navigation button svg {width:21px;height:21px}
+}
+@media(orientation:landscape) and (max-height:510px) {
+ .shell[data-tab=home] .courtActions .goldButton {border-width:3px;min-height:44px}
+ .shell[data-tab=home] .navigation button svg {width:23px;height:23px}
+}
+
+@media(min-width:900px) and (min-height:511px) {
+ .shell[data-tab=home] .navigation {width:min(96%,1050px)}
+ .shell[data-tab=home] .navigation button {font-size:15px}
+ .shell[data-tab=home] :is(.courtLeague,.courtLearning) {width:min(21%,264px);padding:14px}
+ .shell[data-tab=home] .courtActions .goldButton {min-height:76px}
+}

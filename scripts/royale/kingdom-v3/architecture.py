@@ -3,6 +3,8 @@ from math import cos, sin, pi, tau, atan2
 from mathutils import Vector
 from common import Craft, R, circles
 
+LANTERNS=[(-.39,-1.90,1.04),(1.33,-1.90,1.04),(-.43,-2.35,.49),(1.39,-2.35,.49),(-.59,-2.74,.43),(1.55,-2.74,.43),(-2.49,-2.38,.61),(2.36,-2.21,.60)]
+
 def arch_profile(radius, height, count=14, pointed=.20):
     lower=height-radius
     return [(-radius,0),(radius,0)]+[(radius*cos(pi*i/count),lower+radius*sin(pi*i/count)+pointed*sin(pi*i/count)**5)
@@ -79,6 +81,30 @@ def pier(g,x,y,z,h,side=.24,brow=.4):
         g.block((x,y,z+position),(w,brow,t),'trim',.034)
     g.block((x,y,z+h+.115),(side*.57,.16,.22),'trim',.025)
 
+def raised_tile(g,left,right,top_left,top_right,shade):
+    a,b,c,d=map(Vector,(left,right,top_right,top_left))
+    n=(b-a).cross(d-a).normalized()
+    if n.z<0: n=-n
+    a,b,c,d=[p+n*.022 for p in (a,b,c,d)]
+    lip=[a,a.lerp(b,.5)+n*.018,b,c,d]
+    face=lip if (b-a).cross(d-a).dot(n)>0 else list(reversed(lip))
+    tex=[(p.y*.108+p.x*.13,.08+p.z*.16) for p in face]
+    tone=(shade*.84,shade*.94,min(1,shade*1.07))
+    g.patch('roof',[tuple(p) for p in face],[tuple(range(5))],tone,tex)
+    skirt=[lip[0]-n*.026,lip[2]-n*.026,lip[2],lip[1],lip[0]]
+    g.patch('roof',[tuple(p) for p in (skirt if face==lip else list(reversed(skirt)))],
+            [(0,1,2,3,4)],(shade*.54,shade*.64,shade*.82))
+
+def lantern(g,x,y,z):
+    g.rings('iron',circles(x,y,z,[(.055,-.22),(.096,-.169),(.091,-.128)],6))
+    g.rings('lamp',circles(x,y,z,[(.076,-.13),(.085,.062)],6),(.99,.75,.40))
+    g.rings('gold',circles(x,y,z,[(.10,.053),(.118,.085),(.054,.13),(.023,.205),(.001,.235)],6))
+    for j in range(6):
+        a=tau*j/6
+        g.taper('gold',[(x+.080*cos(a),y+.080*sin(a),z-.139),
+                         (x+.09*cos(a),y+.09*sin(a),z+.069)],[.012,.010],4)
+    g.rings('gold',circles(x,y,z,[(.086,-.159),(.10,-.142),(.084,-.120)],6))
+
 def chapel_roof(g,x,y,z,width,length,h,cathedral=False,low=False):
     # Each side is lofted from a flared carved eave into an asymmetric ridge.
     offsets=[(0,1,.0),(.13,.89,.0),(.29,.75,.02),(.50,.52,.03),(.72,.30,.07),(.89,.12,.09),(1,.015,.10)]
@@ -99,10 +125,19 @@ def chapel_roof(g,x,y,z,width,length,h,cathedral=False,low=False):
                 shade=R.uniform(.73,1)*(.92 if j%3==1 else 1)
                 tex=[(.11+v[1]*1.03,.27+v[2]*1.2) for v in face]
                 g.patch('roof',face,[(0,1,2,3)],(shade,shade,min(1,shade*1.06)),uv=tex)
-                if not low and i%2!=j%2:
-                    p=Vector(a[i]).lerp(Vector(a[i+1]),.44)
-                    edge=.04 if j%2 else .056
-                    g.block(tuple(p),(.047,edge,.018),'roof',.004,tone=(.84,.94,1))
+                if not low or j%2==0:
+                    for row in range(1 if low else 2):
+                        lo=.03+row*.49
+                        hi=min(1,lo+(.90 if low else .56))
+                        for col in range(1 if low else 2):
+                            f=.02+col*.49
+                            t=min(.994,f+(.96 if low else .475))
+                            al=Vector(a[i]).lerp(Vector(a[i+1]),f)
+                            ar=Vector(a[i]).lerp(Vector(a[i+1]),t)
+                            bl=Vector(b[i]).lerp(Vector(b[i+1]),f)
+                            br=Vector(b[i]).lerp(Vector(b[i+1]),t)
+                            accent=.77+.23*((i*7+j*11+row+col*5)%13)/12
+                            raised_tile(g,al.lerp(bl,lo),ar.lerp(br,lo),al.lerp(bl,hi),ar.lerp(br,hi),accent)
         for pos in [0,-1]:
             g.taper('gold',[row[pos] for row in surf],[.036,.034,.031,.029,.027,.024,.020],5)
         g.taper('trim',surf[0][::3]+[surf[0][-1]] if n%3 else surf[0][::3],[.048]*(len(surf[0][::3])+(1 if n%3 else 0)),6)
@@ -124,6 +159,18 @@ def chapel_roof(g,x,y,z,width,length,h,cathedral=False,low=False):
         g.solid(disc(radius*1.27),center,0,.075,'trim')
         g.solid(disc(radius*1.04),(center[0],center[1]-.028,center[2]),0,.071,'seam')
         g.solid(disc(radius*.88),(center[0],center[1]-.039,center[2]),0,.067,'cloth')
+        for i in range(12):
+            a=i*tau/12
+            b=(i+1)*tau/12
+            petal=[(0,0),(.83*radius*cos(a),.83*radius*sin(a)),
+                   (.88*radius*cos((a+b)/2),.88*radius*sin((a+b)/2)),(.83*radius*cos(b),.83*radius*sin(b))]
+            g.solid(petal,(center[0],center[1]-.061,center[2]),0,.009,'azure_glass' if i%3 else 'violet_glass',
+                    (.73+(i%3)*.07,.8,.92))
+        for twist in [0,pi/3,2*pi/3]:
+            curve=[(center[0]+radius*(.88*cos(t)*cos(twist)-.34*sin(t)*sin(twist)),center[1]-.108,
+                    center[2]+radius*(.88*cos(t)*sin(twist)+.34*sin(t)*cos(twist)))
+                   for t in [i*tau/24 for i in range(25)]]
+            g.taper('gold',curve,[.011]*len(curve),4)
         for i in range(8):
             a=i*tau/8
             q=[(center[0]+radius*.81*cos(a),center[1]-.076,center[2]+radius*.81*sin(a)),
@@ -154,12 +201,14 @@ def round_roof(g,x,y,z,r,h,variant,low):
             pts=[u[i],u[k],v[k],v[i]]
             g.patch('roof',pts,[(0,1,2,3)],(color,min(1,color*1.06),min(1,color*1.16)),
                     [(i*.18,j*.23),(i*.18+.18,j*.23),(i*.18+.18,j*.23+.24),(i*.18,j*.23+.24)])
-            if not low and j<6:
-                start=Vector(u[i]).lerp(Vector(u[k]),.10)
-                end=Vector(u[i]).lerp(Vector(u[k]),.91)
-                dv=Vector((x-start.x,y-start.y,0)).normalized()*-.028
-                g.patch('roof',[tuple(start),tuple(end),tuple(end+dv+Vector((0,0,-.028))),tuple(start+dv+Vector((0,0,-.028)))],
-                        [(3,2,1,0)],(.49,.61,.82))
+            if j<7 and (not low or i%2==0):
+                for row in range(1 if low else 2):
+                    lo=.025+row*.49
+                    hi=min(1,lo+(.9 if low else .54))
+                    al,ar=Vector(u[i]).lerp(Vector(u[k]),.055),Vector(u[i]).lerp(Vector(u[k]),.945)
+                    bl,br=Vector(v[i]).lerp(Vector(v[k]),.055),Vector(v[i]).lerp(Vector(v[k]),.945)
+                    raised_tile(g,al.lerp(bl,lo),ar.lerp(br,lo),al.lerp(bl,hi),ar.lerp(br,hi),
+                                .77+.22*((j*5+i*13+row*8)%17)/16)
     for i in range(0,sides,max(3,sides//4)):
         path=[(a,b,c+.018) for a,b,c in [row[i] for row in rings]]
         g.taper('gold',path,[.033-.0022*j for j in range(len(path))],5)
@@ -296,5 +345,40 @@ def build_palace(low=False):
     for sign in [-1,1]:
         branch=[(-3.24-u*2.17+sign*.18,-.41-u*1.54-sign*.27,.52-.50*u+.01*sin(pi*u)) for u in [i/12 for i in range(13)]]
         g.taper('gold',branch,[.018]*13,5)
+    for k,(x,y,z) in enumerate(LANTERNS):
+        lantern(g,x,y,z)
+        if k>=2:
+            g.rings('trim',circles(x,y,z-.29,[(.095,-.22),(.091,-.173),(.057,-.116),(.047,.02),(.072,.078)],7))
+    for side in [-1,1]:
+        railing=[(gate+side*(.73+i*.086),-1.87-i*.17,.68-i*.042) for i in range(6)]
+        g.taper('gold',railing,[.023]*6,6)
+        for x,y,z in railing:
+            g.taper('iron',[(x,y,z-.21),(x,y,z)],[.026,.019],5)
+        # Enamel shield between the cornice and each retaining wall.
+        crest(g,gate+side*.86,-1.75,1.22,.42)
     flags=[(*a,1.28),(*b,.94),(*c,.88),(*d,.74),(*e,.68)]
     return g,flags
+
+
+def distant_keep(x,y,z,scale,variant):
+    g=Craft('Distant island • palace '+str(variant))
+    for i,(dx,dy,w,h) in enumerate([(-.58,.12,.55,1.02),(.48,.07,.48,.80),(.03,.30,.58,1.47)]):
+        if variant==2:h*=.90+(.22 if i==1 else 0)
+        px=x+dx*scale; py=y+dy*scale
+        g.rings('stone',circles(px,py,z,[(w*.72*scale,0),(w*.62*scale,h*scale)],8),(.68,.64,.60))
+        g.rings('trim',circles(px,py,z+h*scale,[(w*.75*scale,0),(w*.73*scale,.082*scale)],8))
+        g.rings('roof',circles(px,py,z+h*scale,
+            [(w*.82*scale,.03*scale),(w*.84*scale,.08*scale),(w*.68*scale,.19*scale),
+             (w*.40*scale,w*.76*scale),(.018*scale,w*1.23*scale)],10),(.66,.81,.95))
+        g.rings('joint',circles(px,py,z+h*scale*.73,[(w*.70*scale,0),(w*.70*scale,.04*scale)],8))
+        for offset in [-.13,.13]:
+            g.block((px+offset*scale,py-w*.63*scale,z+h*scale*.53),
+                    (.059*scale,.056*scale,.14*scale),'joint',.013)
+        g.block((px,py-w*.60*scale,z+h*scale*.57),(.11*scale,.044*scale,.17*scale),'glass',.012)
+        g.rings('gold',circles(px,py,z+h*scale+w*1.23*scale,[(.030*scale,0),(.006*scale,.13*scale)],5))
+    g.block((x,y-.11*scale,z+.30*scale),(1.46*scale,.65*scale,.64*scale),'stone',.038,tone=(.66,.64,.60))
+    for k in range(6):
+        g.block((x+(k-2.5)*.223*scale,y-.38*scale,z+.65*scale),
+                (.135*scale,.13*scale,.127*scale),'trim',.016,tone=(.75,.72,.65))
+    g.block((x,y-.44*scale,z+.29*scale),(.25*scale,.036*scale,.34*scale),'joint',.025)
+    return g

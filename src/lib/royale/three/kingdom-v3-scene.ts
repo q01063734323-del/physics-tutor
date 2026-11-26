@@ -8,7 +8,7 @@ import { makeKingdomWater, type WaterSite } from './kingdom-v3-water';
 const root='/royale/kingdom-v3';
 type PlantSite=[number,number,number,number,number];
 type FlagSite=[number,number,number,number];
-type Layout={trees:PlantSite[][];water:WaterSite[];flags:FlagSite[]};
+type Layout={trees:PlantSite[][];water:WaterSite[];flags:FlagSite[];lanterns?:[number,number,number][]};
 
 function cloudMap(){
  const c=document.createElement('canvas');
@@ -119,6 +119,30 @@ function makeGroves(world:T.Group,sites:PlantSite[][],reduced:boolean,wind:{valu
  return {batch,groups};
 }
 
+function makeLanternGlow(sites:[number,number,number][],low:boolean){
+ const field=document.createElement('canvas');
+ field.width=64;field.height=64;
+ const context=field.getContext('2d')!;
+ const fade=context.createRadialGradient(32,32,0,32,32,32);
+ fade.addColorStop(0,'rgba(255,245,207,.91)');
+ fade.addColorStop(.14,'rgba(255,219,117,.69)');
+ fade.addColorStop(.36,'rgba(255,160,48,.27)');
+ fade.addColorStop(.69,'rgba(253,92,17,.065)');
+ fade.addColorStop(1,'rgba(255,103,7,0)');
+ context.fillStyle=fade;context.fillRect(0,0,64,64);
+ const map=new T.CanvasTexture(field);map.colorSpace=T.SRGBColorSpace;
+ const group=new T.Group();
+ const bulbs=sites.filter((_,i)=>!low||i<6).map(([x,y,z])=>{
+  const light=new T.Sprite(new T.SpriteMaterial({map,transparent:true,depthWrite:false,opacity:.63,
+   blending:T.AdditiveBlending,toneMapped:false}));
+  light.position.set(x,z-.025,-y+.061);light.scale.set(.39,.47,1);light.renderOrder=16;group.add(light);
+  return light;
+ });
+ return {group,update(time:number){
+  bulbs.forEach((bulb,i)=>{bulb.material.opacity=.62+.095*Math.sin(time*2.6+i*2.4)+.046*Math.sin(time*5.9+i*.76);});
+ },dispose(){bulbs.forEach(bulb=>bulb.material.dispose());map.dispose();}};
+}
+
 const birdVertex=`
  uniform float uTime;
  void main(){
@@ -127,7 +151,7 @@ const birdVertex=`
   gl_Position=projectionMatrix*modelViewMatrix*instanceMatrix*vec4(p,1.);
  }
 `;
-const birdFragment=`void main(){gl_FragColor=vec4(.20,.28,.42,.71);}`;
+const birdFragment=`void main(){gl_FragColor=vec4(.97,.91,.82,.89);}`;
 
 export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQuality,onReady:()=>void,onError:()=>void){
  const auto=quality==='auto';
@@ -137,23 +161,23 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
  const high=quality==='high'||(auto&&!low&&innerWidth>=950&&cores>=8);
  const renderer=new T.WebGLRenderer({canvas,antialias:!low,alpha:true,powerPreference:low?'low-power':'default'});
  renderer.toneMapping=T.ACESFilmicToneMapping;
- renderer.toneMappingExposure=1.00;
+ renderer.toneMappingExposure=1.06;
  renderer.shadowMap.enabled=!low;
  renderer.shadowMap.type=T.PCFShadowMap;
  renderer.shadowMap.autoUpdate=false;
  const scene=new T.Scene();
- scene.fog=new T.Fog(0xa2b5d6,23,42);
+ scene.fog=new T.Fog(0xa3b5df,23,43);
  const camera=new T.PerspectiveCamera(32,1,.12,75);
  const stage=canvas.parentElement;
- const hemi=new T.HemisphereLight(0xb9d5ff,0x534e62,1.13);
- const sun=new T.DirectionalLight(0xffcea0,3.2);
- sun.position.set(-8,11,7);
+ const hemi=new T.HemisphereLight(0xbcd3ff,0x60617a,1.00);
+ const sun=new T.DirectionalLight(0xffd3a5,3.65);
+ sun.position.set(8,11,7);
  sun.castShadow=!low;
  sun.shadow.mapSize.setScalar(high?1536:768);
  Object.assign(sun.shadow.camera,{left:-7,right:7,top:7,bottom:-7,near:1,far:30});
  sun.shadow.normalBias=.043;sun.shadow.bias=-.0002;sun.shadow.radius=3.4;
  const cool=new T.DirectionalLight(0xa5c7fc,1.20);
- cool.position.set(8,8,-6);
+ cool.position.set(-8,8,-6);
  scene.add(hemi,sun,cool);
  const generator=!low?new T.PMREMGenerator(renderer):undefined;
  const environment=generator?new RoomEnvironment():undefined;
@@ -193,6 +217,7 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
  let water:ReturnType<typeof makeKingdomWater>|undefined;
  let flags:ReturnType<typeof kingFlags>|undefined;
  let instancing:T.InstancedMesh[]=[];
+ let lanterns:ReturnType<typeof makeLanternGlow>|undefined;
  let hitTimer=0;
  function sizing(){
   const w=canvas.clientWidth,h=canvas.clientHeight;
@@ -226,9 +251,9 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
    hitTimer=elapsed;budgetDpr=Math.max(.78,budgetDpr*.88);sizing();
   }
   pointer=T.MathUtils.lerp(pointer,mouse,.047);
-  const tilt=-.36+.02*Math.sin(elapsed*.24)+pointer*.125;
+  const tilt=-.33+.02*Math.sin(elapsed*.24)+pointer*.125;
   const launch=canvas.closest('[data-launching="true"]')!==null;
-  const distance=22.9+Math.exp(-elapsed*2.45)*1.04-(launch?1.18:0);
+  const distance=(camera.aspect>1.18&&canvas.clientHeight>380?22.35:22.9)+Math.exp(-elapsed*2.45)*1.04-(launch?1.18:0);
   location.set(distance*Math.sin(tilt),7.35+.17*Math.sin(elapsed*.42),distance*Math.cos(tilt));
   if(painted)camera.position.lerp(location,.062);
   else camera.position.copy(location);
@@ -253,7 +278,8 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
   birds.material.uniforms.uTime.value=elapsed;
   if(flags)flags.material.uniforms.uWind.value=elapsed;
   water?.update(elapsed);
-  sun.intensity=3.2+dusk*.043;
+  lanterns?.update(elapsed);
+  sun.intensity=3.65+dusk*.055;
   if(!low&&frames%(high?11:19)===0)renderer.shadowMap.needsUpdate=true;
   renderer.render(scene,camera);
   frames++;
@@ -290,7 +316,8 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
   });
   water=makeKingdomWater(layout.water,skyCloud,low,high);
   flags=kingFlags(layout.flags);
-  scene.add(asset.scene,grove.batch,water.root,flags.group);
+  lanterns=makeLanternGlow(layout.lanterns??[],low);
+  scene.add(asset.scene,grove.batch,water.root,flags.group,lanterns.group);
   ready=true;
  }
  void load().catch(()=>{if(!disposed&&!abort.signal.aborted)onError();});
@@ -299,7 +326,7 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
  return ()=>{
   disposed=true;abort.abort();cancelAnimationFrame(frame);resize.disconnect();observer.disconnect();
   stage?.removeEventListener('pointermove',track);canvas.removeEventListener('webglcontextlost',onContextLost);
-  water?.dispose();birds.geometry.dispose();birds.material.dispose();birds.dispose();
+  water?.dispose();lanterns?.dispose();birds.geometry.dispose();birds.material.dispose();birds.dispose();
   cloudBanks.forEach(({sprite})=>sprite.material.dispose());
   instancing.forEach(instance=>instance.dispose());
   disposeKingdomScene(scene);skyCloud.dispose();reflected?.dispose();sun.shadow.dispose();

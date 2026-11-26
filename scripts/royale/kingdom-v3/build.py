@@ -8,7 +8,7 @@ from mathutils.bvhtree import BVHTree
 
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from common import create_palette, collection, PALETTE
-from architecture import build_palace
+from architecture import LANTERNS, build_palace
 from vegetation import prototype, shrub, groundcover, SPECIES
 from landscape import make_landscape, demo_water, FALLS
 
@@ -29,9 +29,9 @@ DESIGN=[
  ('C • Late sunlight',(1.8,-22.0,10.8),(0,0,.99),42,(-10,4,8),3.75,.24,'ffc591')
 ]
 TREE_SITES=[
- (0,-3.44,-1.37,.23,1.05,.12),(2,3.19,-1.34,.21,.81,1.19),(4,2.88,-2.08,.18,.76,-.80),
+ (0,-3.44,-1.37,.23,1.24,.12),(2,3.19,-1.34,.21,.93,1.19),(4,2.88,-2.08,.18,.76,-.80),
  (3,-1.52,-2.38,.21,.47,.7),(1,-3.7,.61,.25,.77,.4),(1,3.57,-.19,.25,.66,2.1),
- (2,-2.58,-1.35,.20,.48,.2),(4,-3.92,-.28,.23,.68,.8),(0,3.03,1.03,.19,.76,4.22),
+ (2,-2.72,-1.36,.20,.66,.2),(4,-3.92,-.28,.23,.68,.8),(0,3.03,1.03,.19,.76,4.22),
  (1,-2.92,1.91,.20,.70,.5),(3,2.95,.77,.25,.68,2.5),(1,-8.26,5.86,1.68,.42,2),
  (1,-8.81,5.7,1.66,.51,1.5),(0,-5.55,-1.77,-.14,.78,1),(4,-5.37,-2.28,-.20,.62,-.80),
  (2,5.84,.96,-.62,.64,.24),(0,5.99,1.84,-.62,.45,1),(3,5.33,1.31,-.64,.44,2),
@@ -196,7 +196,7 @@ def build():
     bpy.ops.export_scene.gltf(filepath=str(opts.out/(stem+'.glb')),export_format='GLB',use_selection=True,
         export_image_format='AUTO',export_tangents=False,export_vertex_color='ACTIVE',export_extras=False)
     if not opts.low:
-        (opts.out/'layout.json').write_text(json.dumps({'trees':placements,'water':FALLS,'flags':flags},separators=(',',':'))+'\n')
+        (opts.out/'layout.json').write_text(json.dumps({'trees':placements,'water':FALLS,'flags':flags,'lanterns':LANTERNS},separators=(',',':'))+'\n')
 
 def render_scene():
     scene=bpy.context.scene
@@ -252,6 +252,6 @@ if not opts.render_only: build()
 else:
     bpy.ops.wm.open_mainfile(filepath=str(opts.out/'Kingdom_3_0_Environment.blend'))
     from common import PALETTE
-    for prefix in ['stone','trim','joint','cliff','top','paving','roof','gold','iron','wood','glass','seam','cloth','leaves','gem','wet','foam']:
+    for prefix in ['stone','trim','joint','cliff','top','paving','roof','gold','iron','wood','glass','seam','cloth','leaves','gem','wet','foam','azure_glass','violet_glass','lamp','petals']:
         PALETTE[prefix]=next(o.active_material for o in bpy.data.objects if o.type=='MESH' and o.name.endswith(' / '+prefix))
 if opts.render or opts.render_only: render_scene()

@@ -79,6 +79,10 @@ def create_palette(textures, reduced=False):
         'iron':('Oxidised midnight iron','213044',.57,.52,None,.0),
         'wood':('Chestnut oak and timber','573321',.91,0,'wood',.33),
         'glass':('Honey glass','ffb657',.40,.06,None,0),
+        'azure_glass':('Luminous azure glass','237dd9',.35,.02,None,0),
+        'violet_glass':('Luminous amethyst glass','8c43e9',.42,.03,None,0),
+        'lamp':('Amber lantern glass','ffb440',.38,0,None,0),
+        'petals':('Orchid and buttercup petals','ffffff',.80,0,None,0),
         'seam':('Shadowed recess','272039',.97,0,None,0),
         'cloth':('Indigo embroidered cloth','254e86',.94,0,'cloth',.24),
         'leaves':('Foliage atlas','8eab51',.86,0,'leaf',.21),
@@ -88,7 +92,7 @@ def create_palette(textures, reduced=False):
     }
     for key,(name,c,r,m,f,n) in definitions.items():
         PALETTE[key]=surface(name,c,r,m,f,n*.63 if reduced else n,
-                             key=='leaves',{'glass':.40,'gem':.12,'foam':.37}.get(key,0))
+                             key=='leaves',{'glass':.84,'gem':.29,'foam':.37,'azure_glass':.76,'violet_glass':.44,'lamp':3.00}.get(key,0))
 
 class Craft:
     """Batched by material for the browser, then published into named Blender collections."""
@@ -171,7 +175,13 @@ class Craft:
             layer=mesh.uv_layers.new(name='UV0')
             layer.data.foreach_set('uv',[v for pair in data['uv'] for v in pair])
             colors=mesh.color_attributes.new(name='Tint and baked contacts',type='FLOAT_COLOR',domain='CORNER')
-            colors.data.foreach_set('color',[v for c in data['tone'] for v in c])
+            # glTF ignores a constant base color hidden behind a MixRGB vertex-color node.
+            material=PALETTE[key]
+            pigment=material.diffuse_color[:3]
+            if not any(node.type=='TEX_IMAGE' for node in material.node_tree.nodes):
+                colors.data.foreach_set('color',[v for c in data['tone'] for v in (*[a*b for a,b in zip(c,pigment)],1)])
+            else:
+                colors.data.foreach_set('color',[v for c in data['tone'] for v in c])
             mesh.color_attributes.active_color=colors
             for poly,flag in zip(mesh.polygons,data['smooth']): poly.use_smooth=flag
             # Blender uses the vertex data for the offline light pass. glTF records it as COLOR_0.
@@ -187,7 +197,7 @@ class Craft:
                 blend=nodes.new('ShaderNodeMixRGB')
                 blend.blend_type='MULTIPLY'; blend.inputs[0].default_value=1
                 if tex: material.node_tree.links.new(tex,blend.inputs[1])
-                else: blend.inputs[1].default_value=base.default_value
+                else: blend.inputs[1].default_value=(1,1,1,1)
                 material.node_tree.links.new(tint_node.outputs['Color'],blend.inputs[2])
                 material.node_tree.links.new(blend.outputs[0],base)
             o=bpy.data.objects.new(name,mesh)

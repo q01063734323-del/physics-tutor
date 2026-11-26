@@ -4,13 +4,15 @@ from mathutils import Vector
 import random
 
 from common import Craft, circles
+from architecture import distant_keep
 
 FALLS=[
-    (-2.34,-2.75,.26,1.08,3.63,-.08),
-    (2.66,-2.50,.31,1.19,4.19,.18),
+    (-2.34,-2.75,.26,1.20,4.1,-.08),
+    (2.66,-2.50,.31,1.32,4.56,.18),
     (-4.19,-1.00,.21,.63,2.61,-1.02),
     (4.11,-.62,.22,.59,3.03,1.1),
-    (-5.54,-2.62,-.18,.49,1.88,-.11)
+    (-5.54,-2.62,-.18,.56,2.12,-.11),
+    (-8.25,4.86,1.63,.30,2.60,-.12),(8.52,6.29,2.15,.39,2.85,-.08)
 ]
 LEDGES=[
     (-5.16,-1.84,-.12,1.51,1.18,2.50,2),
@@ -112,6 +114,10 @@ def make_landscape(low):
         x,y=cos(a)*4.39*w,sin(a)*3.14*w
         depth=1 if j%7==5 else rng.uniform(.65,1.32)
         outcrop(main,(x,y,-rng.uniform(.85,1.85)),(rng.uniform(.35,.83),rng.uniform(.35,.82),depth),j%11,rng.uniform(.77,1.09))
+    for k,(x,y,z,sx,sz) in enumerate([(-2.97,-2.19,-.83,.33,1.04),(-1.42,-2.92,-1.19,.37,.90),
+                                     (.92,-2.90,-1.01,.31,1.12),(2.06,-2.64,-1.28,.32,.86),
+                                     (3.40,-1.98,-1.01,.31,1.19),(-4.08,-.99,-1.12,.29,.94)]):
+        outcrop(main,(x,y,z),(sx,.29,sz),17+k,.84,True)
     for i,(x,y,z,r,s) in enumerate([(-3.72,-1.64,-1.34,.37,.87),(3.91,-1.65,-1.36,.41,1.41),
                                      (-1.70,-2.52,-2.46,.34,.96),(3.27,-2.31,-2.38,.33,.98),
                                      (3.80,.9,-.65,.27,.71),(-5.53,-2.10,-.62,.17,.61)]):
@@ -127,6 +133,8 @@ def make_landscape(low):
             a=j*2.399
             outcrop(g,(x+sx*.74*cos(a),y+sy*.73*sin(a),z-.55-j*.13),(sx*.32,sy*.29,.61+j*.07),i+j,.78)
         satellites.append(g)
+    for n,(x,y,z,scale) in enumerate([(-8.63,5.95,1.66,1.02),(8.47,7.16,2.19,1.24),(5.98,1.45,-.62,.72)]):
+        satellites.append(distant_keep(x,y,z,scale,n))
     shoreline=Craft('Creeks • pool and spillway beds')
     for x,y,z,width,height,angle in FALLS:
         path=[(x+sin(angle)*d,y-cos(angle)*d,z+.016*cos(d*2.5)) for d in [-.87,-.46,-.12,.0,.18]]
