@@ -510,7 +510,7 @@
  .courtHeading{margin-top:6px}
  .courtHeading h1{font-size:clamp(30px,4.4vw,48px)}
  .courtCrown svg{height:20px}
- .scene{inset:13% 0 0}
+ .scene{inset:19% 0 0}
  .courtLeague,.courtLearning{bottom:24%;padding:8px}
  .courtActions{margin-bottom:4px;gap:2px}
  .courtActions .goldButton{min-height:44px;font-size:26px}
