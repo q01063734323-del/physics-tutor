@@ -1,0 +1,204 @@
+.collection {
+ --gold:#f8d69b;
+ --edge:linear-gradient(151deg,#fff0bf 0%,#926039 13%,#f1bc69 23%,#533b32 48%,#a77342 70%,#ffe0a0 89%,#6e4431 100%);
+ --panel:radial-gradient(130% 70% at 28% 0%,#32476d53,transparent 80%),linear-gradient(153deg,#101b2cea,#0a1423f2 68%,#101d31ea);
+ position:relative;isolation:isolate;
+ display:grid;grid-template-columns:minmax(286px, .98fr) minmax(310px, 1.58fr) minmax(235px,.76fr);
+ grid-template-areas:"roster showcase inspector" "roster deck deck";grid-template-rows:minmax(550px,1fr) auto;
+ min-height:min(840px,calc(100dvh - 105px));gap:17px;padding:24px clamp(15px,2.8vw,46px) 27px;
+ overflow:hidden;border-radius:16px;
+ background:radial-gradient(80% 65% at 50% 25%,#263757,#0a1426 76%);
+ box-shadow:0 17px 45px #030712aa,inset 0 0 0 1px #c5964d4f;
+ animation:enter .24s ease-out both;
+}
+@keyframes enter {from{opacity:.72;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.collection h1,.collection h2,.collection p,.collection figure {margin:0}
+.collection svg {width:20px;height:20px;flex:none;vertical-align:middle}
+.stageRegion {display:contents}
+.hall {position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse at 50% 40%,#29416d,#101b33 68%,#081322)}
+.hall canvas {display:block;width:100%;height:100%;pointer-events:none}
+.hall::after {content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#080f214d,transparent 19%,transparent 82%,#050d1ba8),linear-gradient(90deg,#070d1b61,transparent 25% 75%,#070e1c62)}
+.roster,.inspector,.deck {
+ position:relative;z-index:1;
+ border:1px solid transparent;border-radius:19px 9px 19px 9px;
+ background:var(--panel) padding-box,var(--edge) border-box;
+ box-shadow:inset 0 0 0 2px #0b1525,inset 0 0 0 3px #d4a06438,0 12px 27px #050a16b3;
+}
+.roster::before,.inspector::before,.deck::before {
+ content:"";position:absolute;inset:4px;pointer-events:none;border-radius:inherit;
+ background:linear-gradient(136deg,#ffffea99 0 4%,transparent 4.3% 96%,#eeb86baf 96.3%) top / 32px 7px repeat-x;
+ background-repeat:no-repeat;background-position:0 0;
+}
+.roster {grid-area:roster;align-self:stretch;padding:14px 16px 15px;min-width:0}
+.rosterHeader {text-align:center;margin:-4px 0 13px;padding:13px 0 10px;border-bottom:1px solid #b7834756}
+.sectionLine {display:flex;align-items:center;justify-content:center;gap:10px;color:#f5c36a;font-size:10px;font-weight:780;letter-spacing:.19em;text-transform:uppercase}
+.sectionLine::before,.sectionLine::after {content:"";width:34px;height:1px;background:linear-gradient(90deg,transparent,#ddaa60)}
+.sectionLine::after {transform:scaleX(-1)}
+.rosterHeader h1 {font:800 clamp(27px,3.35vw,55px)/1.05 Georgia,serif;color:#ffe5ae;letter-spacing:-.035em;text-shadow:0 3px #6b431f,0 6px 14px #080b17;margin:3px 0 9px}
+.unlocked {font-size:12px;color:#e6eaf6;font-weight:650;font-variant-numeric:tabular-nums}
+.filters {display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:7px;margin:0 0 14px}
+.search,.category,.rarityFilter select,.stageTools select {
+ min-width:0;border:1px solid #b68d585c;border-radius:9px;background:linear-gradient(#142138,#0b1422);color:#f2e9dc;
+}
+.search {display:flex;align-items:center;padding:0 7px;gap:5px}
+.search svg {width:16px;height:16px;color:#edd3a5}
+.search input {min-width:0;width:100%;height:40px;background:transparent;border:0;color:#f6f1ea;padding:4px 0;font-size:12px}
+.search input::placeholder {color:#c5c6d5;opacity:.86}
+.category {display:flex}
+.category select,.rarityFilter select,.stageTools select {max-width:100%;padding:0 7px;font-size:12px}
+.category select {min-height:40px;background:transparent;color:#f5ead9;border:0;min-width:0}
+.rarityFilter {margin:-4px 0 12px;color:#dcd2c5;font-size:12px}
+.rarityFilter select {padding:5px 8px;margin-left:8px}
+.collection button.filterToggle {display:grid;place-items:center;width:40px;padding:0;min-height:40px;color:#efcb91;background:linear-gradient(#2a3650,#111c31);border-color:#bd95667d}
+.filterToggle svg {width:17px;height:17px}
+.filterToggle[aria-expanded=true] {box-shadow:inset 0 0 0 1px #f1c171}
+.cards {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(8px,1vw,15px)}
+.collection .card,.collection .deckCard {
+ position:relative;min-width:0;width:100%;display:block;isolation:isolate;padding:0;
+ aspect-ratio: .81;min-height:0;border:2px solid transparent;border-radius:13px 5px 12px 5px;
+ background:#141d35 padding-box,var(--edge) border-box;color:white;
+ box-shadow:0 5px 8px #020712;transition:filter .18s,border-color .18s,transform .17s,box-shadow .18s;
+}
+.collection .card:hover,.collection .deckCard:hover {filter:brightness(1.16);transform:translateY(-2px)}
+.collection .card:active,.collection .deckCard:active {transform:translateY(1px) scale(.98)}
+.collection .card[aria-pressed=true],.collection .deckCard[aria-pressed=true] {
+ border-color:#ffe2a3;box-shadow:0 0 0 1px #be7b37,0 0 12px #e69c4678,0 4px 7px #030711;
+}
+.card img,.deckCard img {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 32%;border-radius:inherit;pointer-events:none;user-select:none}
+.card::after,.deckCard::after {content:"";position:absolute;z-index:1;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px #fff1cc55,inset 0 0 16px #02071475;pointer-events:none}
+.cost {
+ position:absolute;left:-6px;top:-5px;z-index:3;display:grid;place-items:center;width:27px;height:30px;
+ color:#fff5ff;font:800 15px/1 Georgia,serif;text-shadow:0 2px #3b0a60;
+ clip-path:polygon(21% 5%,78% 0,100% 31%,94% 73%,56% 100%,11% 82%,0 48%);
+ background:linear-gradient(150deg,#fff0ff 3%,#d078ff 15%,#8323c8 34%,#470c77 78%,#c181ff 96%);
+ filter:drop-shadow(0 2px 3px #140627);
+}
+.cardLabel {position:absolute;z-index:2;inset:auto 0 0;display:grid;gap:2px;padding:12px 3px 4px;border-radius:0 0 8px 4px;background:linear-gradient(transparent,#080e1df5 30%);text-align:center}
+.cardLabel strong {font-size:clamp(9px,.69vw,12px);line-height:1.09;text-wrap:balance;color:#fff1d6}
+.cardLabel small {font-size:9px;color:#fff;opacity:.81}
+.lock {position:absolute;top:3px;right:3px;z-index:2;display:flex;align-items:center;gap:1px;background:#121b2ae6;border-radius:5px;padding:2px 3px;color:#ffe4a9;font-size:9px;font-weight:780}
+.lock svg {width:10px;height:10px}
+.showcase {position:relative;grid-area:showcase;min-width:0;min-height:0;align-self:stretch}
+.gesture {position:absolute;inset:0;touch-action:pan-y;user-select:none;cursor:grab;z-index:0}
+.gesture:active {cursor:grabbing}
+.stageLegend {position:absolute;left:50%;top:-5px;transform:translateX(-50%);white-space:nowrap;
+ max-width:100%;color:#fae5bd;font:700 10px/1.2 Georgia,serif;letter-spacing:.16em;text-transform:uppercase;text-shadow:0 2px 6px #030916;
+ background:linear-gradient(90deg,#0a1122a8,#152239e8,#0a1122a8);padding:9px 14px;border-bottom:1px solid #dfae6c73;border-radius:10px}
+.stageLegend span {color:#f5bb65;margin-right:4px}
+.canvasStatus,.loading {position:absolute;z-index:1;top:47%;left:50%;width:max-content;max-width:90%;transform:translate(-50%,-50%);padding:10px 14px;border:1px solid #ad864a8c;border-radius:8px;background:#101b33ea;color:#fff0d5;text-align:center}
+.stageTools {position:absolute;z-index:2;bottom:0;left:50%;transform:translateX(-50%);width:max-content;max-width:100%;display:grid;place-items:center;gap:6px}
+.stageTools>div {display:flex;gap:3px;padding:3px;background:#091221c9;border:1px solid #c0955e9f;border-radius:12px;box-shadow:0 6px 15px #080d1c70}
+.collection .stageTools button {color:#f4d8a6;background:linear-gradient(#2d3651,#101b2e);padding:0;width:38px;min-height:37px;border-radius:8px;line-height:1;font-size:21px}
+.stageTools label,.stageTools small {display:flex;align-items:center;gap:6px;padding:3px 6px;color:#f2e5ce;background:#101b30ea;border-radius:8px;font-size:11px}
+.stageTools select {min-height:28px}
+.inspector {grid-area:inspector;align-self:start;min-width:0;padding:17px 16px 14px}
+.inspectorBody {animation:enter .21s ease-out both}
+.characterName {display:flex;align-items:center;gap:9px;border-bottom:1px solid #98734b64;padding:1px 0 10px}
+.characterName .cost {position:relative;left:0;top:0;min-width:31px;height:35px;font-size:21px}
+.collection .characterName h2 {font-size:clamp(19px,2.1vw,35px);font-family:Georgia,serif;line-height:1.04;color:#ffe7b8;text-shadow:0 2px #67421e;overflow-wrap:anywhere}
+.grade {min-height:36px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:#ffd28a;font-size:12px;font-weight:760}
+.grade svg {width:16px;height:16px}
+.grade span {opacity:.6}
+.inspector p {color:#e1e7f4;font-size:13px;line-height:1.42;min-height:2.5em;margin:2px 0 11px}
+.stats {display:grid;gap:3px;margin:0 0 13px}
+.stats>div {display:flex;justify-content:space-between;align-items:center;gap:6px;background:linear-gradient(90deg,#101728,#0a1423b0);border-bottom:1px solid #ccad713b;border-radius:7px;padding:5px 7px;min-width:0;min-height:30px}
+.stats dt {display:flex;align-items:center;gap:7px;font-size:11px;color:#f1d8ab}
+.stats dt svg {width:16px;height:16px;color:#efbb71}
+.stats dd {margin:0;text-align:right;font-size:12px;font-weight:800;color:#fff2dc;font-variant-numeric:tabular-nums}
+.collection .training {display:flex;width:100%;align-items:center;justify-content:center;gap:8px;background:linear-gradient(#253048,#0c1728) padding-box,var(--edge) border-box;border:2px solid transparent;box-shadow:inset 0 0 0 2px #111d2a,0 4px 9px #030812;color:#ffe7bb;font-weight:760;padding:5px;border-radius:11px;min-height:43px}
+.training svg {fill:#e9af65;width:15px;height:15px}
+.characterActions {display:grid;gap:5px;margin-top:9px}
+.collection .characterActions button {padding:5px 7px;font-weight:650;font-size:11px;min-height:34px;background:#182337;border-color:#b38a5364;color:#f6dfb3}
+.deck {grid-area:deck;align-self:end;padding:12px;display:grid;grid-template-columns:minmax(0,1fr) 100px;gap:12px}
+.deckInner {min-width:0}
+.deckHead {display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:space-between;margin-bottom:9px}
+.collection .deckHead h2 {display:flex;align-items:center;gap:7px;font:700 19px Georgia,serif;color:#fff0cf;margin:0 auto 0 0}
+.deckHead h2 svg {color:#edb977}
+.collection .deckHead button {min-height:34px;padding:4px 9px;font-size:12px;background:linear-gradient(#2b3651,#111c30);border-color:#a37a4e9c;color:#ffe4ae}
+.deckHead button span {font-variant-numeric:tabular-nums;color:#cdd6e5;margin-left:5px}
+.collection .deckHead .save {background:linear-gradient(#ffe6a8,#bc7f32);color:#261c22;border-color:#ffe5af;font-weight:800}
+.deckHint {font-size:12px;color:#f4dbac;padding:2px 0 8px}
+.deckSlots {margin:0;padding:0;display:grid;list-style:none;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}
+.deckSlots li {min-width:0;border-radius:9px}
+.deckSlots li[data-target=true] {outline:1px dashed #ffe1a2;outline-offset:2px}
+.collection .deckCard {aspect-ratio:1.04;border-radius:8px 5px 8px 5px;min-height:41px}
+.deckCard .cost {width:22px;height:24px;font-size:12px;top:-4px;left:-4px}
+.slotNumber {position:absolute;right:2px;bottom:2px;z-index:2;font-size:9px;border-radius:4px;background:#081226ef;padding:2px 5px;color:#ffe5b6}
+.empty {font-size:24px;color:#dbc295}
+.slotActions {display:flex;gap:2px;margin-top:5px}
+.collection .slotActions button {min-width:0;flex:1;min-height:26px;padding:1px;color:#f1d49c;font-size:13px}
+.average {display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;border-left:1px solid #b1814c75;color:#efe4d1;text-align:center;font-size:13px;padding-left:8px}
+.average strong {display:flex;align-items:center;gap:2px;font:800 31px/1 Georgia,serif;color:#fff3dd;font-variant-numeric:tabular-nums}
+.average svg {color:#e1a1ff;fill:#8023b5;width:20px;height:22px}
+.visuallyHidden {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:1170px) and (min-width:951px){
+ .collection {padding:20px 13px;gap:13px;grid-template-columns:minmax(275px,.98fr) minmax(265px,1.38fr) minmax(211px,.75fr)}
+ .roster,.inspector {padding-inline:10px}
+ .cards {gap:8px}
+}
+@media(max-width:950px){
+ .collection {grid-template-columns:minmax(0,1fr) minmax(0,.88fr);grid-template-areas:"showcase showcase" "roster inspector" "deck deck";grid-template-rows:470px auto auto;gap:13px;padding:12px;border-radius:12px}
+ .stageRegion {display:block;grid-area:showcase;position:relative;margin:-12px -12px 0}
+ .hall,.showcase {position:absolute;inset:0;min-height:0}
+ .hall {z-index:0}
+ .stageLegend {top:13px}
+ .stageTools {bottom:12px}
+ .roster,.inspector {padding-inline:12px}
+ .cardLabel strong {font-size:clamp(9px,1.6vw,12px)}
+ .collection .deckCard {aspect-ratio:1}
+}
+@media(max-width:565px){
+ .collection {display:flex;flex-direction:column;padding:8px;overflow:hidden;gap:10px}
+ .stageRegion {order:0;height:clamp(300px,94vw,431px);margin:-8px -8px 0}
+ .roster,.inspector,.deck {align-self:stretch}
+ .roster {order:2;padding:9px 10px 12px}
+ .rosterHeader {padding:8px 0 7px;margin:0 0 10px}
+ .rosterHeader h1 {font-size:34px;margin:3px 0 5px}
+ .inspector {order:1;padding:11px}
+ .deck {order:3;grid-template-columns:minmax(0,1fr);padding:9px}
+ .deckHead h2 {font-size:17px}
+ .deckSlots {grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+ .average {border-left:0;border-top:1px solid #a77a4269;flex-direction:row;gap:12px;padding:8px 0 1px}
+ .average strong {font-size:23px}
+ .cardLabel strong {font-size:10px}
+ .collection .stageTools button {width:43px;min-height:39px}
+ .collection .slotActions button {min-height:35px}
+ .collection .characterActions {grid-template-columns:repeat(2,minmax(0,1fr))}
+ .stageLegend {font-size:9px;letter-spacing:.11em}
+ .stats {grid-template-columns:repeat(2,minmax(0,1fr))}
+ .stats dt {font-size:10px;gap:4px}
+ .stats dt svg {width:13px;height:13px}
+ .stats dd {font-size:11px}
+}
+@media(max-width:355px) {
+ .search {padding-inline:4px}.search input {font-size:11px}.category select {padding-inline:4px}
+ .collection .filterToggle {width:33px}
+ .cards {gap:7px}
+ .cardLabel strong {font-size:9px}
+}
+@media(orientation:landscape) and (max-height:570px) and (min-width:566px) and (max-width:950px){
+ .collection {grid-template-areas:"showcase inspector" "roster deck";grid-template-rows:minmax(310px,1fr) auto}
+ .stageRegion {margin:-12px 0 0 -12px}
+ .deck {align-self:start;grid-template-columns:minmax(0,1fr)}
+ .deckSlots {grid-template-columns:repeat(4,minmax(0,1fr))}
+ .average {border:0;border-top:1px solid #ad875c65;flex-direction:row;padding-top:8px}
+}
+@media(prefers-reduced-motion:reduce){
+ .collection,.inspectorBody,.collection .card,.collection .deckCard {animation:none;transition:none}
+}
+
+.collection .card,.collection .deckCard {
+ border-color:#e3aa684f;
+ box-shadow:inset 0 0 0 1px #ffe0b35e,0 4px 10px #020712;
+}
+.collection .card::after,.collection .deckCard::after {
+ background:linear-gradient(126deg,#ffe4b7a8 0 3%,transparent 3.2% 94%,#ffcf8a9c 94.3%) padding-box;
+}
+.collection .card[aria-pressed=true],.collection .deckCard[aria-pressed=true] {
+ box-shadow:0 0 0 1px #be7b37,0 0 12px #e69c4678,inset 0 0 0 1px #fff4cc;
+}
+.rosterHeader h1 {background:linear-gradient(#fff0c8 15%,#f2c479 76%,#e1ae68);background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 3px 1px #60421f)}
+@media(orientation:landscape) and (max-height:570px) and (min-width:566px) and (max-width:950px){
+ .collection {grid-template-rows:clamp(250px,calc(100dvh - 70px),355px) auto}
+ .inspector {align-self:stretch;max-height:100%;overflow-y:auto}
+}

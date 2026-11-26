@@ -1,12 +1,10 @@
 'use client';
-import { arenaQuality } from '@/lib/royale/quality';
 import Link from'next/link';import{useEffect,useRef,useState}from'react';import{onAuthStateChanged,type User}from'firebase/auth';import{auth}from'@/lib/firebase';import{readLocalRecord,updateLocalRecord,writeLocalRecord}from'@/lib/blitz/storage';import{royaleRequest}from'@/lib/royale/client';import{starterDeck,validDeck,availableCards,arenas,defaultSettings,type Difficulty,type CardId,type RoyaleSettings}from'@/lib/royale/config';import{normalizeProfile,upgradeProfile,type RoyaleProfile}from'@/lib/royale/progress';import{resumeTiming}from'@/lib/royale/timeline';
 import{replayBattle}from'@/lib/royale/engine';
 import{balance}from'@/lib/royale/config';
 import { lazy, Suspense } from 'react';
 import type { GameTask, MatchDescriptor, SavedRun } from './types';
 import { RoyaleTeacher } from './RoyaleTeacher';
-import { RoyaleCollection } from './RoyaleCollection';
 import { RoyalePreferences, useRoyalePreferences } from './RoyalePreferences';
 import { KingdomShell, KingdomHome, KingdomBattleSetup, type KingdomTab } from './KingdomMenu';
 import { KingdomDialog } from './KingdomDialog';
@@ -16,6 +14,7 @@ import { RoyaleSound } from '@/lib/royale/sound';
 import s from './Royale.module.css';
 import k from './Kingdom.module.css';
 
+const RoyaleCollection=lazy(()=>import('./RoyaleCollection').then(module=>({default:module.RoyaleCollection})));
 const RoyaleGame=lazy(()=>import('./RoyaleGame').then(module=>({default:module.RoyaleGame})));
 const KingdomStats=lazy(()=>import('./KingdomStats').then(module=>({default:module.KingdomStats})));
 type Catalog={questions:GameTask[];topics:string[];version:string};type Account={role:'teacher'|'student';profile:RoyaleProfile;settings:RoyaleSettings};
@@ -86,8 +85,8 @@ function AccountRoyale({user,practice,onPractice,onCloud}:{user:User|null;practi
   {profile&&tab==='battle'&&<KingdomBattleSetup profile={profile} arena={arena} setArena={setArena} difficulty={difficulty} setDifficulty={setDifficulty}
    fixed={Boolean(!practice&&settings.studentDifficulty[user?.uid||''])} preferences={preferences} updatePreferences={updatePreferences}
    action={action} onDeck={()=>{setEditDeck(true);setTab('collection');}}/>}
-  {profile&&tab==='collection'&&<RoyaleCollection profile={profile} deck={deck} setDeck={setDeck} busy={busy} save={()=>void collection('deck')}
-   upgrade={id=>void collection('upgrade',id)} quality={arenaQuality(preferences.quality)} initialDeck={editDeck}/>}
+  {profile&&tab==='collection'&&<Suspense fallback={<p className={k.notice} role="status">Открываем коллекцию…</p>}><RoyaleCollection profile={profile} deck={deck} setDeck={setDeck} busy={busy} save={()=>void collection('deck')}
+   upgrade={id=>void collection('upgrade',id)} quality={preferences.quality} initialDeck={editDeck}/></Suspense>}
   {profile&&tab==='progress'&&<KingdomProgress profile={profile} topics={catalog?.topics??[]} onBattle={()=>navigate('battle')}/>}
   {profile&&tab==='stats'&&<Suspense fallback={<p role="status" className={k.notice}>Открываем статистику…</p>}><KingdomStats profile={profile} topics={catalog?.topics??[]}
    catalog={catalog?.questions??[]} user={practice?null:user}/></Suspense>}
