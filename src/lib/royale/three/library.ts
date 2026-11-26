@@ -2,8 +2,9 @@ import * as T from 'three';
 import {GLTFLoader, type GLTF} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
-import type {CardId} from '../config';
+import type {CardId,Side} from '../config';
 import type {ModelPose} from './models';
+import type {ArenaQuality} from './arena-model';
 
 const figures: Partial<Record<CardId, {file?:string;height:number;forward?:number}>> = {
  knight:{height:1.92},archers:{height:1.73},giant:{height:2.73},skeletons:{height:1.47},
@@ -16,9 +17,11 @@ const figures: Partial<Record<CardId, {file?:string;height:number;forward?:numbe
 const premiumFigures=new Set(['giant','frost']);
 const remasteredFigures=new Set(['rider','ember','ballista','meteor','hunters','hunters-silver']);
 
-export function createFigureLibrary(onProgress?: (ready:number,total:number,failed:number)=>void, initialLow=false) {
+export function createFigureLibrary(onProgress?: (ready:number,total:number,failed:number)=>void, initialLow=false, knightQuality:ArenaQuality='high') {
  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
  const assets=new Map<string,GLTF>();
+ const pendingKnights=new Set<ArenaQuality>();
+ const knightPaint=new Map<T.MeshStandardMaterial,T.MeshStandardMaterial>();
  const resources=new Set<T.BufferGeometry|T.Material|T.Texture>();
  const bound=new Set<ReturnType<typeof createInstance>>();
  const entries=[...Object.entries(figures),['hunters-silver',figures.hunters!],['fireball',{height:1.2}],['meteor',{height:1.65}]] as Array<[string,{file?:string;height:number}]>;
@@ -32,6 +35,23 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
   }
  });
  const clear=()=>{for(const value of resources)value.dispose();resources.clear();};
+ function knightKey(quality:ArenaQuality){return 'knight-'+quality;}
+ async function fetchKnight(quality:ArenaQuality){
+  const key=knightKey(quality);
+  if(disposed||assets.has(key)||pendingKnights.has(quality))return;
+  pendingKnights.add(quality);
+  try{
+   const source=await loader.loadAsync('/royale/dawn-knight/'+key+'.glb');
+   track(source);
+   if(disposed)clear();else assets.set(key,source);
+  }finally{pendingKnights.delete(quality);}
+ }
+ function setKnightQuality(quality:ArenaQuality){
+  if(quality===knightQuality)return;
+  knightQuality=quality;
+  if(started||quality==='low')void fetchKnight(quality).catch(()=>undefined);
+ }
+ if(initialLow&&knightQuality==='low')void fetchKnight('low').catch(()=>undefined);
  function preload(){
   if(started||disposed)return;
   started=true;onProgress?.(0,entries.length,0);
@@ -40,11 +60,14 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
    while(!disposed&&index<entries.length){
     const [id,spec]=entries[index++];
     try{
+     if(id==='knight'){await fetchKnight(knightQuality);}
+     else{
      const folder=premiumFigures.has(id)?'v3':remasteredFigures.has(id)?'remaster':'v1';
      const file=(spec.file??id)+'.glb';
      const source=await loader.loadAsync('/royale/'+folder+'/'+file);
      track(source);
      if(disposed)clear();else assets.set(id,source);
+     }
     }catch{failed++;}
     if(!disposed)onProgress?.(++settled,entries.length,failed);
    }
@@ -60,12 +83,25 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
   root.add(model);root.scale.setScalar(id==='fireball'?.83:.92);
   return root;
  };
- function createInstance(source:GLTF,id:CardId) {
+ function createInstance(source:GLTF,id:CardId,side?:Side) {
   const root=new T.Group();
   const model=clone(source.scene);
   const skeletons=new Set<T.Skeleton>();
   model.traverse(node=>{
    if(node instanceof T.SkinnedMesh)skeletons.add(node.skeleton);
+   if(id!=='knight'||side!=='bot'||!(node instanceof T.Mesh))return;
+   function swap(material:T.Material){
+    if(!(material instanceof T.MeshStandardMaterial)||!material.name.startsWith('TEAM'))return material;
+    let rendered=knightPaint.get(material);
+    if(!rendered){
+     rendered=material.clone();
+     rendered.color.setHex(material.name.includes('Raised')?0xc45369:0x8c2944);
+     resources.add(rendered);
+     knightPaint.set(material,rendered);
+    }
+    return rendered;
+   }
+   node.material=Array.isArray(node.material)?node.material.map(swap):swap(node.material);
   });
   const spec=figures[id]!;
   const bounds=new T.Box3().setFromObject(model);
@@ -116,12 +152,17 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
   return instance;
  }
  return {
-  preload,projectile,
-  create(id:CardId,silver=false){
-   const source=(id==='hunters'&&silver?assets.get('hunters-silver'):undefined)??assets.get(id);
-   if(!source||disposed)return;
-   const instance=createInstance(source,id);bound.add(instance);return instance;
+  preload,projectile,setKnightQuality,
+  knightTier(){
+   return assets.has(knightKey(knightQuality))?knightQuality:
+     (['medium','high','low'] as const).find(q=>assets.has(knightKey(q)));
   },
-  dispose(){disposed=true;for(const item of bound)item.dispose();assets.clear();clear();},
+  create(id:CardId,silver=false,side?:Side,quality?:ArenaQuality){
+   const source=id==='knight'&&quality?assets.get(knightKey(quality)):
+     (id==='hunters'&&silver?assets.get('hunters-silver'):undefined)??assets.get(id);
+   if(!source||disposed)return;
+   const instance=createInstance(source,id,side);bound.add(instance);return instance;
+  },
+  dispose(){disposed=true;for(const item of bound)item.dispose();assets.clear();knightPaint.clear();clear();},
  };
 }
