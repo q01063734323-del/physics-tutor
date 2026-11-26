@@ -23,15 +23,20 @@ function AccountRoyale({user,practice,onPractice,onCloud}:{user:User|null;practi
  const [catalog,setCatalog]=useState<Catalog|null>(null),[profile,setProfile]=useState<RoyaleProfile|null>(null),[settings,setSettings]=useState<RoyaleSettings>(defaultSettings),[error,setError]=useState(''),[busy,setBusy]=useState(false),[tab,setTab]=useState<KingdomTab>('home'),[settingsOpen,setSettingsOpen]=useState(false),[editDeck,setEditDeck]=useState(false),[difficulty,setDifficulty]=useState<Difficulty>('novice'),[arena,setArena]=useState('academy'),[run,setRun]=useState<{match:MatchDescriptor;draft:SavedRun|null}|null>(null),[saved,setSaved]=useState<SavedRun|null>(null),[active,setActive]=useState<MatchDescriptor|null>(null),[notice,setNotice]=useState(''),[deck,setDeck]=useState<CardId[]>([...starterDeck]);
  const {preferences,update:updatePreferences,ready:preferencesReady}=useRoyalePreferences();
  const [checkedAt,setCheckedAt]=useState(()=>Date.now());useEffect(()=>{const timer=setInterval(()=>setCheckedAt(Date.now()),30000);return()=>clearInterval(timer);},[]);
- const [menuAudio]=useState(()=>new RoyaleSound());
- useEffect(()=>()=>menuAudio.dispose(),[menuAudio]);
+ const menuAudio=useRef<RoyaleSound|null>(null);
  useEffect(()=>{
-  const audio=menuAudio;
+  const audio=new RoyaleSound();
+  menuAudio.current=audio;
+  return()=>{menuAudio.current=null;audio.dispose();};
+ },[]);
+ useEffect(()=>{
+  const audio=menuAudio.current;
+  if(!audio)return;
   audio.muted=!preferences.sound;
   audio.volume=preferences.volume;
   audio.music=preferences.music;
   if(run||!preferences.sound||!preferences.music)audio.stopMusic();
- },[menuAudio,preferences,run]);
+ },[preferences,run]);
  const operations=useRef(new Map<string,string>());
  const accountKey=practice?`practice:${user?.uid||'guest'}`:user!.uid,storageKey=`royale-run:${accountKey}`,profileKey=`royale-profile:${accountKey}`;
  useEffect(()=>{const controller=new AbortController();let alive=true;
@@ -52,9 +57,9 @@ function AccountRoyale({user,practice,onPractice,onCloud}:{user:User|null;practi
  const activeValid=active&&(!active.expiresAt||active.expiresAt>checkedAt)&&(!active.version||active.version===balance.version)&&(!active.bankVersion||active.bankVersion===catalog?.version);const canResume=saved&&((practice&&saved.match.practice&&saved.match.version===balance.version)||(!practice&&activeValid&&active?.id===saved.match.id));
 
  function navigate(next:KingdomTab){
-  const audio=menuAudio;
-  void audio.interfaceCue('menu');
-  if(preferences.sound&&preferences.music>0)audio.startMusic();
+  const audio=menuAudio.current;
+  void audio?.interfaceCue('menu');
+  if(preferences.sound&&preferences.music>0)audio?.startMusic();
   setEditDeck(false);setTab(next);
  }
  function resume(){
