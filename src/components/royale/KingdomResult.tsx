@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { MatchHistory } from '@/lib/royale/progress';
 import { accuracy, type LearningRecap } from '@/lib/royale/learning';
 import { KingdomDialog } from './KingdomDialog';
@@ -10,6 +10,16 @@ import k from './Kingdom.module.css';
 
 const titles = { win:'Победа!', loss:'Поражение', draw:'Ничья' };
 const signed = (value: number) => value > 0 ? '+' + value : String(value);
+
+function VictoryCrest(){
+ return <svg viewBox="0 0 160 105" aria-hidden="true">
+  <defs><linearGradient id="victoryMetal" x2=".35" y2="1"><stop stopColor="#fff6cb"/><stop offset=".48" stopColor="#e8a74d"/><stop offset="1" stopColor="#925027"/></linearGradient></defs>
+  <path fill="#0f1e38" stroke="#ffe0a0" strokeWidth="2" d="m80 17 35 12v24c0 19-16 33-35 44-19-11-35-25-35-44V29Z"/>
+  <path fill="url(#victoryMetal)" stroke="#fff0ba" strokeWidth="1.4" d="m51 38 16 7 13-17 13 17 16-7-9 28H60Zm10 33h38v5H61Z"/>
+  <path fill="url(#victoryMetal)" d="M65 93C40 92 22 74 13 51c12 6 18 16 24 24-4-12-5-19-5-31 12 9 14 21 15 35 5-7 7-10 13-13 0 10-3 13-5 18Zm30 0c25-1 43-19 52-42-12 6-18 16-24 24 4-12 5-19 5-31-12 9-14 21-15 35-5-7-7-10-13-13 0 10 3 13 5 18Z"/>
+  <path fill="#fff3c2" d="m80 38 5 10-5 6-5-6Z"/>
+ </svg>;
+}
 
 function TrophyCount({total,skip}:{total:number|null;skip:boolean}) {
  const [value,setValue]=useState(total??0);
@@ -26,7 +36,7 @@ function TrophyCount({total,skip}:{total:number|null;skip:boolean}) {
   frame=requestAnimationFrame(advance);
   return()=>cancelAnimationFrame(frame);
  },[skip,total]);
- return total===null?'—':<><span aria-hidden="true">{signed(skip?total:value)}</span><span className={k.srOnly}>{signed(total)}</span></>;
+ return total===null?'—':<><span className={k.trophyValue} aria-hidden="true">{signed(skip?total:value)}</span><span className={k.srOnly}>{signed(total)}</span></>;
 }
 
 export function KingdomResult({outcome,forfeit,score,record,pending,saving,error,saved,catalog,onRetry,onMenu,onDeck,onRematch}: {
@@ -35,6 +45,7 @@ export function KingdomResult({outcome,forfeit,score,record,pending,saving,error
 }) {
  const [review,setReview] = useState(false);
  const [skip,setSkip] = useState(false);
+ const menuButton=useRef<HTMLButtonElement>(null);
  const title = forfeit ? 'Бой завершён досрочно' : titles[outcome];
  const report = record?.learning ?? pending;
  const attempts = record?.attempts ?? report.attempts;
@@ -45,9 +56,9 @@ export function KingdomResult({outcome,forfeit,score,record,pending,saving,error
  return <KingdomDialog title={title} onClose={()=>{if(!saving)onMenu();}} kind={outcome}>
   <div className={k.resultStage} data-skip={skip} data-result={forfeit?'forfeit':outcome}>
    {outcome==='win'&&!forfeit&&<div className={k.resultSparks} aria-hidden="true"/>}
-   {!skip&&<button className={k.skipResult} type="button" onClick={()=>setSkip(true)}>Пропустить анимацию</button>}
+   {!skip&&<button className={k.skipResult} type="button" onClick={()=>{setSkip(true);menuButton.current?.focus();}}>Пропустить анимацию</button>}
   <div className={k.resultHero}>
-   <div className={k.resultEmblem}><KingdomMark name={outcome==='win'?'crown':outcome==='loss'?'compass':'atom'} size={56}/></div>
+   <div className={k.resultEmblem}>{outcome==='win'?<VictoryCrest/>:<KingdomMark name={outcome==='loss'?'compass':'atom'} size={56}/>}</div>
    <p className={k.kicker}>Итог битвы · {score[0]} : {score[1]}</p><h1>{title}</h1>
   </div>
   <div className={k.resultMetrics}>
@@ -65,7 +76,7 @@ export function KingdomResult({outcome,forfeit,score,record,pending,saving,error
   {error&&<p className={k.alert} role="alert">{error} <button onClick={onRetry} disabled={saving}>Повторить сохранение</button></p>}
   <div className={k.actions}>
    {report.missedIds.length>0&&<button type="button" aria-expanded={review} onClick={()=>setReview(!review)}>{review?'Скрыть разбор':'Разобрать ошибки'}</button>}
-   <button className={k.goldButton} disabled={saving} onClick={onMenu}>В главное меню</button>
+   <button className={k.goldButton} ref={menuButton} disabled={saving} onClick={onMenu}>В главное меню</button>
   </div>
   <div className={k.resultSecondary}><button disabled={saving||!saved} onClick={onRematch}>Ещё один бой</button><button disabled={saving} onClick={onDeck}>Изменить колоду</button></div>
   </div>

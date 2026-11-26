@@ -457,3 +457,29 @@
  .leagueList li,.leagueList li[data-stage=current]{min-height:164px}
  .mapLabel b{font-size:11px}
 }
+
+/* Art direction review */
+.courtHeading h1{font-size:clamp(45px,3.85vw,64px)}
+.courtLeague,.courtLearning{bottom:17%}
+.leagueList .leagueBadge::after{inset:4px;background:radial-gradient(ellipse at 36% 18%,color-mix(in srgb,var(--badge) 49%,#172743),#172543 67%);outline:1px solid #cdbd8f}
+.leagueList [data-stage=current] .mapSeal .roadPoint{background:#defdff;box-shadow:0 0 14px 4px #74deffb4}
+.leagueList li[data-stage=reached] .mapLabel{border-color:#b3d4ad}
+.resultStage .resultMetrics .trophyValue{color:inherit;font:inherit;margin:0}
+.resultStage .resultEmblem:has(svg[viewBox="0 0 160 105"]){width:165px}
+.resultStage .resultEmblem svg[viewBox="0 0 160 105"]{width:165px;height:105px}
+.resultStage .resultMistakes li{padding-block:3px;border-bottom:1px solid #d1dbfd20}
+.resultStage .resultMistakes li span{font-variant-numeric:tabular-nums;color:#ffe3ab}
+.resultStage .rewardLine b{color:#ffd8a3}
+@media(max-width:620px){
+ .courtLeague,.courtLearning{bottom:100px}
+ .courtHeading h1{font-size:clamp(35px,9.8vw,58px)}
+ .resultStage .resultEmblem svg[viewBox="0 0 160 105"]{width:127px;height:83px}
+}
+@media(orientation:landscape) and (max-height:550px){
+ .courtHeading h1{font-size:42px}
+ .courtLeague,.courtLearning{bottom:21%}
+ .resultStage .resultHero{margin-bottom:6px}
+ .resultStage .resultEmblem{height:65px}
+ .resultStage .resultEmblem svg{height:60px}
+ .resultStage .resultHero h1{font-size:clamp(35px,7vw,72px)}
+}

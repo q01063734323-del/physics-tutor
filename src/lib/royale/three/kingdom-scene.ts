@@ -21,8 +21,8 @@ const waterFragment = `
   float glints=pow(.5+.5*sin(x*33.+sin(y*17.+uTime*5.)*3.),5.);
   float fade=smoothstep(.0,.27,y)*smoothstep(.0,.12,x)*(1.-smoothstep(.84,1.,x));
   vec3 layer=texture2D(uWater,vec2(x,y*1.1+uTime*.28)).rgb;
-  vec3 color=mix(vec3(.025,.24,.72),vec3(.64,.94,1.),clamp(ribbons*.66+glints*.27+layer.b*.24,0.,1.));
-  gl_FragColor=vec4(color,fade*(.40+ribbons*.58));
+  vec3 color=mix(vec3(.021,.27,.68),vec3(.48,.88,1.),clamp(ribbons*.66+glints*.27+layer.b*.24,0.,1.));
+  gl_FragColor=vec4(color,fade*(.35+ribbons*.53));
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
  }`;
@@ -44,7 +44,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  const reflected=environment&&probes?probes.fromScene(environment,.065):undefined;
  environment?.dispose();probes?.dispose();
  if(reflected){scene.environment=reflected.texture;scene.environmentIntensity=.32;}
- scene.add(island,new T.HemisphereLight(0xbee0ff,0x5c5771,1.36));
+ scene.add(island,new T.HemisphereLight(0xaecbff,0x665d78,1.16));
  const sun=new T.DirectionalLight(0xffca91,3.55);sun.position.set(6,8,4);scene.add(sun);
  sun.castShadow=!economy;sun.shadow.mapSize.setScalar(heavy?1536:768);
  Object.assign(sun.shadow.camera,{left:-8,right:8,top:8,bottom:-8,near:.1,far:27});
@@ -159,12 +159,15 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  }
  island.add(ledge);
  const treeCount=economy?17:34,crownParts=economy?5:8;
- const crowns=new T.InstancedMesh(new T.IcosahedronGeometry(1,1),m(0xffffff),treeCount*crownParts);
+ const crowns=new T.InstancedMesh(new T.IcosahedronGeometry(1,1),new T.MeshStandardMaterial({color:0xffffff,roughness:1,flatShading:false}),treeCount*crownParts);
  const branches=new T.InstancedMesh(new T.CylinderGeometry(.024,.055,1,5),bark,treeCount*3);
  const trunks=new T.InstancedMesh(new T.CylinderGeometry(.038,.09,1,7),bark,treeCount);
  for(let i=0;i<treeCount;i++){
-  const a=i/treeCount*Math.PI*2+.12, x=Math.cos(a)*(3.35+rand()*1.35), z=Math.sin(a)*(1.94+rand()*.62);
-  const h=.42+rand()*.86;
+  const a=i/treeCount*Math.PI*2+.12;
+  let x=Math.cos(a)*(3.35+rand()*1.35);
+  const z=Math.sin(a)*(1.97+rand()*.62);
+  if(z>1.2&&Math.abs(x)<1.2)x=(x<0?-1:1)*(1.48+Math.abs(x)*.49);
+  const h=z>1.5?.32+rand()*.49:.49+rand()*.93;
   helper.position.set(x,.20+h*.41,z);helper.scale.set(h,h,h);helper.rotation.set(.13,0,(rand()-.5)*.27);helper.updateMatrix();trunks.setMatrixAt(i,helper.matrix);
   for(let j=0;j<3;j++){
    const angle=j*Math.PI*2/3+i;
@@ -175,7 +178,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   for(let j=0;j<crownParts;j++){
    const angle=j/crownParts*6.28;
    helper.position.set(x+Math.cos(angle)*h*.20,.33+h*(.76+rand()*.25),z+Math.sin(angle)*h*.22);
-   helper.scale.set(h*(.20+rand()*.15),h*(.25+rand()*.145),h*.33);helper.rotation.set(rand(),rand()*2,rand());helper.updateMatrix();
+   helper.scale.set(h*(.19+rand()*.128),h*(.16+rand()*.15),h*(.28+rand()*.13));helper.rotation.set(rand(),rand()*2,rand());helper.updateMatrix();
    crowns.setMatrixAt(i*crownParts+j,helper.matrix);crowns.setColorAt(i*crownParts+j,new T.Color(leaves[(i+j)%5]));
   }
  }
@@ -218,7 +221,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   transparent:true,depthWrite:false,uniforms:{uTime:{value:0}},
   vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
   fragmentShader:`varying vec2 vUv;uniform float uTime;void main(){
-   vec2 dir=vUv-vec2(.86,.82);float a=atan(dir.y,dir.x);
+   vec2 dir=vUv-vec2(.97,.99);float a=atan(dir.y,dir.x);
    float ray=pow(max(0.,cos(24.*a+.12*sin(.18*uTime))),12.);
    float opacity=ray*smoothstep(.69,.05,length(dir))*smoothstep(.03,.20,vUv.y)*.094;
    gl_FragColor=vec4(.96,.71,.42,opacity*.6);
@@ -240,7 +243,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   }
   const foam=new T.Sprite(new T.SpriteMaterial({map:texture,color:0xd6e7ff,transparent:true,depthWrite:false,opacity:.72}));
   foam.position.set(x,.04-len,z+.2);foam.scale.set(width*2.4,width*.92,1);island.add(foam);
-  mesh(new T.CylinderGeometry(width*.59,width*.67,.062,18),m(0x4a81bd,.31,.31),x,.19,z-.18);
+  mesh(new T.CylinderGeometry(width*.59,width*.67,.062,18),m(0x3d9ece,.31,.24),x,.20,z-.18);
  }
  const jewel=new T.MeshStandardMaterial({color:0x7455d5,emissive:0x8355fd,emissiveIntensity:.53,roughness:.31,metalness:.25});
  for(const [x,y,z,q] of [[-4.6,-.45,1.3,.67],[4.38,-.55,1.45,.72],[-3.84,-1.24,1.82,.49],[3.5,-1.8,1.85,.54]]){
@@ -260,7 +263,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  const resize=new ResizeObserver(()=>{
   const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;
   camera.aspect=w/h;
-  camera.fov=T.MathUtils.radToDeg(Math.max(.48,2*Math.atan(.26/camera.aspect)));
+  camera.fov=T.MathUtils.radToDeg(Math.max(.48,2*Math.atan(.285/camera.aspect)));
   camera.updateProjectionMatrix();
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,economy?1:heavy?1.55:1.25));renderer.setSize(w,h,false);
   last=0;
@@ -289,7 +292,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   cameraPos.set(distance*Math.sin(angle),7.1+.13*Math.sin(elapsed*.42),distance*Math.cos(angle));
   if(!painted)camera.position.copy(cameraPos);
   else camera.position.lerp(cameraPos,.085);
-  aiming.set(0,.63+entering*.07,0);camera.lookAt(aiming);
+  aiming.set(0,(camera.aspect<.84?1.21:1.46)+entering*.06,0);camera.lookAt(aiming);
   for(let i=0;i<birds.count;i++){
    const t=elapsed*.34+i*.42;
    helper.position.set(8.9*Math.sin(t*.45)-2,3.0+i*.18+.41*Math.sin(t*2),-5.1-i*.91);
@@ -301,7 +304,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   sparkles.position.y=.14*Math.sin(elapsed*.3);
   clouds.forEach(({cloud,x,offset})=>{cloud.position.x=x+.95*Math.sin(elapsed*.115+offset);});
   rays.material.uniforms.uTime.value=elapsed;
-  sun.intensity=3.55+.077*Math.sin(elapsed*.36);
+  sun.intensity=3.35+.077*Math.sin(elapsed*.36);
   const shadowStep=Math.floor(elapsed*9);
   if(!economy&&shadowStep!==lastShadow){renderer.shadowMap.needsUpdate=true;lastShadow=shadowStep;}
   renderer.render(scene,camera);
@@ -313,7 +316,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   }
   if (!painted){painted=true;onReady();}
  };
- void loadKingdomAsset('/royale/cinematic/citadel.glb',abort.signal).then(asset=>{
+ void loadKingdomAsset(economy?'/royale/cinematic/citadel-low.glb':'/royale/cinematic/citadel.glb',abort.signal).then(asset=>{
   if(abort.signal.aborted){disposeKingdomScene(asset.scene);return;}
   asset.scene.scale.setScalar(1.19);asset.scene.position.set(0,.45,-.36);
   island.add(asset.scene);

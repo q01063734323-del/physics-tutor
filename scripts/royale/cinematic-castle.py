@@ -7,10 +7,12 @@ from collections import defaultdict
 from pathlib import Path
 
 import bpy
+import numpy as np
 from mathutils import Vector
 
 cli = argparse.ArgumentParser()
 cli.add_argument("--out", type=Path, required=True)
+cli.add_argument("--low", action="store_true")
 opts = cli.parse_args(sys.argv[sys.argv.index("--") + 1:])
 opts.out.mkdir(parents=True, exist_ok=True)
 
@@ -32,17 +34,45 @@ def paint(name, rgb, roughness, metallic=0, emission=0):
     return material
 
 stone = [paint(f"Limestone {index + 1}", color, .86) for index, color in enumerate([
-    (.61,.46,.33),(.77,.63,.45),(.52,.41,.35),(.69,.52,.34)])]
-trim = paint("Ivory carving", (.81,.69,.50), .69)
+    (.52,.395,.29),(.68,.55,.42),(.45,.36,.30),(.58,.45,.34)])]
+trim = paint("Ivory carving", (.74,.625,.45), .69)
 base = paint("Shadowed stone joints", (.29,.22,.19), .93)
 roof = [paint(f"Cobalt glazed tiles {i+1}", c, .42, .18) for i,c in enumerate([
-    (.021,.056,.23),(.028,.101,.37),(.040,.154,.46),(.024,.080,.28),(.067,.205,.52)])]
+    (.015,.033,.13),(.018,.060,.24),(.026,.091,.32),(.016,.048,.215),(.038,.108,.35)])]
 gold = paint("Brushed gold and bronze", (.80,.43,.13), .31, .65)
 shadow = paint("Deep windows and iron", (.023,.028,.047), .83)
-amber = paint("Amber glass", (.99,.39,.054), .43, 0, 1.3)
+amber = paint("Amber glass", (.92,.28,.025), .54, 0, .84)
 water = paint("Fountain blue glass", (.020,.28,.46), .26, .18, .15)
 gem = paint("Aether crystal", (.022,.45,.84), .23, .28, .55)
-cloth = paint("Royal pennant", (.022,.046,.27), .89)
+cloth = paint("Royal pennant", (.012,.048,.24), .89)
+
+def stone_maps():
+    size=128
+    rng_map=np.random.default_rng(381)
+    yy,xx=np.mgrid[0:size,0:size]*math.tau/size
+    waviness=.5*np.sin(4*xx+3*yy)+.34*np.cos(3*xx-7*yy)
+    height=(.7*np.sin(9*xx+2*yy+waviness)+.73*np.cos(5*yy+7*xx)+
+            .28*np.cos(19*xx-7*yy)+.30*rng_map.normal(size=(size,size)))
+    slopes=np.stack([-.13*(np.roll(height,-1,axis=1)-np.roll(height,1,axis=1)),
+                     -.13*(np.roll(height,-1,axis=0)-np.roll(height,1,axis=0)),
+                      np.ones_like(height)],axis=-1)
+    slopes/=np.linalg.norm(slopes,axis=-1)[...,None]
+    packed=np.concatenate([slopes*.5+.5,np.ones_like(height)[...,None]],axis=-1).astype('float32')
+    image=bpy.data.images.new("Limestone micro relief",width=size,height=size,alpha=False)
+    image.colorspace_settings.name="Non-Color"
+    image.pixels.foreach_set(packed.reshape(-1))
+    image.pack()
+    for material in [*stone,trim,base]:
+        nodes=material.node_tree.nodes
+        sample=nodes.new("ShaderNodeTexImage")
+        sample.image=image
+        normal=nodes.new("ShaderNodeNormalMap")
+        normal.inputs["Strength"].default_value=.40
+        material.node_tree.links.new(sample.outputs["Color"],normal.inputs["Color"])
+        material.node_tree.links.new(normal.outputs["Normal"],nodes.get("Principled BSDF").inputs["Normal"])
+
+if not opts.low:
+    stone_maps()
 
 def build(material, vertices, polygons):
     points, faces = buckets[material]
@@ -129,7 +159,7 @@ def tower(x,y,z,r,h,roof_h,sides=12,windows=3):
         a=phase+(i+.5)*math.tau/sides
         for height in [.11,.18]:
             block(x+r*math.cos(a),y+r*math.sin(a),z+h+height,.15*r,.125,.12,trim if i%3 else gold,.027,a)
-    n=sides*2
+    n=sides if opts.low else sides*2
     ring_heights=[0,.075,.185,.32,.47,.62,.755,.865,.945,1]
     ring_widths=[1.18,1.14,1.02,.86,.69,.55,.40,.25,.116,.028]
     section(x,y,z+h+.204,[(r*width,roof_h*height) for width,height in zip(ring_widths,ring_heights)],n,
@@ -147,6 +177,12 @@ def tower(x,y,z,r,h,roof_h,sides=12,windows=3):
             xyz=[(x+rr*math.cos(a+delta),y+rr*math.sin(a+delta),zz) for rr,zz,delta in
                  [(r2,h2,-off),(r2,h2,off),(r1,h1,off),(r1,h1,-off)]]
             build(gold,xyz,[(0,1,2,3)])
+    for j in range(0 if opts.low else 2,sides*2,8 if opts.low else 5):
+        a=phase+j*math.tau/n
+        for k in [1,2,3,4,5,6]:
+            rr=r*ring_widths[k]+.024
+            z_tile=z+h+.204+roof_h*ring_heights[k]
+            block(x+rr*math.cos(a),y+rr*math.sin(a),z_tile,.072*r,.044,.027,roof[(j+k)%5],.008,a)
     cap=z+h+roof_h+.19
     section(x,y,cap,[(.075,0),(.090,.067),(.046,.132),(.025,.315),(.004,.404)],8,gold)
     return cap+.36
@@ -178,6 +214,20 @@ def spired_hall():
             lambda row,side:roof[(row+side)%5],math.pi/4,aspect=.80)
     wall(0,-.92,.068,2.24,.74,1.19)
     stone_arch(0,-1.38,.34,.37,.87,door=True)
+    block(0,-.35,1.48,1.72,.47,.106,trim,.024)
+    block(0,-.58,1.59,1.71,.058,.051,gold,.014)
+    for i in range(9):
+        block((i-4)*.182,-.57,1.57,.053,.083,.20,trim,.013)
+    for sign in [-1,1]:
+        x=sign*1.12
+        for j in range(4):
+            block(x,-.34,1.65+j*.180,.15,.17,.15,trim,.022)
+        block(x,-.34,2.35,.25,.235,.10,gold,.023)
+        for j in range(8):
+            half=.155-j*.007
+            build(cloth,[(x-half,-.292,2.16-j*.071),(x+half,-.292,2.16-j*.071),
+                        (x+half*.95,-.30,2.09-j*.071),(x-half*.95,-.30,2.09-j*.071)],[(0,3,2,1)])
+        build(gold,[(x,-.311,2.105),(x+.077,-.311,1.97),(x,-.311,1.84),(x-.077,-.311,1.97)],[(0,3,2,1)])
     for x in [-.81,.81]:
         stone_arch(x,-1.36,.46,.119,.46)
     for x in [-1.02,1.02]:
@@ -212,9 +262,19 @@ for i,(material,(points,faces)) in enumerate(buckets.items()):
     geo=bpy.data.meshes.new(material.name+" geometry")
     geo.from_pydata(points,[],faces)
     geo.update()
+    if not opts.low and material in [*stone,trim,base]:
+        layer=geo.uv_layers.new(name="Stone projection")
+        for poly in geo.polygons:
+            axis=max(range(3),key=lambda j: abs(poly.normal[j]))
+            projection=[(1,2),(0,2),(0,1)][axis]
+            for idx in poly.loop_indices:
+                co=geo.vertices[geo.loops[idx].vertex_index].co
+                layer.data[idx].uv=(co[projection[0]]*.88,co[projection[1]]*.88)
     geo.materials.append(material)
     obj=bpy.data.objects.new(material.name,geo)
     bpy.context.collection.objects.link(obj)
 
-bpy.ops.wm.save_as_mainfile(filepath=str(opts.out/"citadel-cinematic.blend"))
-bpy.ops.export_scene.gltf(filepath=str(opts.out/"citadel-cinematic.glb"), export_format="GLB", export_yup=True)
+if not opts.low:
+    bpy.ops.wm.save_as_mainfile(filepath=str(opts.out/"citadel-cinematic.blend"))
+stem="citadel-cinematic-low" if opts.low else "citadel-cinematic"
+bpy.ops.export_scene.gltf(filepath=str(opts.out/(stem+".glb")), export_format="GLB", export_yup=True)
