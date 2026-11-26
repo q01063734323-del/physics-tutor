@@ -51,17 +51,17 @@ export function KingdomShell({tab,profile,practice,name,onNavigate,onSettings,ch
  </main>;
 }
 
-export function KingdomHome({profile,topics,preferences,ready,action,showSettings}:{profile:RoyaleProfile;topics:string[];
- preferences:Preferences;ready:boolean;action:ReactNode;showSettings:()=>void}){
+export function KingdomHome({profile,topics,preferences,ready,action,showSettings,launching}:{profile:RoyaleProfile;topics:string[];
+ preferences:Preferences;ready:boolean;action:ReactNode;showSettings:()=>void;launching:boolean}){
  const {current,next,percent}=leagueProgress(profile.trophies);
  const rows=topicRows(profile.topics,topics);
  const recommendation=rows.filter(row=>row.correct<row.attempts).sort((a,b)=>a.percent-b.percent||b.attempts-a.attempts)[0];
  const percentCorrect=accuracy(profile.attempts,profile.correct);
- return <section className={k.court} aria-labelledby="kingdom-title">
+ return <section className={k.court} data-launching={launching} aria-labelledby="kingdom-title">
   <div className={k.courtMist} aria-hidden="true"/>
   <header className={k.courtHeading}><span className={k.courtCrown}><KingdomMark name="crown" size={33}/></span>
    <h1 id="kingdom-title">Physics <em>Royale</em></h1>
-   <p>Каждое решение меняет ход битвы</p>
+   
   </header>
   {ready&&<KingdomScene key={preferences.quality} quality={preferences.quality}/>}
   <aside className={k.courtLeague}><LeagueBadge {...current}/><div><small>Ваша лига</small><b>{current.name}</b>

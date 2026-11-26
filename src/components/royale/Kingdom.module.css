@@ -304,3 +304,156 @@
 @keyframes insignia{from{transform:scale(.76) translateY(6px);opacity:.3}to{transform:scale(1);opacity:1}}
 .currency[data-new=true] b{animation:flyValue .32s ease-out both}
 @keyframes flyValue{from{transform:translateY(3px);opacity:.66;color:#fff6ce}to{transform:translateY(0);opacity:1}}
+
+/* Cinematic kingdom */
+.shell,.dialog{--ease-reveal:cubic-bezier(.20,.76,.25,1);--champagne:#ffe6af;--steel:#314273;--gilded:linear-gradient(136deg,#fff0bf,#b98849 29%,#54405c 57%,#d9b272 81%,#6e4e42);}
+.shell{background:radial-gradient(90% 58% at 52% 0%,#213962 0%,#0c1730 69%,#08101f 100%)}
+.topbar{min-height:59px;margin-bottom:10px}
+.brand>span{border-radius:3px 10px 5px 12px;background:linear-gradient(140deg,#294471,#102040)}
+.player b{font-size:15px}
+.player small{font-size:12px}
+.court{border-radius:16px;background:#305080 url('/royale/cinematic/sky.webp') center 55% / cover;min-height:clamp(555px,calc(100svh - 181px),840px)}
+.court:before{background:linear-gradient(180deg,#0d1b3aa0 0%,#0d1a3a36 20%,transparent 36%,transparent 67%,#080e26c9 100%),linear-gradient(90deg,#101d4028,transparent 30%,transparent 70%,#101d403c)}
+.court:after{border-radius:15px;border-width:2px}
+.courtHeading{margin-top:18px;animation:enter .58s var(--ease-reveal) both}
+.courtHeading h1{font-size:clamp(46px,4.35vw,76px);letter-spacing:-.052em;text-shadow:0 3px 0 #2b2446,0 5px 20px #08183c91}
+.courtCrown svg{height:27px;filter:drop-shadow(0 2px 1px #31233b)}
+.scene{inset:9% 0 0;transition:filter .38s var(--ease-reveal)}
+.court[data-launching=true] .scene{filter:brightness(1.09) saturate(1.1)}
+.scenePoster{background-image:url('/royale/cinematic/citadel-poster.webp');background-size:cover}
+.sceneRecovery{z-index:1;position:absolute;left:50%;bottom:21%;transform:translateX(-50%);width:max-content;max-width:94%;display:flex;gap:9px;align-items:center;padding:5px 7px 5px 10px;border:1px solid #d7ac646d;border-radius:8px;background:#0d1735e8}
+.sceneRecovery p{margin:0;font-size:12px}
+.shell .sceneRecovery button{min-height:35px;font-size:12px}
+.courtMist{opacity:.65}
+.courtLeague,.courtLearning{top:auto;bottom:18%;width:min(20%,232px);border-radius:3px 14px 4px 13px;box-shadow:0 8px 32px #1223445b,inset 0 0 0 2px #cba67325;background:linear-gradient(145deg,#223458f2,#111b33f4);padding:13px}
+.courtLeague .leagueBadge{width:46px;height:53px}
+.courtActions{margin-bottom:17px}
+.courtActions .goldButton{min-height:68px;min-width:clamp(230px,27vw,390px);border:2px solid #ffe3a1;border-radius:10px 10px 20px 20px;color:#fff0cf;background:radial-gradient(ellipse at 50% 0%,#ae76d7ab,transparent 75%),linear-gradient(180deg,#5e3981 0%,#3b224e 55%,#27193d 100%);box-shadow:inset 0 0 0 3px #a16e3d,inset 0 1px 0 5px #f1bf753e,0 5px 0 #87521f,0 20px 40px #070818b9,0 0 26px #f9b94e63;text-shadow:0 2px 0 #30183e,0 0 18px #ffc87a6b}
+.courtActions .goldButton:before,.courtActions .goldButton:after{width:12px;height:12px;top:calc(50% - 6px)}
+.courtActions .goldButton:hover{box-shadow:inset 0 0 0 3px #ba834a,0 5px 0 #87521f,0 15px 40px #070818a9,0 0 29px #f9bf5a89}
+.shell .heroLink{background:linear-gradient(90deg,transparent,#0a162abc,transparent);font-size:13px;min-height:40px}
+.shell .navigation{width:min(100%,830px);border-radius:4px 14px 6px 14px}
+.shell .navigation button[aria-current=page]{background:radial-gradient(at 50% 0%,#5c52a2,#263356 70%);color:#fff0be;border-color:#eac1839c;box-shadow:inset 0 1px #fff1c96b,inset 0 -2px #b9836d40}
+.shell .navigation button:active{transform:translateY(2px);color:#fff5d5}
+.arenaLoading{display:grid;min-height:100dvh;align-content:center;justify-items:center;gap:13px;color:#ffe7aa;background:radial-gradient(at 50% 42%,#293757,#0b1327 64%);font:700 clamp(20px,3vw,32px) Georgia,serif;animation:enter .22s var(--ease-reveal)}
+.arenaLoading svg{width:40px;height:40px}
+
+/* Collection and studio */
+.pane{background:radial-gradient(95% 85% at 75% -22%,#2d4070,#162342 47%,#0d172d);border-radius:6px 17px 8px 17px}
+.paneHeading{padding-bottom:12px;border-bottom:1px solid #d3a97245}
+.kicker{font-size:12px;letter-spacing:.12em;color:#e4c392!important}
+.shell .card{border:1px solid #d1a76e;border-radius:4px 13px 6px 13px;box-shadow:inset 0 0 0 2px #f1ce894d,0 5px 13px #050a16}
+.card::before{content:'';position:absolute;inset:3px;border:1px solid #f6cb7842;border-radius:3px 8px 4px 8px;pointer-events:none;z-index:1}
+.card:nth-child(4n+1){--card-tone:#a96ff8}
+.shell .card[aria-pressed=true]{box-shadow:0 0 0 2px #f8d590,0 0 20px var(--card-tone,#8956d9),0 9px 24px #040615dd}
+.cardCost{border-radius:3px 10px 4px 10px;background:linear-gradient(150deg,#a776e7,#632a9b 52%,#441a73);border-color:#dcabed}
+.character{border-radius:6px 18px 8px 18px;background:linear-gradient(180deg,#243655,#152440);box-shadow:inset 0 0 0 3px #e2b4771a,0 14px 38px #0308179c}
+.characterPortrait::after{background:linear-gradient(0deg,#172544 0%,transparent 62%),linear-gradient(90deg,#111b4149,transparent 30%,transparent 70%,#111b4149)}
+.characterStats dt{font-size:12px;color:#d3dbee}
+.characterStats dd{font-size:14px}
+.characterPortrait img{animation:portraitIn .28s var(--ease-reveal)}
+@keyframes portraitIn{from{opacity:.38;transform:scale(1.025)}to{opacity:1;transform:scale(1)}}
+.deckEditor{border-radius:5px 14px 6px 14px;background:radial-gradient(at 50% 0%,#38456b,#142039 76%)}
+.previewStage{background:radial-gradient(ellipse at 50% 67%,#69578c 0%,#313b64 29%,#151f37 65%,#0e152a);border-color:#d7b7845b}
+
+/* Road of Knowledge */
+.road{padding:0;overflow:hidden;border-radius:5px 16px 7px 16px;background:#14223c}
+.roadIntro,.roadStatus{padding:16px clamp(12px,2.6vw,33px);position:relative;z-index:1;background:linear-gradient(125deg,#202f50,#101c36)}
+.roadIntro{border-bottom:1px solid #e3bf8256}
+.roadStatus{border-top:1px solid #e3bf8256;gap:14px}
+.mapArtwork{position:relative;isolation:isolate;background:#283f64 url('/royale/cinematic/road.webp') center 53% / 100% auto no-repeat;min-height:clamp(325px,33vw,470px);display:grid;align-items:stretch}
+.mapArtwork::before{position:absolute;inset:0;content:'';background:linear-gradient(180deg,#1a2b4888,transparent 25%,transparent 79%,#101a30a6);z-index:-1}
+.mapTrail{position:absolute;width:100%;height:100%;inset:0;overflow:visible;pointer-events:none}
+.mapTrail path{fill:none;stroke:#fff0b5;stroke-width:2.6;stroke-linecap:round;stroke-dasharray:1 9;filter:drop-shadow(0 0 5px #ffb352) drop-shadow(0 0 2px #9d6421)}
+.leagueList{grid-template-columns:repeat(6,minmax(0,1fr));margin:0;padding:0 1.3%;gap:0;align-items:start}
+.leagueList li,.leagueList li[data-stage=current]{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;margin:0;padding:0;border:0;background:none;min-width:0;top:calc((58 - var(--stage-index) * 7.7) * 1%);z-index:1}
+.mapSeal{display:grid;justify-items:center;gap:7px;translate:0 -56%;position:relative}
+.leagueList .leagueBadge{width:clamp(48px,5.2vw,80px);height:clamp(57px,6.4vw,91px);filter:drop-shadow(0 10px 7px #0c133181)}
+.leagueList li[data-stage=current] .leagueBadge{filter:drop-shadow(0 0 15px var(--league-tone)) drop-shadow(0 6px 6px #15192fc4)}
+.mapLabel{margin-top:-36px;display:grid;gap:5px;background:linear-gradient(150deg,#182848ed,#121d38f7);border:1px solid #c5a47387;border-radius:3px 10px 4px 9px;width:min(91%,151px);padding:8px 5px;color:#fff0d0;box-shadow:0 6px 16px #07122968}
+.mapLabel b{font-size:clamp(12px,1.5vw,17px);text-wrap:balance}
+.mapLabel small{font-weight:700;font-size:11px;color:#e4c792}
+.roadPoint:after{display:none}
+.mapSeal .roadPoint{width:10px;height:10px;background:#ffe5a3;box-shadow:0 0 12px 4px #ffcb6da3}
+.leagueList li[data-stage=current] .mapLabel{border-color:#ffd482;box-shadow:0 0 15px #e8aa5c50,0 6px 16px #07122968}
+@media(max-width:800px){
+ .mapArtwork{background:#142745;min-height:auto}
+ .mapTrail,.mapArtwork::before{display:none}
+ .leagueList{grid-template-columns:repeat(3,minmax(0,1fr));padding:6px;gap:5px}
+ .leagueList li,.leagueList li[data-stage=current]{background:linear-gradient(180deg,#12254917 25%,#111f3bea 100%),var(--league-art) center 48%/cover;min-height:194px;top:auto;padding:7px 4px 4px;justify-content:space-between;border:1px solid #9d9ab06b;border-radius:4px 9px 4px 9px}
+ .leagueList li[data-stage=current]{border-color:#f6cb82}
+ .mapSeal{translate:none;gap:1px}
+ .mapLabel{width:100%;margin:0;padding:5px 2px;min-height:45px;align-content:center}
+ .mapLabel small{font-size:10px}
+}
+
+/* Results use a full-screen scene while preserving native modal focus. */
+.dialog:is([data-kind=win],[data-kind=loss],[data-kind=draw]){width:100vw;max-width:none;height:100dvh;max-height:none;inset:0;margin:0;border:0;border-radius:0;padding:0;overscroll-behavior:contain;background:#0b152b;box-shadow:none}
+.resultStage{min-height:100%;position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:38px clamp(12px,5vw,70px) max(25px,env(safe-area-inset-bottom));background:linear-gradient(0deg,#0a122bdd,transparent 32%,#0a122b44 70%),url('/royale/cinematic/hall.webp') center / cover}
+.resultStage[data-result=loss],.resultStage[data-result=forfeit]{background:linear-gradient(180deg,#0a173475,#0c132b96),url('/royale/cinematic/hall.webp') center / cover}
+.resultStage>*:not(.resultHero,.skipResult,.resultSparks){width:min(100%,740px)}
+.resultStage .skipResult{position:absolute;z-index:2;right:max(12px,env(safe-area-inset-right));top:max(9px,env(safe-area-inset-top));font-size:12px;background:#101a34d9}
+.resultStage .resultHero{margin-bottom:17px;padding:3px 0 0}
+.resultStage .resultHero h1{font-size:clamp(36px,8vw,113px);line-height:1;margin:0;color:#ffeabb;text-shadow:0 3px 0 #845029,0 6px 22px #080b1d;letter-spacing:-.055em}
+.resultStage[data-result=win] .resultHero h1{text-transform:uppercase}
+.resultStage[data-result=forfeit] .resultHero h1{font-size:clamp(34px,5.3vw,72px)}
+.resultStage .resultEmblem{width:114px;height:100px;border:0;border-radius:0;background:radial-gradient(ellipse,#f3a53d73,transparent 67%);color:#ffe6a2;filter:drop-shadow(0 0 22px #f6af7a9c);box-shadow:none}
+.resultEmblem svg{width:91px;height:85px;filter:drop-shadow(0 4px 1px #a46a38)}
+.resultStage .kicker{margin:2px 0 9px;font-size:13px;color:#f3d999!important}
+.resultStage .resultMetrics{margin:0 0 12px;border:1px solid #dcc39076;border-radius:4px 13px 7px 13px;padding:6px;background:linear-gradient(#25395ae8,#101b33ed);box-shadow:0 7px 24px #040b1a86}
+.resultStage .resultMetrics>div{background:none;border:0;border-right:1px solid #e2ba7f41;border-radius:0}
+.resultStage .resultMetrics>div:last-child{border-right:0}
+.resultStage .resultMetrics b{font-size:clamp(24px,3.7vw,48px)}
+.resultStage .resultMetrics span{font-size:12px}
+.resultStage .resultMistakes{background:#142442ed;border-color:#9884b276;margin:0 0 8px}
+.resultMistakes li>div{display:grid;gap:3px}
+.resultMistakes li small{font-size:11px;color:#f2b8a4}
+.resultStage .resultMistakes p{font-size:12px;margin:8px 0 0;color:#fad3aa}
+.resultStage .actions{justify-content:center;margin-top:8px}
+.resultStage .actions button{min-width:min(100%,210px)}
+.resultStage .rewardLine{text-align:center}
+.resultStage .resultSecondary{justify-content:center}
+.resultStage[data-skip=false] :is(.resultHero,.resultMetrics,.resultMistakes,.actions){animation:ceremony .65s var(--ease-reveal) both}
+.resultStage[data-skip=false] .resultMetrics{animation-delay:.09s}
+.resultStage[data-skip=true] *{animation:none!important}
+@keyframes ceremony{from{opacity:.28;transform:translateY(9px) scale(.984)}to{opacity:1;transform:translateY(0) scale(1)}}
+.resultSparks{position:absolute;inset:0;pointer-events:none;z-index:-1;opacity:.56;background:radial-gradient(circle at 22% 35%,#ffe198 0 1px,transparent 4px),radial-gradient(circle at 31% 15%,#efac55 0 1px,transparent 5px),radial-gradient(circle at 75% 32%,#ffe198 0 1px,transparent 4px),radial-gradient(circle at 85% 55%,#efac55 0 1px,transparent 3px),radial-gradient(circle at 53% 19%,#fff6cd 0 1px,transparent 6px);animation:ceremony .9s var(--ease-reveal) both}
+@media(max-width:620px){
+ .topbar{min-height:46px}
+ .player small{font-size:10px}
+ .court{min-height:clamp(467px,calc(100svh - 145px),710px);background-image:url('/royale/cinematic/sky-portrait.webp');background-position:center 60%}
+ .courtHeading{margin-top:16px}
+ .courtHeading h1{font-size:clamp(36px,10.4vw,58px)}
+ .scene{inset:8% -1% 9%}
+ .scenePoster{background-size:contain}
+ .courtLeague,.courtLearning{bottom:100px;width:calc(50% - 14px);padding:6px;gap:5px}
+ .courtLeague .leagueBadge{width:32px;height:38px}
+ .courtLeague small,.courtLeague div>span,.courtLearning small,.courtLearning div>span{font-size:10px}
+ .courtActions{margin-bottom:8px}
+ .courtActions .goldButton{min-height:50px}
+ .shell .heroLink{font-size:12px;min-height:36px}
+ .shell .navigation button{font-size:11px}
+ .shell .card{aspect-ratio:1/1.48}
+ .cardName{font-size:clamp(9px,2.5vw,14px)}
+ .resultStage{background-position:center;padding-top:60px}
+ .resultStage .resultEmblem{height:77px}
+ .resultStage .resultEmblem svg{height:64px}
+ .resultStage .resultMetrics{gap:5px}
+ .resultStage .resultMetrics>div{border:0;background:#0c172b7d}
+ .resultStage .resultMetrics span{font-size:11px}
+ .resultStage .actions button{min-width:0;flex:1}
+}
+@media(orientation:landscape) and (max-height:550px){
+ .court{min-height:422px}
+ .courtHeading{margin-top:8px}
+ .courtHeading h1{font-size:46px}
+ .scene{inset:12% 0 0}
+ .courtLeague,.courtLearning{bottom:21%;width:20%}
+}
+@media(max-width:360px){
+ .courtLeague div>span,.courtLearning div>span{font-size:9px}
+ .courtLeague b,.courtLearning b{font-size:13px}
+ .shell .navigation button{font-size:10px}
+ .leagueList li,.leagueList li[data-stage=current]{min-height:164px}
+ .mapLabel b{font-size:11px}
+}

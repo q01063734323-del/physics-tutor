@@ -1,6 +1,7 @@
 import * as T from 'three';
 import { disposeKingdomScene, loadKingdomAsset } from './kingdom-resources';
 import type { GraphicsQuality } from '../quality';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const waterVertex = `
  varying vec2 vUv;
@@ -20,34 +21,40 @@ const waterFragment = `
   float glints=pow(.5+.5*sin(x*33.+sin(y*17.+uTime*5.)*3.),5.);
   float fade=smoothstep(.0,.27,y)*smoothstep(.0,.12,x)*(1.-smoothstep(.84,1.,x));
   vec3 layer=texture2D(uWater,vec2(x,y*1.1+uTime*.28)).rgb;
-  vec3 color=mix(vec3(.07,.28,.69),vec3(.61,.88,1.),clamp(ribbons*.8+glints*.21+layer.b*.24,0.,1.));
+  vec3 color=mix(vec3(.025,.24,.72),vec3(.64,.94,1.),clamp(ribbons*.66+glints*.27+layer.b*.24,0.,1.));
   gl_FragColor=vec4(color,fade*(.40+ribbons*.58));
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
  }`;
 
-const rockColors = [0x2b3454,0x46466a,0x63576b,0x715b69,0x4e5975];
-const leaves = [0x627244,0x395538,0x899153,0xadb566,0x476642];
+const rockColors = [0x465465,0x525973,0x696772,0x7e716c,0x67677b];
+const leaves = [0x457635,0x2c5337,0x789042,0xa4af60,0x4b7840];
 export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuality,onReady:()=>void,onError:()=>void){
  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const heavy=quality==='high'||(quality==='auto'&&innerWidth>=950&&(navigator.hardwareConcurrency||8)>=8);
  const economy=quality==='low'||(quality==='auto'&&(matchMedia('(max-width: 700px)').matches||(navigator.hardwareConcurrency||8)<6));
  const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:!economy,powerPreference:economy?'low-power':'default'});
- renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.32;
+ renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.06;
  const scene=new T.Scene(), island=new T.Group();
  renderer.shadowMap.enabled=!economy;renderer.shadowMap.type=T.PCFShadowMap;
  renderer.shadowMap.autoUpdate=false;
- const fog=new T.Fog(0x625980,18,42);scene.fog=fog;
- scene.add(island,new T.HemisphereLight(0xa9bdff,0x503450,1.68));
- const sun=new T.DirectionalLight(0xffc88d,3.1);sun.position.set(5,7,4);scene.add(sun);
- sun.castShadow=!economy;sun.shadow.mapSize.set(1024,1024);
+ const fog=new T.Fog(0x7c9fd1,19,39);scene.fog=fog;
+ const environment=heavy?new RoomEnvironment():undefined;
+ const probes=environment?new T.PMREMGenerator(renderer):undefined;
+ const reflected=environment&&probes?probes.fromScene(environment,.065):undefined;
+ environment?.dispose();probes?.dispose();
+ if(reflected){scene.environment=reflected.texture;scene.environmentIntensity=.32;}
+ scene.add(island,new T.HemisphereLight(0xbee0ff,0x5c5771,1.36));
+ const sun=new T.DirectionalLight(0xffca91,3.55);sun.position.set(6,8,4);scene.add(sun);
+ sun.castShadow=!economy;sun.shadow.mapSize.setScalar(heavy?1536:768);
  Object.assign(sun.shadow.camera,{left:-8,right:8,top:8,bottom:-8,near:.1,far:27});
  sun.shadow.normalBias=.035;sun.shadow.bias=-.0002;sun.shadow.radius=3.6;
- const rim=new T.DirectionalLight(0xd3afff,1.3);rim.position.set(-6,2,-5);scene.add(rim);
- const camera=new T.OrthographicCamera(-7,7,4.6,-4.6,.1,80);
+ const rim=new T.DirectionalLight(0x91b9ff,1.95);rim.position.set(-6,5,-7);scene.add(rim);
+ const camera=new T.PerspectiveCamera(32,1,.1,85);
  let seed=83;
  function rand(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;}
  const m=(color:number,metalness=0,roughness=.79)=>new T.MeshStandardMaterial({color,metalness,roughness,flatShading:true});
- const gold=m(0xc69253,.51,.36), slate=m(0x8a8796), dark=m(0x35446f), bark=m(0x735447);
+ const gold=m(0xb68a4f,.53,.42), slate=m(0x958777), dark=m(0x34486e), bark=m(0x5b4330);
  const textureLoader=new T.TextureLoader();
  const painting=(name:string)=>{
   const map=textureLoader.load('/royale/kingdom/'+name+'.webp');
@@ -56,12 +63,11 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   return map;
  };
  const rockPaint=painting('rock'), grassPaint=painting('meadow'), waterPaint=painting('cascade');
- const windowGlow=new T.MeshStandardMaterial({color:0xf6b85d,emissive:0xff8c38,emissiveIntensity:1.25,roughness:.7});
  function mesh(geometry:T.BufferGeometry,material:T.Material,x:number,y:number,z:number, parent:T.Object3D=island){
   const item=new T.Mesh(geometry,material);item.position.set(x,y,z);parent.add(item);return item;
  }
- const shapes=[24,24,24,24,24];
- const radius=[1,.98,.83,.57,.12], levels=[.18,-.29,-1.15,-2.35,-3.51];
+ const shapes=[40,40,40,40,40,40];
+ const radius=[1,.975,.94,.72,.50,.12], levels=[.18,-.24,-.65,-1.58,-2.65,-3.68];
  const coordinates:number[][][]=shapes.map((segments,r)=>Array.from({length:segments},(_,i)=>{
   const a=i*Math.PI*2/segments+(r%2)*.075;
   const cr=radius[r]*(1+.10*Math.sin(5*a)+.08*Math.cos(3*a)+.10*(rand()-.5));
@@ -98,21 +104,22 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   shelf.position.set(x,y,z);shelf.scale.setScalar(scale);shelf.rotation.y=x*.18;scene.add(shelf);
  }
  const rockGeometry=new T.DodecahedronGeometry(1,0);
- const fragments=new T.InstancedMesh(rockGeometry,m(0xffffff),economy?34:65);
+ const fragments=new T.InstancedMesh(rockGeometry,new T.MeshStandardMaterial({
+  map:rockPaint,roughness:.92,flatShading:true}),economy?43:104);
  const helper=new T.Object3D();
  for(let i=0;i<fragments.count;i++){
   const a=rand()*Math.PI*2;
   const r=.87+rand()*.15;
-  helper.position.set(Math.cos(a)*5*r,-.63-rand()*1.15,Math.sin(a)*2.85*r);
-  helper.scale.set(.24+rand()*.57,.58+rand()*1.08,.29+rand()*.47);
+  helper.position.set(Math.cos(a)*5*r,-.42-rand()*1.52,Math.sin(a)*2.85*r);
+  helper.scale.set(.23+rand()*.50,.40+rand()*.90,.25+rand()*.45);
   helper.rotation.set(rand()*.62,rand()*6.3,rand()*.42);
   helper.updateMatrix();fragments.setMatrixAt(i,helper.matrix);
   fragments.setColorAt(i,new T.Color(rockColors[i%5]));
  }
  island.add(fragments);
- const courtyard=mesh(new T.CylinderGeometry(2.35,2.65,.35,12),slate,0,.31,-.25);
+ const courtyard=mesh(new T.CylinderGeometry(3,3.18,.30,16),slate,0,.23,-.24);
  courtyard.scale.z=.73;
- const base=mesh(new T.CylinderGeometry(2.03,2.12,.27,12),dark,0,.49,-.3);
+ const base=mesh(new T.CylinderGeometry(2.85,3.04,.16,16),dark,0,.38,-.24);
  base.scale.z=.75;
  const paving=new T.InstancedMesh(new T.BoxGeometry(.40,.075,.28),m(0xffffff),35);
  for(let i=0;i<35;i++){
@@ -122,54 +129,57 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  }
  island.add(paving);
  const flagMeshes:T.Mesh<T.PlaneGeometry,T.ShaderMaterial>[]=[];
- function tower(x:number,z:number,height:number){
-  const group=new T.Group();group.position.set(x,.35,z);island.add(group);
-  const sideCount=10;
-  for(let ring=0;ring<4;ring++){
-   const y=.33+ring*height*.14;
-   mesh(new T.CylinderGeometry(.65-y*.066,.66-y*.066,.032,sideCount),dark,0,y,0,group);
-  }
-  for(const d of [-1,1]){
-   mesh(new T.BoxGeometry(.085,height*.68,.095),dark,d*.395,height*.42,.402,group);
-  }
-  const band=new T.CylinderGeometry(.57,.68,.18,8);
-  mesh(new T.CylinderGeometry(.50,.67,height,sideCount),slate,0,height/2,0,group);
-  mesh(band,dark,0,.12,0,group);
-  mesh(band,gold,0,height-.01,0,group);
-  mesh(new T.CylinderGeometry(.052,.66,.9,sideCount),dark,0,height+.55,0,group);
-  mesh(new T.ConeGeometry(.053,.24,8),gold,0,height+1.12,0,group);
-  const window = mesh(new T.BoxGeometry(.15,.41,.025),windowGlow,0,height*.57,.535,group);
-  const arch = mesh(new T.CircleGeometry(.078,9),windowGlow,0,height*.57+.204,.553,group);arch.rotation.y=0;
-  window.rotation.x=.055;
-  mesh(new T.CylinderGeometry(.025,.025,.61,6),gold,0,height+1.38,0,group);
-  mesh(new T.TorusGeometry(.606,.026,5,sideCount),gold,0,height+.13,0,group).rotation.x=Math.PI/2;
-  for(let j=0;j<sideCount;j++){
-   const a=j*Math.PI*2/sideCount;
-   mesh(new T.BoxGeometry(.085,.08,.086),gold,Math.cos(a)*.59,height+.17,Math.sin(a)*.59,group);
-  }
-  const material=new T.ShaderMaterial({
-   side:T.DoubleSide,
-   uniforms:{uTime:{value:0},uTint:{value:new T.Color(x<0?0x5846b8:0x283c9d)}},
-   vertexShader:`varying vec2 vUv;uniform float uTime;void main(){vUv=uv;vec3 p=position;p.z+=sin(uv.x*7.+uTime*4.)*.16*uv.x;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,
-   fragmentShader:`varying vec2 vUv;uniform vec3 uTint;void main(){if(abs(vUv.y-.5)>(.5-max(0.,vUv.x-.72)*1.2))discard;float trim=step(.395,abs(vUv.y-.5));gl_FragColor=vec4(mix(uTint,vec3(.96,.61,.22),trim),1.); #include <colorspace_fragment> }`.replace(' #include <colorspace_fragment> }','\n#include <colorspace_fragment>\n}'),
-  });
-  const flag=new T.Mesh(new T.PlaneGeometry(.56,.25,12,4),material);flag.position.set(.29,height+1.59,0);group.add(flag);flagMeshes.push(flag);
+ const cloth=new T.ShaderMaterial({
+  side:T.DoubleSide,
+  uniforms:{uTime:{value:0},uTint:{value:new T.Color(0x17418c)}},
+  vertexShader:`varying vec2 vUv;uniform float uTime;
+   void main(){vUv=uv;vec3 p=position;p.z+=sin(uv.x*7.+uTime*3.)*.18*uv.x;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,
+  fragmentShader:`varying vec2 vUv;uniform vec3 uTint;uniform float uTime;void main(){
+   float cut=.5-max(0.,vUv.x-.72)*1.28;
+   if(abs(vUv.y-.5)>cut)discard;
+   float trim=step(cut-.058,abs(vUv.y-.5));
+   vec2 f=vUv-vec2(.39,.5);
+   float seal=1.-smoothstep(.025,.045,abs(abs(f.x)+abs(f.y)*.56-.122));
+   float light=.73+.29*cos(vUv.x*8.+uTime*3.);
+   gl_FragColor=vec4(mix(uTint*light,vec3(.91,.56,.16),max(trim,seal*.8)),1.);
+   #include <colorspace_fragment>
+  }`,
+ });
+ for(const [x,y,z,angle,scale] of [[0,5.44,-1.74,-.19,1.05],[-1.42,4.54,-1.02,.17,.84],[1.57,4.21,-1.15,-.35,.92],[-2.42,3.15,.05,.13,.67],[2.46,3.39,-.07,.23,.73]]){
+  const flag=new T.Mesh(new T.PlaneGeometry(.79,.33,12,4),cloth);
+  flag.position.set(x+.34*scale,y,z);flag.rotation.y=angle;flag.scale.setScalar(scale);
+  island.add(flag);flagMeshes.push(flag);
  }
- tower(-2.19,.42,1.96);tower(2.21,.22,2.26);tower(-1.68,-1.45,1.73);tower(1.67,-1.41,1.96);
- const treeCount=economy?13:23,crowns=new T.InstancedMesh(new T.IcosahedronGeometry(1,1),m(0xffffff),treeCount*6);
+ const ledge=new T.InstancedMesh(new T.BoxGeometry(.25,.16,.41),m(0xe0c399),38);
+ for(let i=0;i<ledge.count;i++){
+  const side=i<19?-1:1,step=i%19;
+  helper.position.set(side*(.84+step*.19),.29+Math.sin(step*.30)*.04,1.83+Math.sin(step*.18)*.60);
+  helper.rotation.set(0,-side*Math.cos(step*.18)*.38,0);helper.scale.setScalar(1);helper.updateMatrix();
+  ledge.setMatrixAt(i,helper.matrix);
+ }
+ island.add(ledge);
+ const treeCount=economy?17:34,crownParts=economy?5:8;
+ const crowns=new T.InstancedMesh(new T.IcosahedronGeometry(1,1),m(0xffffff),treeCount*crownParts);
+ const branches=new T.InstancedMesh(new T.CylinderGeometry(.024,.055,1,5),bark,treeCount*3);
  const trunks=new T.InstancedMesh(new T.CylinderGeometry(.038,.09,1,7),bark,treeCount);
  for(let i=0;i<treeCount;i++){
   const a=i/treeCount*Math.PI*2+.12, x=Math.cos(a)*(3.35+rand()*1.35), z=Math.sin(a)*(1.94+rand()*.62);
-  const h=.54+rand()*.75;
+  const h=.42+rand()*.86;
   helper.position.set(x,.20+h*.41,z);helper.scale.set(h,h,h);helper.rotation.set(.13,0,(rand()-.5)*.27);helper.updateMatrix();trunks.setMatrixAt(i,helper.matrix);
-  for(let j=0;j<6;j++){
-   const angle=j/6*6.28;
+  for(let j=0;j<3;j++){
+   const angle=j*Math.PI*2/3+i;
+   helper.position.set(x+h*.14*Math.cos(angle),.25+h*.53,z+h*.14*Math.sin(angle));
+   helper.rotation.set(.72*Math.sin(angle),0,-.72*Math.cos(angle));
+   helper.scale.set(h,h*.45,h);helper.updateMatrix();branches.setMatrixAt(i*3+j,helper.matrix);
+  }
+  for(let j=0;j<crownParts;j++){
+   const angle=j/crownParts*6.28;
    helper.position.set(x+Math.cos(angle)*h*.20,.33+h*(.76+rand()*.25),z+Math.sin(angle)*h*.22);
    helper.scale.set(h*(.20+rand()*.15),h*(.25+rand()*.145),h*.33);helper.rotation.set(rand(),rand()*2,rand());helper.updateMatrix();
-   crowns.setMatrixAt(i*6+j,helper.matrix);crowns.setColorAt(i*6+j,new T.Color(leaves[(i+j)%5]));
+   crowns.setMatrixAt(i*crownParts+j,helper.matrix);crowns.setColorAt(i*crownParts+j,new T.Color(leaves[(i+j)%5]));
   }
  }
- island.add(trunks,crowns);
+ island.add(trunks,branches,crowns);
  const turf=new T.InstancedMesh(new T.IcosahedronGeometry(1,0),m(0xffffff),economy?35:83);
  for(let i=0;i<turf.count;i++){
   const a=rand()*Math.PI*2,r=.58+rand()*.37;
@@ -178,6 +188,16 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   helper.updateMatrix();turf.setMatrixAt(i,helper.matrix);turf.setColorAt(i,new T.Color(leaves[i%leaves.length]));
  }
  island.add(turf);
+ const foreground=new T.Group();scene.add(foreground);
+ for(const [x,y,z,q] of [[-8.38,-3.55,4,.58],[8.1,-4.65,5,.44],[-11.4,-2,-6,.39],[10,-1.0,-9,.32]]){
+  const ledge=new T.Mesh(cliff,[rockSurface,turfSurface]);
+  ledge.position.set(x,y,z);ledge.scale.setScalar(q);ledge.rotation.y=x*.37;foreground.add(ledge);
+  if(economy)continue;
+  for(let j=0;j<4;j++){
+   const crown=mesh(crowns.geometry,m(leaves[j]),x+(j-1.5)*.33,y+.22+j*.106,z+.32,foreground);
+   crown.scale.set(.58,.46,.52);
+  }
+ }
  const puff=document.createElement('canvas');puff.width=puff.height=128;
  const ctx=puff.getContext('2d')!;
  const texture=new T.CanvasTexture(puff);texture.colorSpace=T.SRGBColorSpace;
@@ -188,7 +208,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   ctx.fillStyle=gradient;ctx.fillRect(x-r,y-r,r*2,r*2);
  }
  const clouds=Array.from({length:economy?6:10},(_,i)=>{
-  const cloud=new T.Sprite(new T.SpriteMaterial({map:texture,color:i<3?0xa2a9db:0xcbb6e7,transparent:true,depthWrite:false,opacity:i<2?.39:.53}));
+  const cloud=new T.Sprite(new T.SpriteMaterial({map:texture,color:i<3?0xc5dcfb:0xe0ccec,transparent:true,depthWrite:false,opacity:i<2?.39:.53}));
   const x=(i%5-2)*3.3+(rand()-.5)*1.9;
   cloud.position.set(x,-2.4+(rand()-.5)*1.7,i<3?4.9:-4.8-rand()*3.4);
   cloud.scale.set(3.1+rand()*2.0,1.36+rand()*.61,1);scene.add(cloud);
@@ -209,11 +229,15 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  const haze=new T.Sprite(new T.SpriteMaterial({map:texture,color:0xbbceff,transparent:true,depthWrite:false,opacity:.51}));
  haze.scale.set(4.8,1.75,1);haze.position.set(0,-2.67,2.97);scene.add(haze);
  const falls:T.ShaderMaterial[]=[];
- for(const [x,z,width,len,turn] of [[-2.76,2.14,.87,3.25,-.15],[2.84,2.03,1.03,3.55,.15],[-4.45,.56,.62,2.58,-1.07]]){
+ for(const [x,z,width,len,turn] of [[-2.58,2.39,.96,3.35,-.17],[2.38,2.23,1.29,3.70,.13],[-4.38,.74,.72,2.29,-.76],[4.31,.52,.68,2.77,.74]]){
   const water=new T.ShaderMaterial({transparent:true,depthWrite:false,side:T.DoubleSide,uniforms:{uTime:{value:0},uWater:{value:waterPaint}},vertexShader:waterVertex,fragmentShader:waterFragment});
   falls.push(water);
   const f=mesh(new T.PlaneGeometry(width,len,5,12),water,x,.23-len*.5,z+.13);
   f.rotation.y=turn;
+  if(!economy){
+   const veil=mesh(new T.PlaneGeometry(width*.57,len*.86,4,10),water,x+width*.25,.20-len*.46,z+.24);
+   veil.rotation.y=turn+.15;
+  }
   const foam=new T.Sprite(new T.SpriteMaterial({map:texture,color:0xd6e7ff,transparent:true,depthWrite:false,opacity:.72}));
   foam.position.set(x,.04-len,z+.2);foam.scale.set(width*2.4,width*.92,1);island.add(foam);
   mesh(new T.CylinderGeometry(width*.59,width*.67,.062,18),m(0x4a81bd,.31,.31),x,.19,z-.18);
@@ -227,13 +251,18 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  spots.setAttribute('position',new T.Float32BufferAttribute(dots,3));
  const sparkles=new T.Points(spots,new T.PointsMaterial({color:0xffd98f,size:.046,transparent:true,opacity:.78,depthWrite:false}));
  scene.add(sparkles);
- const abort=new AbortController();let frame=0, last=0, visible=true, ready=false,pointer=0, painted=false,lastShadow=-1;
+ const birds=new T.InstancedMesh(new T.BufferGeometry(),new T.MeshBasicMaterial({color:0x485a85,side:T.DoubleSide}),economy?3:7);
+ birds.geometry.setAttribute('position',new T.Float32BufferAttribute([-.18,.045,0,0,0,.04,-.078,.012,-.02,0,0,.04,.18,.045,0,.078,.012,-.02],3));
+ birds.frustumCulled=false;scene.add(birds);
+ const abort=new AbortController();
+ const aiming=new T.Vector3(),cameraPos=new T.Vector3();
+ let frame=0,last=0,visible=true,ready=false,pointer=0,smoothed=0,painted=false,lastShadow=-1,firstFrame:number|undefined,frames=0;
  const resize=new ResizeObserver(()=>{
   const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;
-  const aspect=w/h;
-  const half=Math.max(4.68,6.3/aspect);
-  camera.left=-half*aspect;camera.right=half*aspect;camera.top=half;camera.bottom=-half;
-  camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio||1,economy?1:1.45));renderer.setSize(w,h,false);
+  camera.aspect=w/h;
+  camera.fov=T.MathUtils.radToDeg(Math.max(.48,2*Math.atan(.26/camera.aspect)));
+  camera.updateProjectionMatrix();
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,economy?1:heavy?1.55:1.25));renderer.setSize(w,h,false);
   last=0;
  });
  resize.observe(canvas);
@@ -245,37 +274,55 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  canvas.addEventListener('pointermove',mouse);
  const contextLost=(event:Event)=>{event.preventDefault();onError();};
  canvas.addEventListener('webglcontextlost',contextLost);
- const started=performance.now();
  const render=(time:number)=>{
   frame=requestAnimationFrame(render);
   if(!ready||!visible||document.hidden||(reduce&&last)||time-last<(economy?32:15))return;
   last=time;
-  const elapsed=reduce?0:(time-started)/1000;
-  island.position.y=.12*Math.sin(elapsed*.72);
-  island.rotation.y=-.11+.05*Math.sin(elapsed*.32)+pointer*.23;
-  const angle=.27;
-  camera.position.set(13*Math.sin(angle),5.35,13*Math.cos(angle));camera.lookAt(0,.72,0);
+  firstFrame??=time;
+  const elapsed=reduce?0:(time-firstFrame)/1000;
+  smoothed=T.MathUtils.lerp(smoothed,pointer,.062);
+  island.position.y=.072*Math.sin(elapsed*.72);
+  const entering=Math.exp(-elapsed*2.6);
+  const angle=.27+.021*Math.sin(elapsed*.29)+smoothed*.115;
+  const launch=canvas.closest('[data-launching="true"]')!==null;
+  const distance=20.2+.83*entering-(launch?1.2:0);
+  cameraPos.set(distance*Math.sin(angle),7.1+.13*Math.sin(elapsed*.42),distance*Math.cos(angle));
+  if(!painted)camera.position.copy(cameraPos);
+  else camera.position.lerp(cameraPos,.085);
+  aiming.set(0,.63+entering*.07,0);camera.lookAt(aiming);
+  for(let i=0;i<birds.count;i++){
+   const t=elapsed*.34+i*.42;
+   helper.position.set(8.9*Math.sin(t*.45)-2,3.0+i*.18+.41*Math.sin(t*2),-5.1-i*.91);
+   helper.rotation.set(0,t*.7,.18*Math.sin(t*13));helper.scale.setScalar(.94);helper.updateMatrix();birds.setMatrixAt(i,helper.matrix);
+  }
+  birds.instanceMatrix.needsUpdate=true;
   falls.forEach(material=>{material.uniforms.uTime.value=elapsed;});
   flagMeshes.forEach(flag=>{flag.material.uniforms.uTime.value=elapsed;});
   sparkles.position.y=.14*Math.sin(elapsed*.3);
   clouds.forEach(({cloud,x,offset})=>{cloud.position.x=x+.95*Math.sin(elapsed*.115+offset);});
   rays.material.uniforms.uTime.value=elapsed;
-  sun.intensity=3.1+.23*Math.sin(elapsed*.9);
-  const shadowStep=Math.floor(elapsed*16);
+  sun.intensity=3.55+.077*Math.sin(elapsed*.36);
+  const shadowStep=Math.floor(elapsed*9);
   if(!economy&&shadowStep!==lastShadow){renderer.shadowMap.needsUpdate=true;lastShadow=shadowStep;}
   renderer.render(scene,camera);
+  frames++;
+  if(frames%20===1){
+   canvas.dataset.sceneFrames=String(frames);
+   canvas.dataset.sceneDraws=String(renderer.info.render.calls);
+   canvas.dataset.sceneTriangles=String(renderer.info.render.triangles);
+  }
   if (!painted){painted=true;onReady();}
  };
- void loadKingdomAsset('/royale/kingdom/citadel.glb',abort.signal).then(asset=>{
+ void loadKingdomAsset('/royale/cinematic/citadel.glb',abort.signal).then(asset=>{
   if(abort.signal.aborted){disposeKingdomScene(asset.scene);return;}
-  asset.scene.scale.setScalar(1.19);asset.scene.position.set(0,.49,-.42);
+  asset.scene.scale.setScalar(1.19);asset.scene.position.set(0,.45,-.36);
   island.add(asset.scene);
-  island.traverse(node=>{if(node instanceof T.Mesh && !(node.material instanceof T.ShaderMaterial)){node.castShadow=!economy;node.receiveShadow=!economy;}});
+  island.traverse(node=>{if(node instanceof T.Mesh && !(node.material instanceof T.ShaderMaterial)){node.castShadow=!economy&&!(node instanceof T.InstancedMesh);node.receiveShadow=!economy;}});
   ready=true;
  }).catch(()=>{if(!abort.signal.aborted)onError();});
  frame=requestAnimationFrame(render);
  return ()=>{abort.abort();cancelAnimationFrame(frame);resize.disconnect();observer.disconnect();
   canvas.removeEventListener('pointermove',mouse);canvas.removeEventListener('webglcontextlost',contextLost);
-  disposeKingdomScene(scene);spots.dispose();sparkles.material.dispose();clouds.forEach(({cloud})=>cloud.material.dispose());haze.material.dispose();texture.dispose();waterPaint.dispose();if(economy){rays.geometry.dispose();rays.material.dispose();}sun.shadow.dispose();renderer.dispose();
+  disposeKingdomScene(scene);reflected?.dispose();spots.dispose();sparkles.material.dispose();clouds.forEach(({cloud})=>cloud.material.dispose());haze.material.dispose();texture.dispose();waterPaint.dispose();cloth.dispose();if(economy){rays.geometry.dispose();rays.material.dispose();}sun.shadow.dispose();renderer.renderLists.dispose();renderer.dispose();
  };
 }
