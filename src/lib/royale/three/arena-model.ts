@@ -39,7 +39,7 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void,initial:
   lastTime=-1;
   shadowsDirty=true;
  }
- async function use(next:ArenaQuality){
+ async function loadQuality(next:ArenaQuality){
   requested=next;
   const ready=cache.get(next);
   if(ready){setActive(ready);report(true);return;}
@@ -58,10 +58,10 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void,initial:
     let p:T.Object3D|null=node.parent;
     while(p&&!roots.has(p))p=p.parent;
     const mats=[node.material].flat() as T.MeshStandardMaterial[];
-    const translucent=mats.some(m=>m.name.startsWith('Cloud')||m.name.startsWith('Waterfall'));
+    const translucent=mats.some(m=>m.name.startsWith('Cloud banks')||m.name.startsWith('Waterfall'));
     node.receiveShadow=!translucent;
     node.castShadow=Boolean(p)&&next!=='low'&&!translucent;
-    if(translucent)node.renderOrder=mats.some(m=>m.name.startsWith('Cloud'))?2:3;
+    if(translucent)node.renderOrder=mats.some(m=>m.name.startsWith('Cloud banks'))?2:3;
     for(const mat of mats){
      if(model.resources.has(mat))continue;
      model.resources.add(mat);
@@ -78,7 +78,7 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void,initial:
       mat.emissiveIntensity=.34;
       mat.side=T.DoubleSide;
      }
-     if(mat.name.startsWith('Cloud')){
+     if(mat.name.startsWith('Cloud banks')){
       mat.depthWrite=false;
       mat.transparent=true;
      }
@@ -104,7 +104,7 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void,initial:
   }finally{pending.delete(next);}
  }
  return {
-  setQuality(next:ArenaQuality){if(next!==requested||!active)void use(next);},
+  setQuality(next:ArenaQuality){if(next!==requested||!active)void loadQuality(next);},
   active(){return Boolean(active);},
   consumeShadowChange(){const dirty=shadowsDirty;shadowsDirty=false;return dirty;},
   setTower(t:Tower){
