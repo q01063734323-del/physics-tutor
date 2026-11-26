@@ -55,7 +55,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  let seed=83;
  function rand(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;}
  const m=(color:number,metalness=0,roughness=.79)=>new T.MeshStandardMaterial({color,metalness,roughness,flatShading:true});
- const gold=m(0xb68a4f,.53,.42), slate=m(0x958777), dark=m(0x34486e), bark=m(0x5b4330);
+ const slate=m(0x958777), dark=m(0x34486e), bark=m(0x5b4330);
  const textureLoader=new T.TextureLoader();
  const painting=(name:string)=>{
   const map=textureLoader.load('/royale/kingdom/'+name+'.webp');
