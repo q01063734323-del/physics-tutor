@@ -2,12 +2,14 @@ import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import type {Tower} from '../engine';
+import {createWaterfallAlpha} from './waterfall-alpha';
 
 export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void) {
  const solids=new Set<T.BufferGeometry|T.Material|T.Texture>();
  let disposed=false,started=false,root:T.Group|undefined,mixer:T.AnimationMixer|undefined;
  const flowing=new Map<T.Texture,{u:number;v:number}>();
  let quality='low',lastTime=-1;
+ let fallAlpha:T.Texture|undefined;
  const towers=new Map<string,T.Object3D>();
  const towerCasters=new Set<T.Mesh>();
  const groups=['04 Blue keep','04 Red keep','05 Blue left turret','05 Blue right turret','05 Red left turret','05 Red right turret'];
@@ -40,6 +42,16 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void) {
       for(const value of Object.values(material))if(value instanceof T.Texture)solids.add(value);
       const isFall=material.name.includes('Waterfall');
       const isChannel=material.name.includes('Aether channel');
+      if(material.name.includes('Signature Cascade')){
+       if(!fallAlpha){fallAlpha=createWaterfallAlpha();solids.add(fallAlpha);}
+       material.alphaMap=fallAlpha;
+       material.transparent=true;
+       material.depthWrite=false;
+       material.opacity=.88;
+       material.emissiveIntensity=.60;
+       material.color.setHex(0xa5dfff);
+       node.renderOrder=3;
+      }
       if(isFall||isChannel){
        const textures=new Map<T.Texture,T.Texture>();
        const role=isFall?['map','emissiveMap','normalMap'] as const:['normalMap'] as const;
