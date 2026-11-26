@@ -761,7 +761,6 @@
 .paperAsset img { display: block; height: auto; margin: auto; }
 .paperAsset[data-kind="diagram"] img[style*="100%"] { max-width: 100% !important; width: auto !important; max-height: 295px; }
 .game .goldButton:disabled { background: linear-gradient(#e4c17d, #bd9455); color: #45351e; opacity: .87; }
-.game .card[data-card="knight"] img { object-position: 50% 15%; scale: 1.1; clip-path: inset(4.55% round 14px); }
 .game .card[data-card="skeletons"] img { object-position: 53% 18%; }
 .game .card[data-card="giant"] img { object-position: 50% 19%; }
 .crest { color: #ffe7a5; }
@@ -811,7 +810,8 @@
   text-wrap: balance;
 }
 .game .card[data-card="archers"] img { object-position: 50% 37%; }
-.game .card[data-card="knight"] img { clip-path: none; scale: 1; object-position: 50% 11%; }
+/* The new portrait is frame-free here so the accessible cost and title remain live. */
+.game .card[data-card="knight"] img { object-position: 50% 28%; }
 .game .card[data-card="skeletons"] img { object-position: 50% 9%; }
 .game .card[aria-pressed="true"] {
   border-color: #fff0b3;

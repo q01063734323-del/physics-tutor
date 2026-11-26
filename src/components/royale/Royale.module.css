@@ -126,3 +126,13 @@
  .heroCopy{background:linear-gradient(90deg,#131e38 45%,#131e38df 68%,#131e3800)}
  .assetLoading b{letter-spacing:.035em}
 }
+
+.cardArt[data-premium-knight] > img {
+  object-fit: contain;
+  object-position: center;
+  max-height: min(420px, 80vw);
+  aspect-ratio: 1 / 1.28;
+  background: radial-gradient(ellipse at center, #252545, #111629 76%);
+}
+.cardArt[data-premium-knight] > small { bottom: 8px; left: 8px; }
+.premiumCardCost { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
