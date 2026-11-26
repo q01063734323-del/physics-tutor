@@ -5,17 +5,15 @@ import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import type {CardId,Side} from '../config';
 import type {ModelPose} from './models';
 import type {ArenaQuality} from './arena-model';
+import {figureAsset} from './figure-assets';
 
-const figures: Partial<Record<CardId, {file?:string;height:number;forward?:number}>> = {
+const figures: Partial<Record<CardId, {height:number;forward?:number}>> = {
  knight:{height:1.92},archers:{height:1.73},giant:{height:2.73},skeletons:{height:1.47},
  dragon:{height:1.92},mage:{height:2.05},guardians:{height:1.83},
- spears:{file:'wind',height:1.28,forward:.83},sentinel:{height:2.27},
+ spears:{height:1.28,forward:.83},sentinel:{height:2.27},
  rider:{height:2.48},frost:{height:2.14},ember:{height:1.65},
  ballista:{height:2.06},hunters:{height:1.75},
 };
-
-const premiumFigures=new Set(['giant','frost']);
-const remasteredFigures=new Set(['rider','ember','ballista','meteor','hunters','hunters-silver']);
 
 export function createFigureLibrary(onProgress?: (ready:number,total:number,failed:number)=>void, initialLow=false, knightQuality:ArenaQuality='high') {
  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
@@ -24,7 +22,7 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
  const knightPaint=new Map<T.MeshStandardMaterial,T.MeshStandardMaterial>();
  const resources=new Set<T.BufferGeometry|T.Material|T.Texture>();
  const bound=new Set<ReturnType<typeof createInstance>>();
- const entries=[...Object.entries(figures),['hunters-silver',figures.hunters!],['fireball',{height:1.2}],['meteor',{height:1.65}]] as Array<[string,{file?:string;height:number}]>;
+ const entries=[...Object.keys(figures),'hunters-silver','fireball','meteor'] as Array<CardId|'hunters-silver'>;
  let disposed=false, settled=0, failed=0, started=false;
  const track=(data:GLTF)=>data.scene.traverse(o=>{
   if(!(o instanceof T.Mesh))return;
@@ -41,7 +39,7 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
   if(disposed||assets.has(key)||pendingKnights.has(quality))return;
   pendingKnights.add(quality);
   try{
-   const source=await loader.loadAsync('/royale/dawn-knight/'+key+'.glb');
+   const source=await loader.loadAsync(figureAsset('knight',quality));
    track(source);
    if(disposed)clear();else assets.set(key,source);
   }finally{pendingKnights.delete(quality);}
@@ -58,13 +56,11 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
   let index=0;
   async function next(){
    while(!disposed&&index<entries.length){
-    const [id,spec]=entries[index++];
+    const id=entries[index++];
     try{
      if(id==='knight'){await fetchKnight(knightQuality);}
      else{
-     const folder=premiumFigures.has(id)?'v3':remasteredFigures.has(id)?'remaster':'v1';
-     const file=(spec.file??id)+'.glb';
-     const source=await loader.loadAsync('/royale/'+folder+'/'+file);
+     const source=await loader.loadAsync(figureAsset(id));
      track(source);
      if(disposed)clear();else assets.set(id,source);
      }

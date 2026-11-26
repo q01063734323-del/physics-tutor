@@ -23,7 +23,7 @@ const heightOf=(id:CardId)=>id==='giant'?3.58:id==='rider'?3.24:id==='dragon'?2.
 /** The only source of combat truth is ViewFrame.battle. No timers advance game rules here. */
 export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(message:string)=>void,onProgress?:(ready:number,total:number)=>void,initialQuality:ArenaQuality='high'):BattleView{
  let renderer:T.WebGLRenderer;
- try{renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'default'});}catch{throw Error('На этом устройстве недоступен WebGL 2. Продолжим в классическом режиме.');}
+ try{renderer=new T.WebGLRenderer({canvas,antialias:initialQuality!=='low',alpha:true,powerPreference:initialQuality==='low'?'low-power':'default'});}catch{throw Error('На этом устройстве недоступен WebGL 2. Попробуйте облегчённую 3D-графику.');}
  const startLow=initialQuality==='low';
  const scene=new T.Scene();
  scene.fog=new T.Fog(0x7e91ba,46,106);
@@ -78,7 +78,7 @@ export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(me
  const crystalRoot=new T.Group();scene.add(crystalRoot);const mixers:T.AnimationMixer[]=[];const importedGeos=new Set<T.BufferGeometry>(),importedMats=new Set<T.Material>();
  const disposeImported=(root:T.Object3D)=>root.traverse(node=>{if(node instanceof T.Mesh){node.geometry.dispose();for(const m of Array.isArray(node.material)?node.material:[node.material])m.dispose();}});
  new GLTFLoader().load('/royale/3d/citadel-crystal.glb',gltf=>{if(disposed){disposeImported(gltf.scene);return;}gltf.scene.traverse(node=>{if(node instanceof T.Mesh){importedGeos.add(node.geometry);for(const m of Array.isArray(node.material)?node.material:[node.material])importedMats.add(m);}});for(const [x,z] of [[-8,-16],[8,16]]){const model=gltf.scene.clone(true);model.position.set(x,.17,z);crystalRoot.add(model);const mixer=new T.AnimationMixer(model);gltf.animations.forEach(clip=>mixer.clipAction(clip).play());mixers.push(mixer);}},undefined,()=>{if(!disposed)onFailure('Декоративная GLB-модель не загрузилась; бой доступен.');});
- const stopWatchingContext=watchContextLoss(canvas,()=>{if(!disposed)onFailure('WebGL-контекст потерян. Продолжаем этот бой в 2D.');});
+ const stopWatchingContext=watchContextLoss(canvas,()=>{if(!disposed)onFailure('WebGL-контекст потерян. Попробуйте восстановить 3D-кадр.');});
  function quality(mode:ArenaQuality){if(lastQuality===mode)return;lastQuality=mode;const high=mode==='high';library.setKnightQuality(mode);renderer.shadowMap.enabled=mode!=='low';sun.castShadow=mode!=='low';sun.shadow.mapSize.set(high?1024:512,high?1024:512);sun.shadow.map?.dispose();sun.shadow.map=null;renderer.shadowMap.needsUpdate=true;renderer.setPixelRatio(Math.min(dpr,mode==='low'?1:high?2:1.5));renderer.setSize(width,height,false);if(high&&renderer.extensions.has('EXT_color_buffer_float')){bloom??=createSkyBloom(renderer,scene,camera);bloom.resize(width,height,dpr);}world.setQuality(mode as 'low'|'medium'|'high');sky.setQuality(mode);if(mode!=='low')preload();}
  if(!startLow)preload();
  function present(entry:Figure,pose:Parameters<ModelRig['animate']>[0],low:boolean){

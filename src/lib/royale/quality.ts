@@ -9,3 +9,12 @@ export class FrameMeter{
  get ready(){return this.count>=60;}
  low(mode:GraphicsQuality){return mode==='low'||(mode==='auto'&&this.ready&&this.fps<45);}
 }
+
+export function initialAutoQuality(width: number, cores: number, memory?: number): Exclude<GraphicsQuality,'auto'> {
+ if (cores <= 4 || (memory !== undefined && memory <= 4)) return 'low';
+ return width <= 850 || cores <= 6 ? 'medium' : 'high';
+}
+
+export function stepDownQuality(mode: Exclude<GraphicsQuality,'auto'>) {
+ return mode === 'high' ? 'medium' : 'low';
+}

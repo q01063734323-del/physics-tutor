@@ -1,21 +1,88 @@
 'use client';
-import {useState} from 'react';
-import {CardArtwork} from './CardArtwork';
-import {RoyaleIcon} from './RoyaleIcon';
-import {cards,cardIds,availableCards,averageCost,type CardId} from '@/lib/royale/config';
-import {upgradeCost,type RoyaleProfile} from '@/lib/royale/progress';
-import s from './Royale.module.css';
-type Props={profile:RoyaleProfile;deck:CardId[];setDeck:(deck:CardId[])=>void;busy:boolean;save:()=>void;upgrade:(id:CardId)=>void;deckOnly?:boolean};
-export function RoyaleCollection({profile,deck,setDeck,busy,save,upgrade,deckOnly=false}:Props){
- const [query,setQuery]=useState(''),[filter,setFilter]=useState('all');const unlocked=availableCards(profile.xp),complete=deck.length===8&&new Set(deck).size===8;
- const visible=cardIds.filter(id=>(!query.trim()||[cards[id].name,cards[id].description,cards[id].rarity].join(' ').toLocaleLowerCase('ru').includes(query.trim().toLocaleLowerCase('ru')))&&(filter==='all'||filter==='open'&&unlocked.includes(id)||filter==='deck'&&deck.includes(id)));
- function toggle(id:CardId){if(deck.includes(id))setDeck(deck.filter(c=>c!==id));else if(deck.length<8)setDeck([...deck,id]);}
- function move(index:number,delta:number){const next=[...deck],to=index+delta;[next[index],next[to]]=[next[to],next[index]];setDeck(next);}
- return <section className={s.screenEnter}>
-  <div className={s.sectionHead}><div><span className={s.eyebrow}>ВАША ТАКТИКА</span><h2>{deckOnly?'Восемь карт. Тысячи комбинаций.':'Коллекция королевства'}</h2><p>Открыто {unlocked.length} из {cardIds.length}. Новые карты открываются за опыт, без покупок. Первые четыре карты — стартовая рука.</p></div><button className={s.primary} disabled={busy||!complete} onClick={save}>Сохранить колоду</button></div>
-  <div className={s.deckSummary}><strong>{deck.length} / 8 карт</strong><span>Средняя стоимость: {averageCost(deck).toFixed(1)}</span><span>Следующее открытие: {cardIds.find(id=>!unlocked.includes(id))?`${cards[cardIds.find(id=>!unlocked.includes(id))!].unlockXp} XP`:'Все карты открыты'}</span></div>
-  {!complete&&<p className={s.error} role="status">Добавьте ещё {8-deck.length} {8-deck.length===1?'карту':'карт'} перед сохранением. Текущая сохранённая колода продолжает действовать.</p>}
-  <ol className={s.deckSlots} aria-label="Порядок выбранной колоды">{deck.map((id,index)=><li key={id}><CardArtwork id={id}/><b>{index+1}. {cards[id].name}</b><small>{index<4?'Старт':'Очередь'} · {cards[id].cost} энергии</small><div><button disabled={busy||index===0} aria-label={`Раньше: ${cards[id].name}`} onClick={()=>move(index,-1)}>Раньше</button><button disabled={busy||index===deck.length-1} aria-label={`Позже: ${cards[id].name}`} onClick={()=>move(index,1)}>Позже</button><button disabled={busy} aria-label={`Убрать: ${cards[id].name}`} onClick={()=>toggle(id)}>Убрать</button></div></li>)}</ol>
-  <div className={s.collectionToolbar}><label>Найти карту<input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Имя, способность или редкость"/></label><label>Показать<select value={filter} onChange={e=>setFilter(e.target.value)}><option value="all">Вся коллекция</option><option value="open">Открытые карты</option><option value="deck">В колоде</option></select></label><span>{visible.length} из {cardIds.length} карт</span></div>{!visible.length&&<p className={s.notice}>Таких карт не найдено. Попробуйте другое название или фильтр.</p>}<div className={s.collection}>{visible.map(id=>{const c=cards[id],locked=!unlocked.includes(id),chosen=deck.includes(id),scale=1+.04*(profile.levels[id]-1);return <article key={id} data-rarity={c.rarity} className={`${s.collectionCard} ${locked?s.lockedCard:''} ${chosen?s.inDeck:''}`}><div className={s.cardArt} data-premium-knight={id==='knight'||undefined}><CardArtwork id={id} collection/><span className={id==='knight'?s.premiumCardCost:s.cost}>{id==='knight'?`${c.cost} энергии`:c.cost}</span><small>{locked&&<RoyaleIcon name="lock"/>}{locked?`${c.unlockXp} XP`:chosen?'В колоде':'Открыта'}</small></div><div className={s.cardDetails}><span className={s.eyebrow}>{c.rarity} · уровень {profile.levels[id]}</span><h3>{c.name}</h3><p>{c.description}</p>{!deckOnly&&<><div className={s.cardQuickStats}><span><b>{Math.round(c.hp*scale)||'—'}</b>здоровье</span><span><b>{Math.round(c.damage*scale)}</b>урон</span><span><b>{c.cooldown||'—'}</b>сек. / удар</span></div><details className={s.cardSpecs}><summary>Все характеристики</summary><dl><dt>Здоровье</dt><dd>{Math.round(c.hp*scale)||'—'}</dd><dt>Урон</dt><dd>{Math.round(c.damage*scale)}</dd><dt>Атака каждые</dt><dd>{c.cooldown?`${c.cooldown} с`:'Заклинание'}</dd><dt>Скорость</dt><dd>{c.speed}</dd><dt>Дальность</dt><dd>{c.range}</dd><dt>Цели</dt><dd>{c.targets==='all'?'Земля / воздух':c.targets==='buildings'?'Здания':'Земля'}</dd><dt>Отряд</dt><dd>{c.count||'Заклинание'}</dd></dl></details></>}<button aria-pressed={chosen} disabled={busy||locked||(!chosen&&deck.length>=8)} onClick={()=>toggle(id)}>{locked?'Ещё не открыта':chosen?'Убрать из колоды':'Добавить в колоду'}</button>{!deckOnly&&<button disabled={busy||locked||profile.levels[id]>=5||profile.coins<upgradeCost(profile.levels[id])} onClick={()=>upgrade(id)}>{profile.levels[id]>=5?'Максимальный уровень':`Улучшить · ${upgradeCost(profile.levels[id])} монет`}</button>}</div></article>;})}</div>
+import { lazy, Suspense, useRef, useState } from 'react';
+import { cardIds, cards, availableCards, averageCost, type CardId } from '@/lib/royale/config';
+import { upgradeCost, type RoyaleProfile } from '@/lib/royale/progress';
+import type { GraphicsQuality } from '@/lib/royale/quality';
+import { CardArtwork } from './CardArtwork';
+import { KingdomDialog } from './KingdomDialog';
+import { KingdomMark } from './KingdomMarks';
+import { RoyaleIcon } from './RoyaleIcon';
+import k from './Kingdom.module.css';
+
+const Viewer = lazy(()=>import('./KingdomPreview'));
+type Props={profile:RoyaleProfile;deck:CardId[];setDeck:(deck:CardId[])=>void;busy:boolean;save:()=>void;
+ upgrade:(card:CardId)=>void;quality:GraphicsQuality;initialDeck?:boolean};
+
+export function RoyaleCollection({profile,deck,setDeck,busy,save,upgrade,quality,initialDeck}:Props){
+ const [selected,setSelected]=useState<CardId>('knight'), [view,setView]=useState(false);
+ const [deckOpen,setDeckOpen]=useState(Boolean(initialDeck)), [filter,setFilter]=useState<'all'|'owned'|'deck'>('all');
+ const [query,setQuery]=useState('');
+ const details=useRef<HTMLElement>(null);
+ function pick(id:CardId){
+  setSelected(id);
+  if(matchMedia('(max-width: 620px)').matches)details.current?.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+ }
+ const owned=availableCards(profile.xp);
+ const complete=deck.length===8&&new Set(deck).size===8;
+ const visible=cardIds.filter(id=>(!query.trim()||[cards[id].name,cards[id].description,cards[id].rarity].join(' ').toLocaleLowerCase('ru').includes(query.trim().toLocaleLowerCase('ru')))&&(filter==='all'||filter==='owned'&&owned.includes(id)||filter==='deck'&&deck.includes(id)));
+ const card=cards[selected], level=profile.levels[selected], unlocked=owned.includes(selected), chosen=deck.includes(selected);
+ const scale=1+.04*(level-1);
+ const targets=card.targets==='all'?'Земля и воздух':card.targets==='buildings'?'Здания':'Земля';
+ const move=(index:number,delta:number)=>{
+  const next=[...deck],other=index+delta;
+  if(other<0||other>=next.length)return;
+  [next[index],next[other]]=[next[other],next[index]];setDeck(next);
+ };
+ return <section className={k.pane} aria-labelledby="kingdom-collection">
+  <header className={k.paneHeading}><div><span className={k.kicker}>Фигуры и заклинания</span><h1 id="kingdom-collection">Коллекция</h1></div>
+   <button className={k.subButton} type="button" aria-expanded={deckOpen} onClick={()=>setDeckOpen(!deckOpen)}><RoyaleIcon name="deck"/>Колода · {deck.length}/8</button>
+  </header>
+  {deckOpen&&<section className={k.deckEditor} aria-labelledby="kingdom-deck">
+   <div className={k.sectionHead}><div><h2 id="kingdom-deck">Боевая колода</h2><p>Первые четыре карты — стартовая рука. Средняя стоимость {averageCost(deck).toFixed(1)}.</p></div>
+    <button type="button" className={k.goldButton} disabled={busy||!complete} onClick={save}>Сохранить колоду</button></div>
+   {!complete&&<p role="status">Выберите восемь открытых карт. До сохранения используется прежняя колода.</p>}
+   <ol className={k.deckSlots}>{deck.map((id,index)=><li key={id}>
+    <button className={k.deckArt} type="button" aria-label={cards[id].name} onClick={()=>pick(id)}><CardArtwork id={id}/><span>{index+1}</span></button>
+    <b>{cards[id].name}</b>
+    <div><button aria-label={'Раньше: '+cards[id].name} onClick={()=>move(index,-1)} disabled={busy||index===0}>‹</button>
+     <button aria-label={'Позже: '+cards[id].name} onClick={()=>move(index,1)} disabled={busy||index===deck.length-1}>›</button>
+     <button aria-label={'Убрать: '+cards[id].name} onClick={()=>setDeck(deck.filter(item=>item!==id))} disabled={busy}>×</button></div>
+   </li>)}</ol>
+  </section>}
+  <div className={k.collectionLayout}>
+   <div className={k.roster}>
+    <div className={k.filters}>
+     <div aria-label="Показать карты">{([['all','Все '+cardIds.length],['owned','Открытые '+owned.length],['deck','В колоде '+deck.length]] as const).map(([id,label])=><button type="button" aria-pressed={filter===id} onClick={()=>setFilter(id)} key={id}>{label}</button>)}</div>
+     <input type="search" aria-label="Найти карту" placeholder="Найти карту" value={query} onChange={event=>setQuery(event.target.value)}/>
+    </div>
+    {visible.length===0&&<p role="status">По этим фильтрам нет карт.</p>}
+    <div className={k.cards}>{visible.map(id=><button type="button" className={k.card} aria-pressed={selected===id} onClick={()=>pick(id)} key={id}>
+     <span className={k.cardCost}>{cards[id].cost}</span><CardArtwork id={id}/>
+     {!owned.includes(id)&&<span className={k.cardLock}><RoyaleIcon name="lock"/><span>{cards[id].unlockXp} XP</span></span>}
+     <span className={k.cardName}>{cards[id].name}</span>
+    </button>)}</div>
+   </div>
+   <aside ref={details} className={k.character} aria-label={'Характеристики · '+card.name}>
+    <div className={k.characterPortrait}><CardArtwork id={selected}/></div>
+    <div className={k.characterInfo}>
+     <div className={k.characterTitle}><span className={k.cardCost}>{card.cost}</span><div><small>{card.rarity} · уровень {level}</small><h2>{card.name}</h2></div></div>
+     <p>{card.description}</p>
+     <dl className={k.characterStats}>
+      {([['Здоровье',card.hp?Math.round(card.hp*scale):'—'],['Урон',Math.round(card.damage*scale)],['Скорость',card.speed],
+        ['Дальность',card.range],['Интервал атаки',card.cooldown?card.cooldown+' с':'—'],['Цели',targets],['Размер отряда',card.count||'Заклинание']] as const)
+       .map(([name,value])=><div key={name}><dt>{name}</dt><dd>{value}</dd></div>)}
+     </dl>
+     <button type="button" className={k.violetButton} onClick={()=>setView(true)}><KingdomMark name="cube"/>3D-просмотр</button>
+     <div className={k.characterActions}>
+      <button disabled={busy||!unlocked||(!chosen&&deck.length>=8)} onClick={()=>{setDeck(chosen?deck.filter(id=>id!==selected):[...deck,selected]);setDeckOpen(true);}}>{!unlocked?'Откроется за '+card.unlockXp+' XP':chosen?'Убрать из колоды':'Добавить в колоду'}</button>
+      {unlocked&&<button disabled={busy||level>=5||profile.coins<upgradeCost(level)} onClick={()=>upgrade(selected)}>{level>=5?'Максимальный уровень':'Улучшить · '+upgradeCost(level)+' монет'}</button>}
+     </div>
+    </div>
+   </aside>
+  </div>
+  {view&&<KingdomDialog title={'3D-просмотр · '+card.name} onClose={()=>setView(false)} kind="preview">
+   <header className={k.dialogHead}><h2>{card.name}</h2><button className={k.iconButton} onClick={()=>setView(false)} aria-label="Закрыть просмотр">×</button></header>
+   <Suspense fallback={<p role="status">Открываем 3D-просмотр…</p>}><Viewer key={selected+quality} id={selected} quality={quality}/></Suspense>
+  </KingdomDialog>}
  </section>;
 }

@@ -39,7 +39,12 @@ export function expansionEffects(scene:T.Scene) {
    if(rings<18){
     temp.position.set(x,.25,z);temp.rotation.set(-Math.PI/2,0,0);temp.scale.setScalar(radius);temp.updateMatrix();
     shockwaves.setMatrixAt(rings,temp.matrix);
-    shockwaves.setColorAt(rings++,color(hex,1.5*(1-t)));
+    shockwaves.setColorAt(rings++,color(hex,1.28*(1-t)));
+    if(high&&rings<18&&t<.68){
+     temp.position.y=.28;temp.scale.setScalar(radius*.63);
+     temp.updateMatrix();shockwaves.setMatrixAt(rings,temp.matrix);
+     shockwaves.setColorAt(rings++,color(side==='player'?0xe4c4ff:0xffca93,.9*(1-t)));
+    }
    }
    for(let i=0;i<(high?7:3);i++){
     const angle=i*2.4+id*.41+t*.7;
