@@ -6,7 +6,6 @@ import type {BattleView,GroundPoint,ViewFrame} from '../presentation';
 import {gameToWorld,worldToGame,WORLD_SCALE} from './coordinates';
 import {createBattleCamera,fitBattleCamera} from './camera';
 import {createArena} from './arena';
-import {createSkyBackground} from './sky-background';
 import {watchContextLoss} from './context';
 import {LowDetailCache} from './lod';
 import {createFigureLibrary} from './library';
@@ -22,10 +21,9 @@ const heightOf=(id:CardId)=>id==='giant'?3.58:id==='rider'?3.24:id==='dragon'?2.
 /** The only source of combat truth is ViewFrame.battle. No timers advance game rules here. */
 export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(message:string)=>void,onProgress?:(ready:number,total:number)=>void,startLow=false):BattleView{
  let renderer:T.WebGLRenderer;
- try{renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'default'});}catch{throw Error('На этом устройстве недоступен WebGL 2. Продолжим в классическом режиме.');}
+ try{renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'default'});}catch{throw Error('На этом устройстве недоступен WebGL 2. Продолжим в классическом режиме.');}
  const scene=new T.Scene();
- const plainSky=new T.Color(0x718abd),paintedSky=createSkyBackground();
- scene.background=plainSky;scene.fog=new T.Fog(0x8999c2,36,91);
+ scene.fog=new T.Fog(0x777da7,36,91);
  renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
  renderer.shadowMap.type=T.PCFShadowMap;
  const camera=createBattleCamera(),world=createArena(theme),workshop=new ModelWorkshop();scene.add(world.root);
@@ -74,7 +72,7 @@ export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(me
  const disposeImported=(root:T.Object3D)=>root.traverse(node=>{if(node instanceof T.Mesh){node.geometry.dispose();for(const m of Array.isArray(node.material)?node.material:[node.material])m.dispose();}});
  new GLTFLoader().load('/royale/3d/citadel-crystal.glb',gltf=>{if(disposed){disposeImported(gltf.scene);return;}gltf.scene.traverse(node=>{if(node instanceof T.Mesh){importedGeos.add(node.geometry);for(const m of Array.isArray(node.material)?node.material:[node.material])importedMats.add(m);}});for(const [x,z] of [[-8,-16],[8,16]]){const model=gltf.scene.clone(true);model.position.set(x,.17,z);crystalRoot.add(model);const mixer=new T.AnimationMixer(model);gltf.animations.forEach(clip=>mixer.clipAction(clip).play());mixers.push(mixer);}},undefined,()=>{if(!disposed)onFailure('Декоративная GLB-модель не загрузилась; бой доступен.');});
  const stopWatchingContext=watchContextLoss(canvas,()=>{if(!disposed)onFailure('WebGL-контекст потерян. Продолжаем этот бой в 2D.');});
- function quality(mode:string){if(lastQuality===mode)return;lastQuality=mode;const high=mode==='high';scene.background=mode==='low'?plainSky:paintedSky??plainSky;renderer.shadowMap.enabled=mode!=='low';sun.castShadow=mode!=='low';sun.shadow.mapSize.set(high?1024:512,high?1024:512);sun.shadow.map?.dispose();sun.shadow.map=null;renderer.setPixelRatio(Math.min(dpr,mode==='low'?1:high?2:1.5));renderer.setSize(width,height,false);world.setQuality(mode as 'low'|'medium'|'high');sky.setQuality(mode);if(mode!=='low')preload();}
+ function quality(mode:string){if(lastQuality===mode)return;lastQuality=mode;const high=mode==='high';renderer.shadowMap.enabled=mode!=='low';sun.castShadow=mode!=='low';sun.shadow.mapSize.set(high?1024:512,high?1024:512);sun.shadow.map?.dispose();sun.shadow.map=null;renderer.setPixelRatio(Math.min(dpr,mode==='low'?1:high?2:1.5));renderer.setSize(width,height,false);world.setQuality(mode as 'low'|'medium'|'high');sky.setQuality(mode);if(mode!=='low')preload();}
  if(!startLow)preload();
  function present(entry:Figure,pose:Parameters<ModelRig['animate']>[0],low:boolean){
   const {rig,unit}=entry;
@@ -130,6 +128,6 @@ export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(me
   effects.finish(resolved==='high');renderer.render(scene,camera);
  },
  diagnostics(){return{calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures};},
- dispose(){if(disposed)return;disposed=true;stopWatchingContext();clearGhost();mixers.forEach(m=>{m.stopAllAction();m.uncacheRoot(m.getRoot());});importedGeos.forEach(g=>g.dispose());importedMats.forEach(m=>m.dispose());lod.dispose();workshop.dispose();world.dispose();sky.dispose();effects.dispose();comet?.dispose();comets.clear();library.dispose();geometry.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());scene.clear();figures.clear();free.clear();turrets.clear();projectiles.clear();projectilePool.length=0;paintedSky?.dispose();renderer.renderLists.dispose();renderer.dispose();renderer.forceContextLoss();}
+ dispose(){if(disposed)return;disposed=true;stopWatchingContext();clearGhost();mixers.forEach(m=>{m.stopAllAction();m.uncacheRoot(m.getRoot());});importedGeos.forEach(g=>g.dispose());importedMats.forEach(m=>m.dispose());lod.dispose();workshop.dispose();world.dispose();sky.dispose();effects.dispose();comet?.dispose();comets.clear();library.dispose();geometry.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());scene.clear();figures.clear();free.clear();turrets.clear();projectiles.clear();projectilePool.length=0;renderer.renderLists.dispose();renderer.dispose();renderer.forceContextLoss();}
  };
 }

@@ -1,14 +1,16 @@
 /* eslint-disable @next/next/no-img-element -- Original local game art. */
 'use client';
-import{memo,useCallback,useEffect,useRef,useState,type PointerEvent}from'react';import type{User}from'firebase/auth';
+import{useCallback,useEffect,useRef,useState,type PointerEvent}from'react';import type{User}from'firebase/auth';
 import{resumeTiming}from'@/lib/royale/timeline';
 import{balance,cards,arenas,type CardId,type RoyaleSettings,type Tier}from'@/lib/royale/config';import{createBattle,applyCommand,advanceBattle,replayBattle,canPlace,stepBattle,type GameCommand}from'@/lib/royale/engine';
-import{royaleRequest}from'@/lib/royale/client';import{rewardMatch,type RoyaleProfile,type VerifiedAnswer}from'@/lib/royale/progress';import{writeLocalRecord}from'@/lib/blitz/storage';import{create2DView}from'@/lib/royale/view-2d';import type{BattleView,GraphicsMode}from'@/lib/royale/presentation';import{RoyaleSound}from'@/lib/royale/sound';import{tierLabels}from'@/lib/royale/tasks';import type{TrainerCheckResult}from'@/lib/trainer-public';import{displayTrainerAnswer}from'@/lib/trainer-bank';import{MathText}from'../QuestionTrainer';import SourceScan from'../SourceScan';import{StudioDialog}from'../StudioDialog';
+import{royaleRequest}from'@/lib/royale/client';import{rewardMatch,type RoyaleProfile,type VerifiedAnswer}from'@/lib/royale/progress';import{writeLocalRecord}from'@/lib/blitz/storage';import{create2DView}from'@/lib/royale/view-2d';import type{BattleView,GraphicsMode}from'@/lib/royale/presentation';import{RoyaleSound}from'@/lib/royale/sound';import type{TrainerCheckResult}from'@/lib/trainer-public';import{StudioDialog}from'../StudioDialog';
 import type{GameTask,IssuedTask,MatchDescriptor,SavedRun}from'./types';import s from'./Royale.module.css';import{FrameMeter}from'@/lib/royale/quality';import{PreferenceFields,type Preferences}from'./RoyalePreferences';import{achievementLabels}from'@/lib/royale/progress';
 import {CardArtwork} from './CardArtwork';
-import {RoyaleIcon} from './RoyaleIcon';
+import { BattleIcon } from './RoyaleBattleIcon';
+import { RoyaleTaskPanel } from './RoyaleTaskPanel';
+import { BattleEnergyBurst } from './BattleEnergyBurst';
+import b from './RoyaleBattle.module.css';
 import {MissedQuestions} from './MissedQuestions';
-const TaskMath=memo(MathText),TaskScan=memo(SourceScan);
 type Finish={profile:RoyaleProfile;outcome:'win'|'loss'|'draw';rewarded:boolean};
 type Props={preferences:Preferences;updatePreferences:(patch:Partial<Preferences>)=>void;initialView:GraphicsMode;user:User|null;match:MatchDescriptor;draft:SavedRun|null;catalog:GameTask[];settings:RoyaleSettings;profile:RoyaleProfile;storageKey:string;profileKey:string;onProfile:(profile:RoyaleProfile)=>void;onReturn:()=>void;onRematch:()=>void;onDeck:()=>void};
 function bootBattle(match:MatchDescriptor,draft:SavedRun|null,targetTick=0){const state=draft?replayBattle(match.seed,match.difficulty,match.deck,match.levels,draft.commands,draft.tick):createBattle(match.seed,match.difficulty,match.deck,match.levels);if(draft?.forfeit)state.result='loss';if(!state.result&&targetTick>state.tick)advanceBattle(state,targetTick);return state;}
@@ -19,8 +21,68 @@ export function RoyaleGame({preferences,updatePreferences,initialView,user,match
  const commands=useRef<GameCommand[]>(draft?.commands||[]),used=useRef<string[]>(draft?.used||[]),answers=useRef<VerifiedAnswer[]>(draft?.answers||[]),focusRemaining=useRef(timing.focusRemaining),questionFocus=useRef(timing.questionFocus),focusActive=useRef(false),taskRef=useRef<IssuedTask|null>(draft?.task||null),feedbackRef=useRef<TrainerCheckResult|null>(draft?.feedback||null),typedRef=useRef(draft?.typedAnswer||''),selectedRef=useRef<CardId|null>(null),pendingStorage=useRef<Promise<unknown>>(Promise.resolve()),forfeit=useRef(Boolean(draft?.forfeit)),finishedOnce=useRef(false),committed=useRef(false),alive=useRef(false),cursor=useRef({x:110,y:450}),canvas=useRef<HTMLCanvasElement>(null),persist=useRef<()=>void>(()=>undefined);
  const preferencesRef=useRef(preferences);useEffect(()=>{preferencesRef.current=preferences;},[preferences]);
  const soundRef=useRef<RoyaleSound|null>(null);if(soundRef.current===null)soundRef.current=new RoyaleSound();const {sound:soundOn,volume,music}=preferences;const [audioOpen,setAudioOpen]=useState(false),[performanceStats,setPerformanceStats]=useState({fps:0,frameMs:0,renderMs:0,low:false,calls:0,triangles:0,geometries:0,textures:0});
- const [hud,setHud]=useState(()=>{const state=bootBattle(match,draft,timing.tick);return{tick:state.tick,energy:state.energy,hand:[...state.hand],result:state.result,slow:false,focus:timing.focusRemaining,catchingUp:false,forfeit:Boolean(draft?.forfeit),scorePlayer:state.towers.filter(t=>t.side==='bot'&&t.hp<=0).length,scoreBot:state.towers.filter(t=>t.side==='player'&&t.hp<=0).length};}),[selected,setSelected]=useState<CardId|null>(null),[panel,setPanel]=useState(false),[confirmQuit,setConfirmQuit]=useState(false),[task,setTask]=useState<IssuedTask|null>(draft?.task||null),[feedback,setFeedback]=useState<TrainerCheckResult|null>(draft?.feedback||null),[input,setInput]=useState(draft?.typedAnswer||''),[taskBusy,setTaskBusy]=useState(false),[message,setMessage]=useState(''),[tier,setTier]=useState<Tier|'all'>('all'),[topic,setTopic]=useState('all'),[section,setSection]=useState('all'),[newOnly,setNewOnly]=useState(false),[earned,setEarned]=useState(0),[finishResult,setFinishResult]=useState<Finish|null>(null),[saving,setSaving]=useState(false),[finishError,setFinishError]=useState('');
- const [answerSummary,setAnswerSummary]=useState(()=>({total:draft?.answers.length||0,correct:draft?.answers.filter(a=>a.correct).length||0}));
+ const [hud,setHud]=useState(()=>{const state=bootBattle(match,draft,timing.tick);return{tick:state.tick,energy:state.energy,hand:[...state.hand],result:state.result,slow:false,focus:timing.focusRemaining,questionFocus:timing.questionFocus,catchingUp:false,forfeit:Boolean(draft?.forfeit),scorePlayer:state.towers.filter(t=>t.side==='bot'&&t.hp<=0).length,scoreBot:state.towers.filter(t=>t.side==='player'&&t.hp<=0).length};}),[selected,setSelected]=useState<CardId|null>(null),[panel,setPanel]=useState(false),[confirmQuit,setConfirmQuit]=useState(false),[task,setTask]=useState<IssuedTask|null>(draft?.task||null),[feedback,setFeedback]=useState<TrainerCheckResult|null>(draft?.feedback||null),[input,setInput]=useState(draft?.typedAnswer||''),[taskBusy,setTaskBusy]=useState(false),[message,setMessage]=useState(''),[tier,setTier]=useState<Tier|'all'>('all'),[topic,setTopic]=useState('all'),[section,setSection]=useState('all'),[newOnly,setNewOnly]=useState(false),[earned,setEarned]=useState(0),[finishResult,setFinishResult]=useState<Finish|null>(null),[saving,setSaving]=useState(false),[finishError,setFinishError]=useState('');
+ const gameRoot = useRef<HTMLElement>(null);
+ const energyRef = useRef<HTMLDivElement>(null);
+ const rewardRef = useRef<HTMLDivElement>(null);
+ const taskTrigger = useRef<HTMLElement | null>(null);
+ const [mobile, setMobile] = useState(false);
+ const [statsOpen, setStatsOpen] = useState(false);
+ const [fullscreen, setFullscreen] = useState(false);
+ const [theater, setTheater] = useState(false);
+ const lessonOpen = panel && !hud.result;
+ const [answerHistory, setAnswerHistory] = useState<VerifiedAnswer[]>(() => draft?.answers || []);
+ const answerSummary = { total: answerHistory.length, correct: answerHistory.filter(answer => answer.correct).length };
+ useEffect(() => {
+  const query = matchMedia('(max-width: 760px), (max-width: 920px) and (max-height: 530px)');
+  const update = () => setMobile(query.matches);
+  update();
+  query.addEventListener('change', update);
+  return () => query.removeEventListener('change', update);
+ }, []);
+ useEffect(() => {
+  const update = () => setFullscreen(Boolean(gameRoot.current && document.fullscreenElement === gameRoot.current));
+  document.addEventListener('fullscreenchange', update);
+  return () => document.removeEventListener('fullscreenchange', update);
+ }, []);
+ useEffect(() => {
+  const root = gameRoot.current;
+  const viewport = window.visualViewport;
+  if (!root || !viewport || !mobile || !lessonOpen) return;
+  const resize = () => {
+   root.style.setProperty('--lesson-height', `${viewport.height}px`);
+   root.style.setProperty('--lesson-top', `${viewport.offsetTop}px`);
+  };
+  resize();
+  viewport.addEventListener('resize', resize);
+  viewport.addEventListener('scroll', resize);
+  return () => {
+   viewport.removeEventListener('resize', resize);
+   viewport.removeEventListener('scroll', resize);
+   root.style.removeProperty('--lesson-height');
+   root.style.removeProperty('--lesson-top');
+  };
+ }, [mobile, lessonOpen]);
+ async function toggleFullscreen() {
+  if (theater) { setTheater(false); return; }
+  if (document.fullscreenElement === gameRoot.current) {
+   await document.exitFullscreen();
+   return;
+  }
+  try {
+   if (gameRoot.current?.requestFullscreen) {
+    await gameRoot.current.requestFullscreen();
+    return;
+   }
+  } catch { /* Use the browser viewport when full screen is unavailable. */ }
+  setTheater(true);
+ }
+ useEffect(() => {
+  if (!theater) return;
+  const exit = (event: KeyboardEvent) => { if (event.key === 'Escape' && !event.defaultPrevented) setTheater(false); };
+  window.addEventListener('keydown', exit);
+  return () => window.removeEventListener('keydown', exit);
+ }, [theater]);
  useEffect(()=>{if(!message||panel)return;const timer=setTimeout(()=>setMessage(current=>current===message?'':current),5000);return()=>clearTimeout(timer);},[message,panel]);
  const arena=arenas.find(a=>a.id===match.arena)||arenas[0];
  const snapshot=useCallback(():SavedRun=>({match,commands:[...commands.current],tick:battleRef.current!.tick,savedAt:Date.now(),focusActive:focusActive.current,focusRemaining:focusRemaining.current,questionFocus:questionFocus.current,used:[...used.current],answers:[...answers.current],task:taskRef.current,feedback:feedbackRef.current,typedAnswer:typedRef.current,forfeit:forfeit.current}),[match]);
@@ -45,7 +107,7 @@ export function RoyaleGame({preferences,updatePreferences,initialView,user,match
    if(viewRef.current&&(!qualityLow||now-lastDraw>=32||battle.result)){const renderStarted=performance.now();if(lastDraw)meter.push(now-lastDraw);lastDraw=now;try{viewRef.current.render({battle,selected:selectedRef.current,alpha:Math.min(1,accumulator/balance.tickMs),previous,reducedMotion:reduced,cursor:selectedRef.current?cursor.current:undefined,quality:qualityMode,lowQuality:qualityLow});}catch{if(viewModeRef.current==='3d'){setViewMode('2d');setMessage('Графика 3D недоступна. Бой продолжается в классическом режиме.');}}renderCost+=performance.now()-renderStarted;draws++;}
    if(now-lastMeasure>1000){if(qualityMode!=='auto')qualityLow=qualityMode==='low';else if(meter.ready&&!qualityLow&&meter.fps<45)qualityLow=true;setPerformanceStats({fps:meter.fps,frameMs:meter.frameMs,renderMs:draws?renderCost/draws:0,low:qualityLow,...(viewRef.current?.diagnostics?.()||{calls:0,triangles:0,geometries:0,textures:0})});lastMeasure=now;renderCost=0;draws=0;}
    const effect=battle.effects.findLast(e=>e.id>lastEffect);if(effect){lastEffect=effect.id;soundRef.current?.play(effect.kind);if(preferencesRef.current.haptics&&!reduced&&['fire','collapse'].includes(effect.kind)&&document.visibilityState==='visible')navigator.vibrate?.(18);}
-   if(now-lastHud>100){setHud({tick:battle.tick,energy:battle.energy,hand:[...battle.hand],result:battle.result,slow:slowed>0&&match.focusScale<1,focus:Math.max(0,focusRemaining.current),catchingUp:!battle.result&&accumulator>300,forfeit:forfeit.current,scorePlayer:battle.towers.filter(t=>t.side==='bot'&&t.hp<=0).length,scoreBot:battle.towers.filter(t=>t.side==='player'&&t.hp<=0).length});lastHud=now;}
+   if(now-lastHud>100){setHud({tick:battle.tick,energy:battle.energy,hand:[...battle.hand],result:battle.result,slow:slowed>0&&match.focusScale<1,focus:Math.max(0,focusRemaining.current),questionFocus:questionFocus.current,catchingUp:!battle.result&&accumulator>300,forfeit:forfeit.current,scorePlayer:battle.towers.filter(t=>t.side==='bot'&&t.hp<=0).length,scoreBot:battle.towers.filter(t=>t.side==='player'&&t.hp<=0).length});lastHud=now;}
    if(battle.result&&!endedAt)endedAt=now;if(!endedAt||now-endedAt<1000)frame=requestAnimationFrame(loop);
   };frame=requestAnimationFrame(loop);const save=setInterval(()=>persist.current(),2000),onHide=()=>persist.current();window.addEventListener('pagehide',onHide);
   return()=>{alive.current=false;cancelAnimationFrame(frame);clearInterval(save);window.removeEventListener('pagehide',onHide);sound.dispose();};
@@ -69,25 +131,154 @@ export function RoyaleGame({preferences,updatePreferences,initialView,user,match
    if(!alive.current)return;setEarned(0);setFeedback(null);feedbackRef.current=null;setInput('');typedRef.current='';if(issued.focusRemaining!==undefined)focusRemaining.current=Math.min(focusRemaining.current,issued.focusRemaining);if(issued.focusAllowance!==undefined)questionFocus.current=Math.max(questionFocus.current,balance.focusPerQuestionSeconds-issued.focusAllowance);if(issued.syncTick&&issued.syncTick>battle.tick)advanceBattle(battle,issued.syncTick);if(!used.current.includes(issued.question.id))used.current.push(issued.question.id);taskRef.current=issued;setTask(issued);void store();
   }catch(error){focusActive.current=false;if(alive.current)setMessage(error instanceof Error?error.message:'Задача недоступна.');}finally{if(alive.current)setTaskBusy(false);}
  }
- function openTask(){const battle=battleRef.current!;if(battle.result)return;setPanel(true);focusActive.current=!feedbackRef.current;if(!taskRef.current)void loadTask();}
+ function openTask(){const battle=battleRef.current!;if(battle.result)return;taskTrigger.current=document.activeElement instanceof HTMLElement?document.activeElement:null;setAudioOpen(false);setStatsOpen(false);setPanel(true);focusActive.current=!feedbackRef.current;if(!taskRef.current)void loadTask();}
  async function check(){const battle=battleRef.current!;if(!taskRef.current||taskBusy||feedbackRef.current||!input.trim()||battle.result)return;setTaskBusy(true);setMessage('');const current=taskRef.current;
   try{const response=match.practice?await royaleRequest<{result:TrainerCheckResult}>(null,{action:'practice-answer',questionId:current.question.id,answer:input}):await royaleRequest<{result:TrainerCheckResult;receipt:{id:string;amount:number;minTick:number;focusRemaining?:number}}>(user,{action:'answer',matchId:match.id,challengeId:current.challengeId,answer:input,tick:battle.tick});
-   if(!alive.current)return;focusActive.current=false;feedbackRef.current=response.result;setFeedback(response.result);answers.current.push({correct:response.result.correct===true,topics:current.question.topics,section:current.question.section,questionId:current.question.id});setAnswerSummary({total:answers.current.length,correct:answers.current.filter(a=>a.correct).length});
+   if(!alive.current)return;focusActive.current=false;feedbackRef.current=response.result;setFeedback(response.result);answers.current.push({correct:response.result.correct===true,topics:current.question.topics,section:current.question.section,questionId:current.question.id});setAnswerHistory([...answers.current]);
    const receipt='receipt'in response?response.receipt as {id:string;amount:number;minTick:number;focusRemaining?:number}:{id:current.challengeId,amount:response.result.correct?current.reward:0,minTick:battle.tick};
    if(receipt.focusRemaining!==undefined)focusRemaining.current=Math.min(focusRemaining.current,receipt.focusRemaining);if(receipt.minTick>battle.tick&&!battle.result)advanceBattle(battle,receipt.minTick);if(receipt.amount&&!battle.result){const previous=battle.energy,command:GameCommand={kind:'reward',tick:battle.tick,id:receipt.id,amount:receipt.amount};if(applyCommand(battle,command)){commands.current.push(command);setEarned(battle.energy-previous);}}
    soundRef.current?.play(response.result.correct?'correct':'wrong');void store();
   }catch(error){if(alive.current)setMessage(error instanceof Error?error.message:'Не удалось проверить ответ. Энергия не начислена.');}finally{if(alive.current)setTaskBusy(false);}
  }
- function closeTask(){focusActive.current=false;setPanel(false);void store();}
+ function closeTask(){
+  focusActive.current=false;
+  setPanel(false);
+  requestAnimationFrame(() => taskTrigger.current?.focus({ preventScroll: true }));
+  void store();
+ }
  function quit(){if(!battleRef.current!.result){paused.current=match.practice;setConfirmQuit(true);}else onReturn();}
  function resume(){paused.current=false;setConfirmQuit(false);}
  function leaveBattle(){paused.current=false;forfeit.current=true;battleRef.current!.result='loss';setConfirmQuit(false);setHud(previous=>({...previous,result:'loss',forfeit:true}));}
  const seconds=Math.max(0,balance.matchSeconds-Math.floor(hud.tick*balance.tickMs/1000)),outcome=finishResult?.outcome||hud.result;
- return <main data-graphics={viewMode} className={s.game} style={{'--arena-accent':arena.accent}as React.CSSProperties}><header className={s.gameHeader}><button onClick={quit}>{match.practice?'Пауза':'Меню'}</button><div><span className={s.eyebrow}>PHYSICS ROYALE</span><strong>{arena.name}</strong></div><div className={s.score} aria-label="Разрушенные башни">{hud.scorePlayer} : {hud.scoreBot}</div><div className={s.timer} aria-label="Осталось времени">{Math.floor(seconds/60)}:{String(seconds%60).padStart(2,'0')}</div></header><div className={s.battleLayout}><section className={s.battleColumn}><div className={s.arenaFrame}><canvas key={viewMode} ref={canvas} className={s.arena} role="application" tabIndex={0} aria-label="Арена Physics Royale. Выберите карту; стрелками перемещайте прицел, Enter размещает войско." onPointerDown={place} onPointerMove={movePreview} onKeyDown={event=>{const directions:Record<string,[number,number]>={ArrowLeft:[-15,0],ArrowRight:[15,0],ArrowUp:[0,-15],ArrowDown:[0,15]};if(directions[event.key]){event.preventDefault();cursor.current={x:Math.max(18,Math.min(402,cursor.current.x+directions[event.key][0])),y:Math.max(18,Math.min(702,cursor.current.y+directions[event.key][1]))};}if(event.key==='Enter'){event.preventDefault();deploy(cursor.current.x,cursor.current.y);}}}/>{viewLoading!==null&&<div className={s.assetLoading} role="status"><span className={s.brandMark}><RoyaleIcon name="shield"/></span><div><b>PHYSICS ROYALE</b><small>Загрузка 3D-ресурсов · {viewLoading}%</small><progress max={100} value={viewLoading} aria-label="Загрузка 3D-ресурсов"/></div></div>}{hud.catchingUp&&<p className={s.catchup}>Восстанавливаем ход боя…</p>}</div><div className={s.energy}><img src="/royale/crystal.svg" alt=""/><div><div className={s.energyNumbers}><b>{hud.energy} <small>/ 10</small></b><span>Энергия только за верные ответы</span></div><div className={s.energyTrack}><i style={{width:`${hud.energy*10}%`}}/></div></div>{earned>0&&<strong className={s.energyEarned}>+{earned}</strong>}</div><div className={s.hand} aria-label="Четыре активные карты">{hud.hand.map(card=><button key={card} className={`${s.handCard} ${selected===card?s.selectedCard:''}`} aria-pressed={selected===card} disabled={Boolean(hud.result)||hud.catchingUp} onClick={()=>choose(card)}><CardArtwork id={card}/><span className={`${s.cost} ${hud.energy<cards[card].cost?s.unaffordable:''}`}>{cards[card].cost}</span><b>{cards[card].name}</b></button>)}</div><div className={s.commandBar}>{viewMode==='3d'&&selected?<div className={s.placementActions}><button className={s.placeConfirm} disabled={(!placementPending&&hud.energy>=cards[selected].cost)||hud.catchingUp||Boolean(hud.result)} onClick={()=>{if(hud.energy<cards[selected].cost)openTask();else deploy(cursor.current.x,cursor.current.y);}}>{hud.energy<cards[selected].cost?'Решить задачу · нужна энергия':placementPending?'Разместить: '+cards[selected].name:'Выберите точку на поле'}</button><button aria-label="Отменить выбор карты" onClick={()=>{selectedRef.current=null;setSelected(null);setPlacementPending(false);}}>Отмена</button></div>:<button className={s.solve} disabled={Boolean(hud.result)||hud.catchingUp} onClick={openTask}>Решить задачу <span>+{settings.rewards.easy} / +{settings.rewards.medium} / +{settings.rewards.hard}</span></button>}<div className={s.battleOptions}><small>{hud.slow?'Бой замедлен во время решения':`Замедление: ещё ${Math.ceil(hud.focus)} с на матч`}</small><button className={s.viewModeButton} aria-label={viewMode==='3d'?'Перейти в 2D':'Перейти в 3D'} onClick={()=>switchView(viewMode==='3d'?'2d':'3d')}>{viewMode==='3d'?'3D · объём':'2D · классика'}</button><button aria-expanded={audioOpen} onClick={()=>setAudioOpen(!audioOpen)}>Звук</button></div></div>{message&&!panel&&<p className={s.message} role="status">{message}</p>}</section>
- <aside className={`${s.lessonPanel} ${panel?s.lessonOpen:''}`} aria-label="Задача по физике">{panel?<><div className={s.panelHeader}><h2>Знания дают силу</h2><button onClick={closeTask} aria-label="Закрыть задачу">×</button></div><p className={s.taskHint}>Фильтры применяются к следующему заданию. Верно решено ранее: {profile.solvedQuestionIds.length}.</p><div className={s.taskFilters}><label>Сложность<select value={tier} disabled={taskBusy} onChange={e=>setTier(e.target.value as Tier|'all')}><option value="all">Любая</option>{Object.entries(tierLabels).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label><label>Раздел<select value={section} disabled={taskBusy} onChange={e=>{setSection(e.target.value);setTopic('all');}}><option value="all">Все доступные</option>{[...new Set(catalog.filter(q=>match.section==='all'||q.section===match.section).map(q=>q.section))].map(name=><option key={name}>{name}</option>)}</select></label><label>Тема<select value={topic} disabled={taskBusy} onChange={e=>setTopic(e.target.value)}><option value="all">Все доступные</option>{[...new Set(catalog.filter(q=>(match.section==='all'||q.section===match.section)&&(section==='all'||q.section===section)).flatMap(q=>q.topics))].filter(t=>!match.topics.length||match.topics.includes(t)).map(t=><option key={t}>{t}</option>)}</select></label><label className={s.checkbox}><input type="checkbox" checked={newOnly} disabled={taskBusy} onChange={e=>setNewOnly(e.target.checked)}/>Только ещё не решённые верно</label></div>{taskBusy&&!task&&<p role="status">Открываем задачу из банка ЕГЭ…</p>}{task&&<article className={s.task}><div className={s.taskMeta}><span>{tierLabels[task.tier]}</span><b>+{task.reward} энергии</b></div><h3>{task.question.section}</h3><p className={s.prompt}><TaskMath text={task.question.prompt}/></p>{task.question.assets.filter(a=>a.role==='scan'||a.role==='diagram').map(asset=><TaskScan key={asset.id} src={asset.url} alt={asset.alt}/>)}<small>Источник: {task.question.source.title}, стр. {task.question.source.pdfPage??'—'}, № {task.question.source.taskLabel}. Игровая сложность задаётся отдельно от источника.</small><form onSubmit={event=>{event.preventDefault();void check();}}><label>{task.question.answer?.type==='numeric'?`Ваш ответ${task.question.answer.unit?` (${task.question.answer.unit})`:''}`:task.question.answer?.type==='multi_select'?'Номера верных вариантов из условия':'Последовательность ответа'}<input value={input} inputMode={task.question.answer?.type==='numeric'?'decimal':'text'} disabled={Boolean(feedback)||taskBusy||Boolean(hud.result)} maxLength={128} onChange={event=>{setInput(event.target.value);typedRef.current=event.target.value;}} placeholder={task.question.answer?.type==='numeric'?'Введите число':'Введите номера или значения'}/></label>{task.question.answer?.type==='multi_select'&&<fieldset className={s.answerChoices}><legend>Нажмите номера верных утверждений из условия</legend>{['1','2','3','4','5','6','7','8','9'].map(number=><button type="button" key={number} aria-label={`Вариант ${number}`} aria-pressed={Boolean(input.match(/[1-9]/g)?.includes(number))} disabled={Boolean(feedback)||taskBusy} onClick={()=>{const numbers=new Set(input.match(/[1-9]/g)||[]);if(numbers.has(number))numbers.delete(number);else numbers.add(number);const value=[...numbers].sort().join(' ');setInput(value);typedRef.current=value;}}>{number}</button>)}</fieldset>}<button className={s.primary} disabled={!input.trim()||taskBusy||Boolean(feedback)||Boolean(hud.result)}>{taskBusy?'Проверяем…':'Проверить ответ'}</button></form>{feedback&&<div className={feedback.correct?s.correct:s.incorrect} role="status"><strong>{feedback.correct?`Верно! ${earned?`+${earned} энергии`:'Запас энергии уже полный'}`:'Пока неверно. Энергия не начислена.'}</strong><p>{feedback.feedback}</p><p>Ответ: {displayTrainerAnswer(feedback.answer)}</p>{feedback.solution?<p><TaskMath text={feedback.solution}/></p>:<small>Подробное текстовое решение отсутствует в источнике. Разберите ход решения с преподавателем.</small>}{feedback.assets.map(a=><TaskScan key={a.id} src={a.url} alt={a.alt}/>)}<button onClick={()=>void loadTask()} disabled={taskBusy||Boolean(hud.result)}>Следующая задача</button><button onClick={closeTask}>Вернуться в бой</button></div>}</article>}{message&&<p className={s.error} role="alert">{message}</p>}{!task&&!taskBusy&&<button onClick={()=>void loadTask()}>Загрузить задачу</button>}<p className={s.taskHint}>Замедление ограничено {balance.focusPerQuestionSeconds} секундами на задачу и {balance.focusBudgetSeconds} секундами на матч. После проверки бой идёт в обычном темпе.</p></>:<><span className={s.eyebrow}>ВАШ СЛЕДУЮЩИЙ ХОД</span><h2>{selected?cards[selected].name:'Сначала знания. Затем стратегия.'}</h2>{selected?<><CardArtwork id={selected} className={s.inspectArt}/><p>{cards[selected].description}</p><div className={s.statsGrid}><span>Здоровье <b>{cards[selected].hp||'—'}</b></span><span>Урон <b>{cards[selected].damage}</b></span><span>Энергия <b>{cards[selected].cost}</b></span><span>Дальность <b>{cards[selected].range}</b></span></div></>:<p>Выберите карту и коснитесь своей половины поля. Войска сами идут к мосту, выбирают цели и атакуют. Для новой энергии решайте реальные задачи.</p>}<p className={s.taskHint}>{match.practice?'Практика: прогресс хранится только на этом устройстве.':'Результат и награды проверяются сервером по записи матча.'}</p></>}</aside></div>
- {audioOpen&&<div className={s.audioPopover} role="dialog" aria-label="Настройки звука и графики"><div className={s.panelHeader}><h2>Звук и графика</h2><button onClick={()=>setAudioOpen(false)} aria-label="Закрыть настройки звука">×</button></div><PreferenceFields value={preferences} onChange={updatePreferences}/><p className={s.telemetry}>{performanceStats.fps||'—'} FPS · кадр {performanceStats.frameMs.toFixed(1)} мс · отрисовка {performanceStats.renderMs.toFixed(1)} мс · {performanceStats.low?'низкое':preferences.quality==='medium'?'среднее':'высокое'} качество{viewMode==='3d'&&<> · {performanceStats.calls} вызовов · {performanceStats.triangles.toLocaleString('ru-RU')} треугольников · {performanceStats.geometries} геометрий</>}</p></div>}
+ const questionSeconds = feedback || (!task && !taskBusy) ? 0 :
+  Math.max(0, Math.ceil(Math.min(balance.focusPerQuestionSeconds - hud.questionFocus, hud.focus)));
+ return (
+  <main ref={gameRoot} className={`${s.game} ${b.game}`} data-graphics={viewMode} data-task={lessonOpen}
+    data-viewport={theater}>
+   <header className={b.topBar} inert={mobile && lessonOpen}>
+    <div className={b.wordmark} aria-label="Physics Royale">
+     <div className={b.crest}><BattleIcon name="atom"/></div>
+     <div aria-hidden="true">PHYSICS<span>ROYALE</span></div>
+    </div>
+    <div className={b.scoreboard}>
+     <div className={b.team} data-team="player" aria-label="Башни, разрушенные игроком">
+      <BattleIcon name="crown"/><b key={hud.scorePlayer}>{hud.scorePlayer}</b>
+     </div>
+     <div className={b.clock} aria-label="Осталось времени" data-urgent={seconds <= 30}>
+      <span key={seconds}>{Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</span>
+     </div>
+     <div className={b.team} data-team="opponent" aria-label="Башни, разрушенные соперником">
+      <b key={hud.scoreBot}>{hud.scoreBot}</b><BattleIcon name="crown"/>
+     </div>
+    </div>
+    <div className={b.toolbar}>
+     <button type="button" className={b.iconButton} onClick={() => {
+      setStatsOpen(!statsOpen); setAudioOpen(false);
+     }} aria-expanded={statsOpen} aria-label="Статистика матча" title="Статистика матча"><BattleIcon name="stats"/></button>
+     <button type="button" className={b.iconButton} onClick={() => {
+      setAudioOpen(!audioOpen); setStatsOpen(false);
+     }} aria-expanded={audioOpen} aria-label="Настройки звука и графики" title="Настройки"><BattleIcon name="settings"/></button>
+     <button type="button" className={b.iconButton} onClick={() => void toggleFullscreen()}
+       aria-pressed={fullscreen || theater} aria-label={fullscreen || theater ? 'Выйти из полноэкранного режима' : 'Полноэкранный режим'}
+       title={fullscreen || theater ? 'Выйти из полноэкранного режима' : 'Полноэкранный режим'}>
+      <BattleIcon name={fullscreen || theater ? 'shrink' : 'fullscreen'}/>
+     </button>
+     <button type="button" className={b.iconButton} onClick={quit} aria-label={match.practice ? 'Пауза' : 'Меню'}
+      title={match.practice ? 'Пауза' : 'Меню'}><BattleIcon name="pause"/></button>
+    </div>
+   </header>
+   <section className={b.battlefield} aria-label={arena.name} inert={mobile && lessonOpen}>
+    <canvas key={viewMode} ref={canvas} className={b.arena} role="application" tabIndex={0}
+     aria-label="Арена Physics Royale. Выберите карту; стрелками перемещайте прицел, Enter размещает войско."
+     onPointerDown={place} onPointerMove={movePreview} onKeyDown={event => {
+      const directions: Record<string, [number, number]> = {ArrowLeft: [-15,0], ArrowRight: [15,0], ArrowUp: [0,-15], ArrowDown: [0,15]};
+      const offset = directions[event.key];
+      if (offset) {
+       event.preventDefault();
+       cursor.current = {x: Math.max(18, Math.min(402, cursor.current.x + offset[0])), y: Math.max(18, Math.min(702, cursor.current.y + offset[1]))};
+      }
+      if (event.key === 'Enter') { event.preventDefault(); deploy(cursor.current.x, cursor.current.y); }
+     }}/>
+    {viewLoading !== null && <div className={b.assetLoading} role="status">
+     <BattleIcon name="atom"/><div><b>Загрузка 3D-арены · {viewLoading}%</b>
+      <progress max={100} value={viewLoading} aria-label="Загрузка 3D-ресурсов"/>
+     </div>
+    </div>}
+    {hud.catchingUp && <p className={b.battleNotice} role="status">Восстанавливаем ход боя…</p>}
+   </section>
+   <section className={b.dock} aria-label="Карты и энергия" inert={mobile && lessonOpen}>
+    {selected ? <div className={b.placement}>
+     {viewMode === '3d' && <button type="button" className={b.goldButton}
+      disabled={(!placementPending && hud.energy >= cards[selected].cost) || hud.catchingUp || Boolean(hud.result)}
+      onClick={() => {
+       if (hud.energy < cards[selected].cost) openTask();
+       else deploy(cursor.current.x,cursor.current.y);
+      }}>
+      {hud.energy < cards[selected].cost ? 'Решить задачу · нужна энергия' : placementPending ? 'Разместить: ' + cards[selected].name : 'Выберите точку на поле'}
+     </button>}
+     <button type="button" className={b.iconButton} aria-label="Отменить выбор карты" onClick={() => {
+      selectedRef.current = null; setSelected(null); setPlacementPending(false);
+     }}><BattleIcon name="close"/></button>
+    </div> : message && !lessonOpen && <p className={b.dockNotice} role="status">{message}</p>}
+    {selected && message && !lessonOpen && <p className={b.srOnly} role="status">{message}</p>}
+    <div className={b.hand} aria-label="Четыре активные карты">
+     {hud.hand.map(card => <button type="button" className={b.card} key={card}
+      data-card={card} data-unaffordable={hud.energy < cards[card].cost} aria-pressed={selected === card}
+      aria-label={`${cards[card].name}, ${cards[card].cost} энергии`}
+      disabled={Boolean(hud.result) || hud.catchingUp} onClick={() => choose(card)}>
+      <CardArtwork id={card}/><span className={b.cardCost}>{cards[card].cost}</span>
+      <b>{cards[card].name}</b>
+     </button>)}
+    </div>
+    <div className={b.energy} ref={energyRef} data-earned={earned > 0}>
+     <div className={b.energyGem}><BattleIcon name="energy"/></div>
+     <span className={b.energyNumber}><b>{hud.energy}</b><small> / {balance.maxEnergy}</small></span>
+     <div className={b.energySegments} role="meter" aria-label="Энергия" aria-valuemin={0}
+      aria-valuemax={balance.maxEnergy} aria-valuenow={hud.energy}>
+      {Array.from({length: balance.maxEnergy}, (_, index) => <i key={index} data-filled={hud.energy > index}/>)}
+     </div>
+    </div>
+    <button type="button" className={`${b.goldButton} ${b.solve}`}
+     data-needs-energy={hud.hand.some(card => hud.energy < cards[card].cost)}
+     aria-controls="royale-task" aria-expanded={lessonOpen} disabled={Boolean(hud.result) || hud.catchingUp} onClick={openTask}>
+     <i aria-hidden="true"><BattleIcon name="atom"/></i>
+     <span><b>Решить задачу</b><small>+{settings.rewards.easy} / +{settings.rewards.medium} / +{settings.rewards.hard}</small></span>
+    </button>
+   </section>
+   <RoyaleTaskPanel open={lessonOpen} mobile={mobile} task={task} feedback={feedback} input={input}
+    busy={taskBusy} ended={Boolean(outcome)} earned={earned} message={panel ? message : ''}
+    slow={hud.slow} questionSeconds={questionSeconds} matchSeconds={Math.ceil(hud.focus)} catalog={catalog}
+    match={match} tier={tier} section={section} topic={topic} newOnly={newOnly} rewardRef={rewardRef}
+    onTier={setTier} onSection={value => { setSection(value); setTopic('all'); }} onTopic={setTopic}
+    onNewOnly={setNewOnly} onInput={value => { setInput(value); typedRef.current = value; }}
+    onCheck={() => void check()} onNext={() => void loadTask()} onClose={closeTask}/>
+   {earned > 0 && <BattleEnergyBurst from={rewardRef} to={energyRef} mobile={mobile}/>}
+   {audioOpen && !outcome && <section className={b.popover} aria-label="Звук и графика"
+    onKeyDown={event => { if (event.key === 'Escape') setAudioOpen(false); }}>
+    <div className={b.popoverHeading}><h2>Звук и графика</h2>
+     <button type="button" className={b.iconButton} onClick={() => setAudioOpen(false)} aria-label="Закрыть настройки"><BattleIcon name="close"/></button>
+    </div>
+    <PreferenceFields value={preferences} onChange={updatePreferences}/>
+    <button type="button" className={b.secondaryButton} onClick={() => switchView(viewMode === '3d' ? '2d' : '3d')}>
+     {viewMode === '3d' ? 'Перейти в 2D' : 'Перейти в 3D'}
+    </button>
+   </section>}
+   {statsOpen && !outcome && <section className={b.popover} aria-label="Статистика матча"
+    onKeyDown={event => { if (event.key === 'Escape') setStatsOpen(false); }}>
+    <div className={b.popoverHeading}><h2>Статистика матча</h2>
+     <button type="button" className={b.iconButton} onClick={() => setStatsOpen(false)} aria-label="Закрыть статистику"><BattleIcon name="close"/></button>
+    </div>
+    <dl><div><dt>Башни</dt><dd>{hud.scorePlayer} : {hud.scoreBot}</dd></div>
+     <div><dt>Верные ответы</dt><dd>{answerSummary.correct} / {answerSummary.total}</dd></div>
+     <div><dt>Энергия</dt><dd>{hud.energy} / {balance.maxEnergy}</dd></div>
+     <div><dt>Частота кадров</dt><dd>{performanceStats.fps || '—'} FPS</dd></div>
+     <div><dt>Кадр / отрисовка</dt><dd>{performanceStats.frameMs.toFixed(1)} / {performanceStats.renderMs.toFixed(1)} мс</dd></div>
+     {viewMode === '3d' && <div><dt>Вызовы / треугольники</dt><dd>{performanceStats.calls} / {performanceStats.triangles.toLocaleString('ru-RU')}</dd></div>}
+    </dl>
+   </section>}
 
  {confirmQuit&&!outcome&&<StudioDialog title={match.practice?"Пауза":"Завершить бой?"} id="royale-confirm-exit" onClose={resume}><p>Досрочный выход не приносит кубков, XP или монет.</p><button onClick={resume}>Продолжить бой</button><button onClick={leaveBattle}>Завершить без наград</button></StudioDialog>}
- {outcome&&<StudioDialog title="Результат боя" id="royale-match-result" onClose={()=>{if(!saving)onReturn();}}><div className={s.result} data-outcome={outcome}><img src="/royale/trophy.svg" alt=""/><span className={s.eyebrow}>БОЙ ЗАВЕРШЁН</span><h1>{hud.forfeit?'Бой завершён досрочно':outcome==='win'?'Победа!':outcome==='draw'?'Достойная ничья':'Следующий бой будет вашим'}</h1><p>{answerSummary.correct} верных ответов из {answerSummary.total} попыток.</p><MissedQuestions catalog={catalog} answers={answers.current}/>{saving&&<p role="status">Проверяем запись боя и сохраняем результат…</p>}{finishResult&&<><div className={s.resultMetrics}><span><b>{hud.scorePlayer}</b> башен</span><span><b>{answerSummary.total?Math.round(answerSummary.correct/answerSummary.total*100):0}%</b> точность</span><span><b>{finishResult.profile.trophies-baseline.trophies>0?'+':''}{finishResult.profile.trophies-baseline.trophies}</b> кубков</span><span><b>+{finishResult.profile.xp-baseline.xp}</b> XP</span><span><b>+{finishResult.profile.coins-baseline.coins}</b> монет</span></div>{finishResult.profile.achievements.filter(id=>!baseline.achievements.includes(id)).map(id=><p key={id} className={s.notice}>Новое достижение: {achievementLabels[id]}</p>)}{!finishResult.rewarded&&<p>За досрочный бой или бой без верных ответов награды не начисляются.</p>}{outcome==='loss'&&!hud.forfeit&&<p>Попробуйте выпустить танка впереди стрелков и сохранить дешёвый отряд для защиты.</p>}</>}{finishError&&<><p className={s.error} role="alert">{finishError}</p><button onClick={()=>void finalize()} disabled={saving}>Повторить сохранение</button></>}<button className={s.primary} disabled={saving||!finishResult} onClick={onRematch}>Ещё один бой</button><button disabled={saving} onClick={onDeck}>Изменить колоду</button><button className={s.primary} disabled={saving} onClick={onReturn}>{finishResult?'Вернуться в меню':'Вернуться в меню · запись останется на устройстве'}</button></div></StudioDialog>}
- </main>;
+ {outcome&&<StudioDialog title="Результат боя" id="royale-match-result" onClose={()=>{if(!saving)onReturn();}}><div className={s.result} data-outcome={outcome}><img src="/royale/trophy.svg" alt=""/><span className={s.eyebrow}>БОЙ ЗАВЕРШЁН</span><h1>{hud.forfeit?'Бой завершён досрочно':outcome==='win'?'Победа!':outcome==='draw'?'Достойная ничья':'Следующий бой будет вашим'}</h1><p>{answerSummary.correct} верных ответов из {answerSummary.total} попыток.</p><MissedQuestions catalog={catalog} answers={answerHistory}/>{saving&&<p role="status">Проверяем запись боя и сохраняем результат…</p>}{finishResult&&<><div className={s.resultMetrics}><span><b>{hud.scorePlayer}</b> башен</span><span><b>{answerSummary.total?Math.round(answerSummary.correct/answerSummary.total*100):0}%</b> точность</span><span><b>{finishResult.profile.trophies-baseline.trophies>0?'+':''}{finishResult.profile.trophies-baseline.trophies}</b> кубков</span><span><b>+{finishResult.profile.xp-baseline.xp}</b> XP</span><span><b>+{finishResult.profile.coins-baseline.coins}</b> монет</span></div>{finishResult.profile.achievements.filter(id=>!baseline.achievements.includes(id)).map(id=><p key={id} className={s.notice}>Новое достижение: {achievementLabels[id]}</p>)}{!finishResult.rewarded&&<p>За досрочный бой или бой без верных ответов награды не начисляются.</p>}{outcome==='loss'&&!hud.forfeit&&<p>Попробуйте выпустить танка впереди стрелков и сохранить дешёвый отряд для защиты.</p>}</>}{finishError&&<><p className={s.error} role="alert">{finishError}</p><button onClick={()=>void finalize()} disabled={saving}>Повторить сохранение</button></>}<button className={s.primary} disabled={saving||!finishResult} onClick={onRematch}>Ещё один бой</button><button disabled={saving} onClick={onDeck}>Изменить колоду</button><button className={s.primary} disabled={saving} onClick={onReturn}>{finishResult?'Вернуться в меню':'Вернуться в меню · запись останется на устройстве'}</button></div></StudioDialog>}
+  </main>
+ );
 }

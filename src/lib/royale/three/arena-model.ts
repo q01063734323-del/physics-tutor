@@ -22,6 +22,8 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void) {
    started=true;
    void new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync('/royale/remaster/sky-arena.glb').then(gltf=>{
     gltf.scene.traverse(node=>{
+     // The battle backdrop supplies the cloud layer across the entire viewport.
+     if(node.name.startsWith('Drifting_cloud_bank'))node.visible=false;
      for(const name of groups){
       if(node.name===name||node.name===name.replaceAll(' ','_')||node.name===name.replaceAll(' ','')){
        groupNodes.set(name,node);towerNodes.add(node);
