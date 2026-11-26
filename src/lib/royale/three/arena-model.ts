@@ -6,27 +6,52 @@ import type {Tower} from '../engine';
 export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void) {
  const solids=new Set<T.BufferGeometry|T.Material|T.Texture>();
  let disposed=false,started=false,root:T.Group|undefined,mixer:T.AnimationMixer|undefined;
- let animatedWater:T.Texture|undefined,quality='low',lastTime=-1;
+ const flowing=new Map<T.Texture,{u:number;v:number}>();
+ let quality='low',lastTime=-1;
  const towers=new Map<string,T.Object3D>();
+ const towerCasters=new Set<T.Mesh>();
  const groups=['04 Blue keep','04 Red keep','05 Blue left turret','05 Blue right turret','05 Red left turret','05 Red right turret'];
  const groupNodes=new Map<string,T.Object3D>();
+ const towerNodes=new Set<T.Object3D>();
  function cleanup(){solids.forEach(item=>item.dispose());solids.clear();}
  return {
   preload(){
    if(disposed||started)return;
    started=true;
-   void new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync('/royale/v1/sky-arena.glb').then(gltf=>{
+   void new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync('/royale/remaster/sky-arena.glb').then(gltf=>{
     gltf.scene.traverse(node=>{
-     for(const name of groups)if(node.name===name.replaceAll(' ','')||node.name===name||node.name===name.replaceAll(' ','_'))groupNodes.set(name,node);
+     for(const name of groups){
+      if(node.name===name||node.name===name.replaceAll(' ','_')||node.name===name.replaceAll(' ','')){
+       groupNodes.set(name,node);towerNodes.add(node);
+      }
+     }
      if(!(node instanceof T.Mesh))return;
      solids.add(node.geometry);
      node.receiveShadow=true;
+     let ancestor:T.Object3D|null=node.parent;
+     while(ancestor&&!towerNodes.has(ancestor))ancestor=ancestor.parent;
+     if(ancestor&&node.geometry.getAttribute('position').count>100){
+      towerCasters.add(node);
+      node.castShadow=quality==='high';
+     }
      for(const material of [node.material].flat() as T.MeshStandardMaterial[]){
+      if(solids.has(material))continue;
       solids.add(material);
       for(const value of Object.values(material))if(value instanceof T.Texture)solids.add(value);
-      if(material.name.includes('Aether channel')&&material.normalMap){
-       animatedWater=material.normalMap.clone();animatedWater.wrapS=animatedWater.wrapT=T.RepeatWrapping;
-       material.normalMap=animatedWater;solids.add(animatedWater);
+      const isFall=material.name.includes('Waterfall');
+      const isChannel=material.name.includes('Aether channel');
+      if(isFall||isChannel){
+       const textures=new Map<T.Texture,T.Texture>();
+       const role=isFall?['map','emissiveMap','normalMap'] as const:['normalMap'] as const;
+       for(const field of role){
+        const original=material[field];if(!original)continue;
+        let texture=textures.get(original);
+        if(!texture){texture=original.clone();texture.wrapS=texture.wrapT=T.RepeatWrapping;
+         texture.needsUpdate=true;solids.add(texture);textures.set(original,texture);
+         flowing.set(texture,isFall?{u:.008,v:-.12}:{u:.034,v:-.063});
+        }
+        material[field]=texture;
+       }
       }
      }
     });
@@ -39,7 +64,11 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void) {
     onSettled(true);
    }).catch(()=>{if(!disposed)onSettled(false);});
   },
-  setQuality(next:string){quality=next;if(root)root.visible=next!=='low';},
+  setQuality(next:string){
+   quality=next;
+   if(root)root.visible=next!=='low';
+   for(const node of towerCasters)node.castShadow=next==='high';
+  },
   active(){return Boolean(root?.visible);},
   setTower(t:Tower){const name=t.side==='player'?'Blue':'Red';
    const tower=towers.get(t.kind==='king'?'04 '+name+' keep':'05 '+name+(t.x<210?' left':' right')+' turret');
@@ -50,8 +79,8 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void) {
    const time=reduced?0:Math.floor(seconds*(quality==='high'?30:15))/(quality==='high'?30:15);
    if(time===lastTime)return;
    lastTime=time;mixer?.setTime(time);
-   animatedWater?.offset.set(time*.024,-time*.087);
+   for(const [texture,{u,v}] of flowing)texture.offset.set((time*u)%1,(time*v)%1);
   },
-  dispose(){disposed=true;mixer?.stopAllAction();if(root){mixer?.uncacheRoot(root);root.removeFromParent();}cleanup();towers.clear();},
+  dispose(){disposed=true;mixer?.stopAllAction();if(root){mixer?.uncacheRoot(root);root.removeFromParent();}cleanup();flowing.clear();towers.clear();towerNodes.clear();towerCasters.clear();groupNodes.clear();},
  };
 }
