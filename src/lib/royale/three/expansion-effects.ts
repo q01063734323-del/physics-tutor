@@ -33,6 +33,20 @@ export function expansionEffects(scene:T.Scene) {
    shockwaves.setMatrixAt(rings,temp.matrix);
    shockwaves.setColorAt(rings++,color(teamColors[side],.87+Math.sin(id)*.13));
   },
+  arrival(x:number,z:number,side:Side,id:number,age:number,high:boolean){
+   if(!enabled||age<0||age>=.57)return;
+   const t=age/.57,hex=teamColors[side],radius=.28+.57*(1-(1-t)**2);
+   if(rings<18){
+    temp.position.set(x,.25,z);temp.rotation.set(-Math.PI/2,0,0);temp.scale.setScalar(radius);temp.updateMatrix();
+    shockwaves.setMatrixAt(rings,temp.matrix);
+    shockwaves.setColorAt(rings++,color(hex,1.5*(1-t)));
+   }
+   for(let i=0;i<(high?7:3);i++){
+    const angle=i*2.4+id*.41+t*.7;
+    dot(x+radius*Math.cos(angle),.27+Math.sin(Math.PI*t)*(.3+(i%3)*.14),
+        z+radius*Math.sin(angle),.61*(1-t),hex,angle,1.4);
+   }
+  },
   aura(card:CardId,id:number,x:number,y:number,z:number,attack:number,high:boolean){
    const hex=accents[card];
    if(!enabled||hex===undefined)return;

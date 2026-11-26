@@ -58,10 +58,11 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void,initial:
     let p:T.Object3D|null=node.parent;
     while(p&&!roots.has(p))p=p.parent;
     const mats=[node.material].flat() as T.MeshStandardMaterial[];
-    const translucent=mats.some(m=>m.name.startsWith('Cloud banks')||m.name.startsWith('Waterfall'));
+    const clouds=mats.some(m=>m.name.startsWith('Cloud'));
+    const translucent=clouds||mats.some(m=>m.name.startsWith('Waterfall'));
     node.receiveShadow=!translucent;
     node.castShadow=Boolean(p)&&next!=='low'&&!translucent;
-    if(translucent)node.renderOrder=mats.some(m=>m.name.startsWith('Cloud banks'))?2:3;
+    if(translucent)node.renderOrder=clouds?2:3;
     for(const mat of mats){
      if(model.resources.has(mat))continue;
      model.resources.add(mat);
@@ -73,14 +74,17 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void,initial:
       mat.alphaMap=alpha;
       mat.transparent=true;
       mat.depthWrite=false;
-      mat.opacity=.91;
-      mat.emissive.setHex(0x439bc8);
-      mat.emissiveIntensity=.34;
+      mat.opacity=.86;
+      mat.emissive.setHex(0x198ed4);
+      mat.emissiveIntensity=.45;
       mat.side=T.DoubleSide;
      }
-     if(mat.name.startsWith('Cloud banks')){
+     if(mat.name.startsWith('Cloud')){
+      mat.color.setHex(0x91a0ca);
+      mat.emissiveIntensity*=.31;
       mat.depthWrite=false;
       mat.transparent=true;
+      mat.opacity=mat.name.startsWith('Cloud banks')?.24:.21;
      }
      if(isFall||isCanal){
       for(const field of ['map','normalMap'] as const){

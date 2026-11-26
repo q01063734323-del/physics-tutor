@@ -96,7 +96,7 @@ export function RoyaleGame({preferences,updatePreferences,initialView,user,match
   if(viewMode==='2d'){try{connect(create2DView(element,match.arena,report));}catch(error){report(error instanceof Error?error.message:'Не удалось открыть классическую арену.');}}
   else void import('@/lib/royale/three/renderer').then(module=>{if(!cancelled)connect(module.create3DView(element,match.arena,report,(ready,total)=>{
     if(!cancelled)setViewLoading(ready===total?null:Math.round(ready/total*100));
-   },preferencesRef.current.quality==='low'));}).catch(()=>{if(!cancelled){setViewMode('2d');updatePreferences({graphics:'2d'});setMessage('3D недоступен на этом устройстве. Продолжаем тот же бой в 2D.');}});
+   },preferencesRef.current.quality==='auto'?'high':preferencesRef.current.quality));}).catch(()=>{if(!cancelled){setViewMode('2d');updatePreferences({graphics:'2d'});setMessage('3D недоступен на этом устройстве. Продолжаем тот же бой в 2D.');}});
   return()=>{cancelled=true;observer?.disconnect();if(viewRef.current===created)viewRef.current=null;created?.dispose();};
  // Preference changes are consumed by the view each frame; they must not recreate the scene.
  // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -156,7 +156,7 @@ export function RoyaleGame({preferences,updatePreferences,initialView,user,match
   <main ref={gameRoot} className={`${s.game} ${b.game}`} data-graphics={viewMode} data-task={lessonOpen}
     data-viewport={theater}>
    <header className={b.topBar} inert={mobile && lessonOpen}>
-    <div className={b.wordmark} aria-label="Physics Royale">
+    <div className={b.wordmark} role="img" aria-label="Physics Royale">
      <div className={b.crest}><BattleIcon name="atom"/></div>
      <div aria-hidden="true">PHYSICS<span>ROYALE</span></div>
     </div>
@@ -273,12 +273,15 @@ export function RoyaleGame({preferences,updatePreferences,initialView,user,match
      <div><dt>Энергия</dt><dd>{hud.energy} / {balance.maxEnergy}</dd></div>
      <div><dt>Частота кадров</dt><dd>{performanceStats.fps || '—'} FPS</dd></div>
      <div><dt>Кадр / отрисовка</dt><dd>{performanceStats.frameMs.toFixed(1)} / {performanceStats.renderMs.toFixed(1)} мс</dd></div>
-     {viewMode === '3d' && <div><dt>Вызовы / треугольники</dt><dd>{performanceStats.calls} / {performanceStats.triangles.toLocaleString('ru-RU')}</dd></div>}
+     {viewMode === '3d' && <>
+      <div><dt>Вызовы / треугольники</dt><dd>{performanceStats.calls} / {performanceStats.triangles.toLocaleString('ru-RU')}</dd></div>
+      <div><dt>Геометрии / текстуры</dt><dd>{performanceStats.geometries} / {performanceStats.textures}</dd></div>
+     </>}
     </dl>
    </section>}
 
  {confirmQuit&&!outcome&&<StudioDialog title={match.practice?"Пауза":"Завершить бой?"} id="royale-confirm-exit" onClose={resume}><p>Досрочный выход не приносит кубков, XP или монет.</p><button onClick={resume}>Продолжить бой</button><button onClick={leaveBattle}>Завершить без наград</button></StudioDialog>}
- {outcome&&<StudioDialog title="Результат боя" id="royale-match-result" onClose={()=>{if(!saving)onReturn();}}><div className={s.result} data-outcome={outcome}><img src="/royale/trophy.svg" alt=""/><span className={s.eyebrow}>БОЙ ЗАВЕРШЁН</span><h1>{hud.forfeit?'Бой завершён досрочно':outcome==='win'?'Победа!':outcome==='draw'?'Достойная ничья':'Следующий бой будет вашим'}</h1><p>{answerSummary.correct} верных ответов из {answerSummary.total} попыток.</p><MissedQuestions catalog={catalog} answers={answerHistory}/>{saving&&<p role="status">Проверяем запись боя и сохраняем результат…</p>}{finishResult&&<><div className={s.resultMetrics}><span><b>{hud.scorePlayer}</b> башен</span><span><b>{answerSummary.total?Math.round(answerSummary.correct/answerSummary.total*100):0}%</b> точность</span><span><b>{finishResult.profile.trophies-baseline.trophies>0?'+':''}{finishResult.profile.trophies-baseline.trophies}</b> кубков</span><span><b>+{finishResult.profile.xp-baseline.xp}</b> XP</span><span><b>+{finishResult.profile.coins-baseline.coins}</b> монет</span></div>{finishResult.profile.achievements.filter(id=>!baseline.achievements.includes(id)).map(id=><p key={id} className={s.notice}>Новое достижение: {achievementLabels[id]}</p>)}{!finishResult.rewarded&&<p>За досрочный бой или бой без верных ответов награды не начисляются.</p>}{outcome==='loss'&&!hud.forfeit&&<p>Попробуйте выпустить танка впереди стрелков и сохранить дешёвый отряд для защиты.</p>}</>}{finishError&&<><p className={s.error} role="alert">{finishError}</p><button onClick={()=>void finalize()} disabled={saving}>Повторить сохранение</button></>}<button className={s.primary} disabled={saving||!finishResult} onClick={onRematch}>Ещё один бой</button><button disabled={saving} onClick={onDeck}>Изменить колоду</button><button className={s.primary} disabled={saving} onClick={onReturn}>{finishResult?'Вернуться в меню':'Вернуться в меню · запись останется на устройстве'}</button></div></StudioDialog>}
+ {outcome&&<StudioDialog title="Результат боя" id="royale-match-result" onClose={()=>{if(!saving)onReturn();}}><div className={`${s.result} ${b.matchResult}`} data-outcome={outcome}><img src="/royale/trophy.svg" alt=""/><span className={s.eyebrow}>БОЙ ЗАВЕРШЁН</span><h1>{hud.forfeit?'Бой завершён досрочно':outcome==='win'?'Победа!':outcome==='draw'?'Достойная ничья':'Следующий бой будет вашим'}</h1><p>{answerSummary.correct} верных ответов из {answerSummary.total} попыток.</p><MissedQuestions catalog={catalog} answers={answerHistory}/>{saving&&<p role="status">Проверяем запись боя и сохраняем результат…</p>}{finishResult&&<><div className={s.resultMetrics}><span><b>{hud.scorePlayer}</b> башен</span><span><b>{answerSummary.total?Math.round(answerSummary.correct/answerSummary.total*100):0}%</b> точность</span><span><b>{finishResult.profile.trophies-baseline.trophies>0?'+':''}{finishResult.profile.trophies-baseline.trophies}</b> кубков</span><span><b>+{finishResult.profile.xp-baseline.xp}</b> XP</span><span><b>+{finishResult.profile.coins-baseline.coins}</b> монет</span></div>{finishResult.profile.achievements.filter(id=>!baseline.achievements.includes(id)).map(id=><p key={id} className={s.notice}>Новое достижение: {achievementLabels[id]}</p>)}{!finishResult.rewarded&&<p>За досрочный бой или бой без верных ответов награды не начисляются.</p>}{outcome==='loss'&&!hud.forfeit&&<p>Попробуйте выпустить танка впереди стрелков и сохранить дешёвый отряд для защиты.</p>}</>}{finishError&&<><p className={s.error} role="alert">{finishError}</p><button onClick={()=>void finalize()} disabled={saving}>Повторить сохранение</button></>}<button className={s.primary} disabled={saving||!finishResult} onClick={onRematch}>Ещё один бой</button><button disabled={saving} onClick={onDeck}>Изменить колоду</button><button className={s.primary} disabled={saving} onClick={onReturn}>{finishResult?'Вернуться в меню':'Вернуться в меню · запись останется на устройстве'}</button></div></StudioDialog>}
   </main>
  );
 }

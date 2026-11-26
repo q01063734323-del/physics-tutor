@@ -21,24 +21,25 @@ type Turret={rig:ModelRig;health:Health;tower:Tower;rubble:T.Group};
 const scaleOf=(id:CardId)=>id==='dragon'?1:1.22;
 const heightOf=(id:CardId)=>id==='giant'?3.58:id==='rider'?3.24:id==='dragon'?2.24:id==='ballista'?2.72:id==='frost'||id==='sentinel'?2.95:2.48;
 /** The only source of combat truth is ViewFrame.battle. No timers advance game rules here. */
-export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(message:string)=>void,onProgress?:(ready:number,total:number)=>void,startLow=false):BattleView{
+export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(message:string)=>void,onProgress?:(ready:number,total:number)=>void,initialQuality:ArenaQuality='high'):BattleView{
  let renderer:T.WebGLRenderer;
  try{renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'default'});}catch{throw Error('На этом устройстве недоступен WebGL 2. Продолжим в классическом режиме.');}
+ const startLow=initialQuality==='low';
  const scene=new T.Scene();
- scene.fog=new T.Fog(0x8e9dcb,51,118);
- renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.07;
+ scene.fog=new T.Fog(0x7e91ba,46,106);
+ renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.04;
  renderer.shadowMap.type=T.PCFShadowMap;
  renderer.shadowMap.autoUpdate=false;
  renderer.info.autoReset=false;
  const camera=createBattleCamera(),world=createArena(theme),workshop=new ModelWorkshop();scene.add(world.root);
- scene.add(new T.HemisphereLight(0xc5dbff,0x72829c,1.54));
- const sun=new T.DirectionalLight(0xffdeac,2.88);sun.position.set(-14,29,9);sun.shadow.camera.left=-25;sun.shadow.camera.right=25;sun.shadow.camera.top=28;sun.shadow.camera.bottom=-28;sun.shadow.camera.near=1;sun.shadow.camera.far=80;sun.shadow.bias=-.001;sun.shadow.normalBias=.045;sun.shadow.radius=2.7;scene.add(sun);scene.add(sun.target);
+ scene.add(new T.HemisphereLight(0xb3c9ff,0x6b597b,1.33));
+ const sun=new T.DirectionalLight(0xffd5a2,3.1);sun.position.set(-14,29,9);sun.shadow.camera.left=-25;sun.shadow.camera.right=25;sun.shadow.camera.top=28;sun.shadow.camera.bottom=-28;sun.shadow.camera.near=1;sun.shadow.camera.far=80;sun.shadow.bias=-.001;sun.shadow.normalBias=.045;sun.shadow.radius=2.7;scene.add(sun);scene.add(sun.target);
  const motes=createSkyMotes(scene);
  let bloom:ReturnType<typeof createSkyBloom>|undefined;
  const geometry:T.BufferGeometry[]=[],materials:T.Material[]=[];
  const geo=<G extends T.BufferGeometry>(g:G)=>{geometry.push(g);return g;};
  const material=(color:number,transparent=false)=>{const m=new T.MeshBasicMaterial({color,transparent,opacity:transparent?.28:1,depthWrite:!transparent});materials.push(m);return m;};
- const barGeo=geo(new T.PlaneGeometry(1,.095)),barBack=material(0x243848),playerBar=material(0x9cebba),botBar=material(0xffb58a),shadowGeo=geo(new T.CircleGeometry(.46,14)),shadowMaterial=material(0x182938,true),rubbleGeo=geo(new T.BoxGeometry(.3,.25,.28)),rubbleMat=new T.MeshStandardMaterial({color:0xaaa78a,roughness:1});materials.push(rubbleMat);
+ const barGeo=geo(new T.PlaneGeometry(1,.095)),barBack=material(0x243848),playerBar=material(0x63cfff),botBar=material(0xff876e),shadowGeo=geo(new T.CircleGeometry(.46,14)),shadowMaterial=material(0x182938,true),rubbleGeo=geo(new T.BoxGeometry(.3,.25,.28)),rubbleMat=new T.MeshStandardMaterial({color:0xaaa78a,roughness:1});materials.push(rubbleMat);
  let subscribed=0,totalAssets=0,failedAssets=0,arenaDone=false,arenaFailed=false,cometDone=false,cometFailed=false,loading=false;
  let comet:Awaited<ReturnType<typeof import('./approved-comet.mjs')['createCometFlame']>>|undefined;
  const comets=new Map<number,number>();
@@ -49,7 +50,7 @@ export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(me
  };
  const library=createFigureLibrary((ready,total,failed)=>{subscribed=ready;totalAssets=total;failedAssets=failed;publishProgress();},true);
  const effects=expansionEffects(scene);
- const sky=loadSkyArena(scene,ok=>{arenaDone=true;arenaFailed=!ok;publishProgress();},startLow?'low':'high');
+ const sky=loadSkyArena(scene,ok=>{arenaDone=true;arenaFailed=!ok;publishProgress();},initialQuality);
  function preload(){
   if(loading)return;
   loading=true;library.preload();
@@ -98,7 +99,7 @@ export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(me
  render(f:ViewFrame){if(disposed||renderer.getContext().isContextLost())return;const state=f.battle,time=state.tick+f.alpha,seconds=time/20,resolved=f.lowQuality||f.quality==='low'?'low':f.quality==='medium'?'medium':'high';quality(resolved);effects.begin(seconds,resolved!=='low'&&!f.reducedMotion);sky.update(seconds,f.reducedMotion);world.root.visible=!sky.active();crystalRoot.visible=!sky.active()&&resolved!=='low';if(world.root.visible)world.animate(time,f.reducedMotion);mixers.forEach(m=>m.setTime(f.reducedMotion?0:seconds));
   for(const t of state.towers){let entry=turrets.get(t.id);if(!entry){const rig=workshop.createTower(t.kind,t.side);contact(rig,t.kind==='king'?2.2:1.8);scene.add(rig.root);const rubble=new T.Group();for(let i=0;i<9;i++){const block=new T.Mesh(rubbleGeo,rubbleMat);block.position.set(Math.cos(i*2.4)*(.3+i*.06),.25,Math.sin(i*2.4)*(.3+i*.06));block.rotation.set(i*.2,i*.8,i*.4);rubble.add(block);}rubble.visible=false;scene.add(rubble);entry={rig,health:health(t.side,t.kind==='king'?1.6:1.25),tower:t,rubble};turrets.set(t.id,entry);}const p=gameToWorld(t.x,t.y),death=t.hp<=0?Math.min(1,(time-t.hitAt)/16):0;entry.rig.root.position.set(p.x,.18,p.z);entry.rig.root.rotation.y=t.side==='player'?0:Math.PI;sky.setTower(t);entry.rig.animate({time:seconds,moving:false,attack:t.attackAt>0?Math.max(0,1-(time-(t.attackAt-20))/6):0,hit:Math.max(0,1-(time-t.hitAt)/5),death,reducedMotion:f.reducedMotion});detail(entry.rig,f.lowQuality,'tower:'+t.kind+t.side,()=>workshop.createTower(t.kind,t.side));entry.rig.root.visible=death<1&&!sky.active();entry.health.group.visible=t.hp>0;setHealth(entry.health,p.x,t.kind==='king'?(sky.active()?4.96:3.95):3.07,p.z,t.hp/t.maxHp);entry.rubble.position.set(p.x,.1,p.z);entry.rubble.visible=death>0;}
   const currentIds=new Set<number>();for(const u of state.units){currentIds.add(u.id);let entry=figures.get(u.id);if(!entry){entry=acquire(u);figures.set(u.id,entry);}entry.unit=u;const old=f.previous.get(u.id)||u,x=old.x+(u.x-old.x)*f.alpha,y=old.y+(u.y-old.y)*f.alpha,p=gameToWorld(x,y),flying=cards[u.card].flying?.7:0;entry.rig.root.position.set(p.x,.18+flying,p.z);entry.rig.root.rotation.y=-u.facing-Math.PI/2;present(entry,{time:seconds,moving:Math.abs(old.x-u.x)+Math.abs(old.y-u.y)>.015,attack:Math.max(0,1-(time-u.lastAttack)/8),hit:Math.max(0,1-(time-u.hitAt)/5),death:0,reducedMotion:f.reducedMotion},f.lowQuality);entry.rig.root.scale.multiplyScalar(scaleOf(u.card)*Math.min(1,.4+(time-u.bornAt)/8));setHealth(entry.health,p.x,heightOf(u.card)+flying,p.z,u.hp/u.maxHp);
-   if(resolved!=='low'){effects.badge(p.x,.25,p.z,u.side,u.id);effects.aura(u.card,u.id,p.x,.2+flying,p.z,Math.max(0,1-(time-u.lastAttack)/8),resolved==='high');}}
+   if(resolved!=='low'){effects.arrival(p.x,p.z,u.side,u.id,(time-u.bornAt)/20,resolved==='high');effects.badge(p.x,.25,p.z,u.side,u.id);effects.aura(u.card,u.id,p.x,.2+flying,p.z,Math.max(0,1-(time-u.lastAttack)/8),resolved==='high');}}
   for(const [id,entry] of figures){if(currentIds.has(id))continue;if(entry.deadAt===null){
     entry.deadAt=time;
     if(entry.unit.card==='ember'&&time-entry.unit.lastAttack<3){const location=gameToWorld(entry.unit.x,entry.unit.y);effects.burst('ember',location.x,location.z,cards.ember.splash!*WORLD_SCALE);}
