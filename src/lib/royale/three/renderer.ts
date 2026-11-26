@@ -26,14 +26,14 @@ export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(me
  try{renderer=new T.WebGLRenderer({canvas,antialias:initialQuality!=='low',alpha:true,powerPreference:initialQuality==='low'?'low-power':'default'});}catch{throw Error('На этом устройстве недоступен WebGL 2. Попробуйте облегчённую 3D-графику.');}
  const startLow=initialQuality==='low';
  const scene=new T.Scene();
- scene.fog=new T.Fog(0x7e91ba,46,106);
+ scene.fog=new T.Fog(0x8399bb,43,108);
  renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.04;
  renderer.shadowMap.type=T.PCFShadowMap;
  renderer.shadowMap.autoUpdate=false;
  renderer.info.autoReset=false;
  const camera=createBattleCamera(),world=createArena(theme),workshop=new ModelWorkshop();scene.add(world.root);
- scene.add(new T.HemisphereLight(0xb3c9ff,0x6b597b,1.33));
- const sun=new T.DirectionalLight(0xffd5a2,3.1);sun.position.set(-14,29,9);sun.shadow.camera.left=-25;sun.shadow.camera.right=25;sun.shadow.camera.top=28;sun.shadow.camera.bottom=-28;sun.shadow.camera.near=1;sun.shadow.camera.far=80;sun.shadow.bias=-.001;sun.shadow.normalBias=.045;sun.shadow.radius=2.7;scene.add(sun);scene.add(sun.target);
+ scene.add(new T.HemisphereLight(0xb7cbff,0x6b627a,1.39));
+ const sun=new T.DirectionalLight(0xffd9ae,3.04);sun.position.set(-14,29,9);sun.shadow.camera.left=-25;sun.shadow.camera.right=25;sun.shadow.camera.top=28;sun.shadow.camera.bottom=-28;sun.shadow.camera.near=1;sun.shadow.camera.far=80;sun.shadow.bias=-.001;sun.shadow.normalBias=.045;sun.shadow.radius=2.7;scene.add(sun);scene.add(sun.target);
  const motes=createSkyMotes(scene);
  let bloom:ReturnType<typeof createSkyBloom>|undefined;
  const geometry:T.BufferGeometry[]=[],materials:T.Material[]=[];

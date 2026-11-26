@@ -320,7 +320,7 @@
 .courtCrown svg{height:27px;filter:drop-shadow(0 2px 1px #31233b)}
 .scene{inset:9% 0 0;transition:filter .38s var(--ease-reveal)}
 .court[data-launching=true] .scene{filter:brightness(1.09) saturate(1.1)}
-.scenePoster{background-image:url('/royale/cinematic/citadel-poster.webp');background-size:cover}
+.scenePoster{background-image:url('/royale/cinematic/citadel-poster.webp');background-size:contain}
 .sceneRecovery{z-index:1;position:absolute;left:50%;bottom:21%;transform:translateX(-50%);width:max-content;max-width:94%;display:flex;gap:9px;align-items:center;padding:5px 7px 5px 10px;border:1px solid #d7ac646d;border-radius:8px;background:#0d1735e8}
 .sceneRecovery p{margin:0;font-size:12px}
 .shell .sceneRecovery button{min-height:35px;font-size:12px}
@@ -482,4 +482,14 @@
  .resultStage .resultEmblem{height:65px}
  .resultStage .resultEmblem svg{height:60px}
  .resultStage .resultHero h1{font-size:clamp(35px,7vw,72px)}
+}
+
+@media(min-width:841px){.scene{inset:15% 0 0}}
+
+@media(prefers-reduced-motion:reduce){.arenaLoading{animation:none}}
+@media(max-width:430px) and (orientation:portrait){
+ .leagueList{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .mapLabel b{font-size:13px;text-wrap:balance;overflow-wrap:anywhere}
+ .courtLeague,.courtLearning{min-height:68px}
+ .courtLearning .learningIcon{width:29px;height:29px}
 }

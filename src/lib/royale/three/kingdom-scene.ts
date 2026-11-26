@@ -1,6 +1,7 @@
 import * as T from 'three';
 import { disposeKingdomScene, loadKingdomAsset } from './kingdom-resources';
 import type { GraphicsQuality } from '../quality';
+import { makeCloudVolume } from './kingdom-cloud';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const waterVertex = `
@@ -33,7 +34,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const heavy=quality==='high'||(quality==='auto'&&innerWidth>=950&&(navigator.hardwareConcurrency||8)>=8);
  const economy=quality==='low'||(quality==='auto'&&(matchMedia('(max-width: 700px)').matches||(navigator.hardwareConcurrency||8)<6));
- const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:!economy,powerPreference:economy?'low-power':'default'});
+ const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:!economy||(innerWidth<=430&&(navigator.hardwareConcurrency||4)>=4),powerPreference:economy?'low-power':'default'});
  renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.06;
  const scene=new T.Scene(), island=new T.Group();
  renderer.shadowMap.enabled=!economy;renderer.shadowMap.type=T.PCFShadowMap;
@@ -210,6 +211,22 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   gradient.addColorStop(0,'rgba(255,242,255,.7)');gradient.addColorStop(.34,'rgba(215,197,255,.42)');gradient.addColorStop(1,'rgba(195,168,255,0)');
   ctx.fillStyle=gradient;ctx.fillRect(x-r,y-r,r*2,r*2);
  }
+ const shadowCanvas=document.createElement('canvas');shadowCanvas.width=shadowCanvas.height=64;
+ const ink=shadowCanvas.getContext('2d')!;
+ const groundGradient=ink.createRadialGradient(32,32,4,32,32,31);
+ groundGradient.addColorStop(0,'rgba(14,30,51,.64)');groundGradient.addColorStop(1,'rgba(14,30,51,0)');
+ ink.fillStyle=groundGradient;ink.fillRect(0,0,64,64);
+ const shade=new T.InstancedMesh(new T.PlaneGeometry(1,1),new T.MeshBasicMaterial({
+  map:new T.CanvasTexture(shadowCanvas),transparent:true,depthWrite:false,
+  opacity:economy?.66:.50,polygonOffset:true,polygonOffsetFactor:-1,
+ }),treeCount+1);
+ for(let i=0;i<treeCount;i++){
+  trunks.getMatrixAt(i,helper.matrix);helper.matrix.decompose(helper.position,helper.quaternion,helper.scale);
+  helper.position.setY(.253);helper.rotation.set(-Math.PI/2,0,0);
+  helper.scale.setScalar(Math.max(.55,helper.scale.y*.87));helper.updateMatrix();shade.setMatrixAt(i,helper.matrix);
+ }
+ helper.position.set(0,.253,-.15);helper.scale.set(6.38,4.8,1);helper.updateMatrix();shade.setMatrixAt(treeCount,helper.matrix);
+ island.add(shade);
  const clouds=Array.from({length:economy?6:10},(_,i)=>{
   const cloud=new T.Sprite(new T.SpriteMaterial({map:texture,color:i<3?0xc5dcfb:0xe0ccec,transparent:true,depthWrite:false,opacity:i<2?.39:.53}));
   const x=(i%5-2)*3.3+(rand()-.5)*1.9;
@@ -217,6 +234,13 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   cloud.scale.set(3.1+rand()*2.0,1.36+rand()*.61,1);scene.add(cloud);
   return {cloud,x,offset:rand()*6.28};
  });
+ const cloudVolumes=heavy?[[-5.8,-2.8,5.2],[5.6,-3.4,4.9],[-3.7,-2.3,-6.4]].map(([x,y,z])=>{
+  const cloud=makeCloudVolume();
+  cloud.position.set(x,y,z);
+  cloud.scale.set(2.85,.84,1.25);
+  scene.add(cloud);
+  return {cloud,x};
+ }):[];
  const rays=new T.Mesh(new T.PlaneGeometry(15,9),new T.ShaderMaterial({
   transparent:true,depthWrite:false,uniforms:{uTime:{value:0}},
   vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
@@ -258,7 +282,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  birds.geometry.setAttribute('position',new T.Float32BufferAttribute([-.18,.045,0,0,0,.04,-.078,.012,-.02,0,0,.04,.18,.045,0,.078,.012,-.02],3));
  birds.frustumCulled=false;scene.add(birds);
  const abort=new AbortController();
- const aiming=new T.Vector3(),cameraPos=new T.Vector3();
+ const aiming=new T.Vector3(),cameraPos=new T.Vector3(),volumeEye=new T.Vector3();
  let frame=0,last=0,visible=true,ready=false,pointer=0,smoothed=0,painted=false,lastShadow=-1,firstFrame:number|undefined,frames=0;
  const resize=new ResizeObserver(()=>{
   const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;
@@ -271,10 +295,11 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  resize.observe(canvas);
  const observer=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;last=0;});
  observer.observe(canvas);
+ const stage=canvas.parentElement;
  const mouse=(event:PointerEvent)=>{
   if(!reduce&&event.pointerType==='mouse'){const rect=canvas.getBoundingClientRect();pointer=(event.clientX-rect.left)/rect.width-.5;}
  };
- canvas.addEventListener('pointermove',mouse);
+ stage?.addEventListener('pointermove',mouse);
  const contextLost=(event:Event)=>{event.preventDefault();onError();};
  canvas.addEventListener('webglcontextlost',contextLost);
  const render=(time:number)=>{
@@ -292,7 +317,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   cameraPos.set(distance*Math.sin(angle),7.1+.13*Math.sin(elapsed*.42),distance*Math.cos(angle));
   if(!painted)camera.position.copy(cameraPos);
   else camera.position.lerp(cameraPos,.085);
-  aiming.set(0,(camera.aspect<.84?1.21:1.46)+entering*.06,0);camera.lookAt(aiming);
+  aiming.set(0,(camera.aspect<.84?1.12:1.56)+entering*.06,0);camera.lookAt(aiming);
   for(let i=0;i<birds.count;i++){
    const t=elapsed*.34+i*.42;
    helper.position.set(8.9*Math.sin(t*.45)-2,3.0+i*.18+.41*Math.sin(t*2),-5.1-i*.91);
@@ -303,6 +328,10 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   flagMeshes.forEach(flag=>{flag.material.uniforms.uTime.value=elapsed;});
   sparkles.position.y=.14*Math.sin(elapsed*.3);
   clouds.forEach(({cloud,x,offset})=>{cloud.position.x=x+.95*Math.sin(elapsed*.115+offset);});
+  cloudVolumes.forEach(({cloud,x},index)=>{
+   cloud.position.x=x+Math.sin(elapsed*.105+index)*.5;
+   cloud.material.uniforms.uEye.value.copy(cloud.worldToLocal(volumeEye.copy(camera.position)));
+  });
   rays.material.uniforms.uTime.value=elapsed;
   sun.intensity=3.35+.077*Math.sin(elapsed*.36);
   const shadowStep=Math.floor(elapsed*9);
@@ -311,6 +340,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
   frames++;
   if(frames%20===1){
    canvas.dataset.sceneFrames=String(frames);
+   canvas.dataset.sceneTime=String(time);
    canvas.dataset.sceneDraws=String(renderer.info.render.calls);
    canvas.dataset.sceneTriangles=String(renderer.info.render.triangles);
   }
@@ -325,7 +355,7 @@ export function mountKingdomScene(canvas:HTMLCanvasElement,quality:GraphicsQuali
  }).catch(()=>{if(!abort.signal.aborted)onError();});
  frame=requestAnimationFrame(render);
  return ()=>{abort.abort();cancelAnimationFrame(frame);resize.disconnect();observer.disconnect();
-  canvas.removeEventListener('pointermove',mouse);canvas.removeEventListener('webglcontextlost',contextLost);
+  stage?.removeEventListener('pointermove',mouse);canvas.removeEventListener('webglcontextlost',contextLost);
   disposeKingdomScene(scene);reflected?.dispose();spots.dispose();sparkles.material.dispose();clouds.forEach(({cloud})=>cloud.material.dispose());haze.material.dispose();texture.dispose();waterPaint.dispose();cloth.dispose();if(economy){rays.geometry.dispose();rays.material.dispose();}sun.shadow.dispose();renderer.renderLists.dispose();renderer.dispose();
  };
 }

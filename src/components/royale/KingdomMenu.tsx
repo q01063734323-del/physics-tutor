@@ -69,7 +69,7 @@ export function KingdomHome({profile,topics,preferences,ready,action,showSetting
    <progress aria-label="Прогресс лиги" max={100} value={percent}/></div></aside>
   <aside className={k.courtLearning}><div className={k.learningIcon}><KingdomMark name="atom"/></div><div><small>Физика в бою</small>
    <b>{percentCorrect===null?'Первые задачи':percentCorrect+'% точность'}</b>
-   <span>{recommendation?'Повторить · '+recommendation.topic:profile.attempts?`${profile.correct} верных ответов`:'Заработайте энергию за ответы'}</span></div>
+   <span>{recommendation?'Повторить · '+recommendation.topic:profile.attempts?`${profile.correct} верных ответов`:'Энергия за верные ответы'}</span></div>
   </aside>
   <div className={k.courtActions}>{action}<button type="button" className={k.heroLink} onClick={showSettings}>Выбрать арену и сложность <span aria-hidden="true">↗</span></button></div>
  </section>;

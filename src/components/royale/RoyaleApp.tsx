@@ -11,6 +11,7 @@ import { KingdomShell, KingdomHome, KingdomBattleSetup, type KingdomTab } from '
 import { KingdomDialog } from './KingdomDialog';
 import { KingdomProgress } from './KingdomProgress';
 import { RoyaleIcon } from './RoyaleIcon';
+import { RoyaleSound } from '@/lib/royale/sound';
 import s from './Royale.module.css';
 import k from './Kingdom.module.css';
 
@@ -22,6 +23,19 @@ function AccountRoyale({user,practice,onPractice,onCloud}:{user:User|null;practi
  const [catalog,setCatalog]=useState<Catalog|null>(null),[profile,setProfile]=useState<RoyaleProfile|null>(null),[settings,setSettings]=useState<RoyaleSettings>(defaultSettings),[error,setError]=useState(''),[busy,setBusy]=useState(false),[tab,setTab]=useState<KingdomTab>('home'),[settingsOpen,setSettingsOpen]=useState(false),[editDeck,setEditDeck]=useState(false),[difficulty,setDifficulty]=useState<Difficulty>('novice'),[arena,setArena]=useState('academy'),[run,setRun]=useState<{match:MatchDescriptor;draft:SavedRun|null}|null>(null),[saved,setSaved]=useState<SavedRun|null>(null),[active,setActive]=useState<MatchDescriptor|null>(null),[notice,setNotice]=useState(''),[deck,setDeck]=useState<CardId[]>([...starterDeck]);
  const {preferences,update:updatePreferences,ready:preferencesReady}=useRoyalePreferences();
  const [checkedAt,setCheckedAt]=useState(()=>Date.now());useEffect(()=>{const timer=setInterval(()=>setCheckedAt(Date.now()),30000);return()=>clearInterval(timer);},[]);
+ const menuAudio=useRef<RoyaleSound|null>(null);
+ if(!menuAudio.current)menuAudio.current=new RoyaleSound();
+ useEffect(()=>{
+  const audio=menuAudio.current!;
+  return()=>audio.dispose();
+ },[]);
+ useEffect(()=>{
+  const audio=menuAudio.current!;
+  audio.muted=!preferences.sound;
+  audio.volume=preferences.volume;
+  audio.music=preferences.music;
+  if(run||!preferences.sound||!preferences.music)audio.stopMusic();
+ },[preferences,run]);
  const operations=useRef(new Map<string,string>());
  const accountKey=practice?`practice:${user?.uid||'guest'}`:user!.uid,storageKey=`royale-run:${accountKey}`,profileKey=`royale-profile:${accountKey}`;
  useEffect(()=>{const controller=new AbortController();let alive=true;
@@ -41,7 +55,12 @@ function AccountRoyale({user,practice,onPractice,onCloud}:{user:User|null;practi
  if(run&&profile&&catalog)return<Suspense fallback={<main className={k.arenaLoading} role="status"><RoyaleIcon name="swords"/><span>Открываем 3D-арену…</span></main>}><RoyaleGame preferences={preferences} updatePreferences={updatePreferences} key={run.match.id} user={user} match={run.match} draft={run.draft} catalog={catalog.questions} settings={settings} profile={profile} storageKey={storageKey} profileKey={profileKey} onProfile={setProfile} onReturn={returnMenu} onRematch={()=>{setRun(null);void start();}} onDeck={()=>{returnMenu();setEditDeck(true);setTab('collection');}}/></Suspense>;
  const activeValid=active&&(!active.expiresAt||active.expiresAt>checkedAt)&&(!active.version||active.version===balance.version)&&(!active.bankVersion||active.bankVersion===catalog?.version);const canResume=saved&&((practice&&saved.match.practice&&saved.match.version===balance.version)||(!practice&&activeValid&&active?.id===saved.match.id));
 
- function navigate(next:KingdomTab){setEditDeck(false);setTab(next);}
+ function navigate(next:KingdomTab){
+  const audio=menuAudio.current!;
+  void audio.interfaceCue('menu');
+  if(preferences.sound&&preferences.music>0)audio.startMusic();
+  setEditDeck(false);setTab(next);
+ }
  function resume(){
   if(!saved)return;
   try{
