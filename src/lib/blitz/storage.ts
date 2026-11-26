@@ -55,3 +55,20 @@ export async function saveStudyState(account: string, state: StudyState): Promis
     tx.onabort = () => reject(tx.error || new Error("Сохранение прервано. Результат остаётся на экране."));
   });
 }
+
+/** Read and update a single local account record in the same transaction. */
+export async function updateLocalRecord<T>(key: string, update: (value: T | undefined) => T): Promise<T> {
+ const db=await openDatabase();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction('accounts','readwrite'),store=tx.objectStore('accounts');
+  const read=store.get(key);
+  let next:T;
+  read.onsuccess=()=>{
+   try{next=update(read.result);store.put(next,key);}
+   catch(error){tx.abort();reject(error);}
+  };
+  tx.oncomplete=()=>resolve(next);
+  tx.onerror=()=>reject(tx.error);
+  tx.onabort=()=>reject(tx.error??Error('Сохранение прервано.'));
+ });
+}

@@ -7,10 +7,18 @@ import {performance} from 'node:perf_hooks';
 import ts from 'typescript';
 const dir=await fs.mkdtemp(path.join(os.tmpdir(),'royale-ultimate-')),require=createRequire(import.meta.url);
 try{
- for(const n of ['config','engine','progress','quality'])await fs.writeFile(path.join(dir,n+'.js'),ts.transpileModule(await fs.readFile(`src/lib/royale/${n}.ts`,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText);
+ for(const n of ['config','engine','progress','quality','leagues','learning'])await fs.writeFile(path.join(dir,n+'.js'),ts.transpileModule(await fs.readFile(`src/lib/royale/${n}.ts`,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText);
  const {cards,cardIds,starterDeck,validDeck,availableCards,averageCost}=require(path.join(dir,'config.js'));
  const {createBattle,applyCommand,advanceBattle,replayBattle}=require(path.join(dir,'engine.js'));
  const {initialProfile,normalizeProfile,rewardMatch,upgradeProfile,playerLevel}=require(path.join(dir,'progress.js'));
+ const {leagueProgress,leagues,matchTrophies}=require(path.join(dir,'leagues.js'));
+ const {learningRecap}=require(path.join(dir,'learning.js'));
+ assert.deepEqual(leagues.map(league=>league.trophies),[0,300,700,1200,1800,2500]);
+ for(const [index,league] of leagues.entries()){assert.equal(leagueProgress(league.trophies).index,index);if(index)assert.equal(leagueProgress(league.trophies-1).index,index-1);}
+ assert.deepEqual(matchTrophies,{win:25,loss:-8,draw:3});
+ const recap=learningRecap([{correct:false,topics:['Силы','Силы'],section:'Механика',questionId:'a'}],8,{knight:2});
+ assert.deepEqual(recap,{attempts:1,correct:0,energy:10,missedIds:['a'],topics:{Силы:{attempts:1,correct:0}}});
+
  const {FrameMeter}=require(path.join(dir,'quality.js'));
  assert.equal(cardIds.length,16);assert(validDeck(starterDeck));assert(!validDeck(cardIds));assert(!validDeck([...starterDeck.slice(1),'archers']));assert.equal(availableCards(0).length,8);assert.equal(availableCards(240).length,16);assert.equal(averageCost([]),0);
  for(const id of cardIds){for(const prefix of ['card-','unit-']){const art=await fs.readFile(`public/royale/${prefix}${id}.svg`,'utf8');assert(art.includes('<svg'));assert(!/https?:\/\/(?!www.w3.org)|<script|<image|foreignObject/.test(art));}const deck=[id,...cardIds.filter(c=>c!==id).slice(0,7)],s=createBattle(55,'novice',deck),commands=[];if(cards[id].cost>s.energy){const reward={tick:0,kind:'reward',id:'valid-fixture-answer',amount:6};assert(applyCommand(s,reward));commands.push(reward);}const command={tick:0,kind:'deploy',card:id,x:110,y:415};assert(applyCommand(s,command),`${id} deploys`);commands.push(command);advanceBattle(s,100);assert.deepEqual(replayBattle(55,'novice',deck,{},commands,100),s,`${id} deterministic replay`);}

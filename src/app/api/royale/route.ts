@@ -1,5 +1,6 @@
+import {topicAnalytics,summarizeAttempts,type LearningAttempt} from '@/lib/command-center/analytics';
 import{preparationAccess}from'@/lib/command-center/access';
-import{publishedTrainerQuestions,publishedTrainerById,publishedTrainerVersion}from'@/lib/published-trainer-server';
+import{publishedTrainerQuestions,publishedTrainerById,publishedTrainerVersion,publishedTrainerCatalog}from'@/lib/published-trainer-server';
 import{publicTrainerQuestion,checkPublishedAnswer,trainerOriginAllowed}from'@/lib/trainer-public';
 import{defaultSettings}from'@/lib/royale/config';
 import{suitableTask,taskTier,normalizeUnitInput}from'@/lib/royale/tasks';
@@ -10,6 +11,17 @@ function fail(error:unknown){const status=error instanceof RoyaleError?error.sta
 export async function GET(request:Request){try{const p=new URL(request.url).searchParams;
  if(p.get('view')==='catalog')return reply({version:publishedTrainerVersion,topics:royaleTopics,questions:publishedTrainerQuestions.filter(suitableTask).map(q=>({...publicTrainerQuestion(q),gameTier:taskTier(q,defaultSettings)}))});
  if(p.get('view')==='active')return reply(await activeMatch(request));
+ if(p.get('view')==='learning'){
+  const access=await preparationAccess(request);
+  const records=await access.db.collection('preparationAttempts').where('studentId','==',access.target).limit(5001).get();
+  if(records.size>5000)throw new RoyaleError('Сводка платформы временно недоступна для этой истории.',422);
+  const attempts=records.docs.map(record=>record.data() as LearningAttempt);
+  const {attemptsCount,uniqueSolved,accuracy}=summarizeAttempts(publishedTrainerCatalog,attempts);
+  const topics=topicAnalytics(publishedTrainerCatalog,attempts)
+   .filter(topic=>topic.attemptsCount>0)
+   .map(({topic,attemptsCount,accuracy})=>({topic,attempts:attemptsCount,accuracy}));
+  return reply({attempts:attemptsCount,solved:uniqueSolved,accuracy,topics});
+ }
  const access=await preparationAccess(request,p.get('student')),settings=await settingsFor(access.db),profile=normalizeProfile((await access.db.doc(`royaleProfiles/${access.target}`).get()).data());
  if(p.get('view')==='teacher'){if(!access.teacher)throw new RoyaleError('Нет доступа.',403);return reply({role:'teacher',settings,profile,studentId:access.target});}
  const personal={...settings,studentTopics:{[access.target]:settings.studentTopics[access.target]||[]},studentDifficulty:settings.studentDifficulty[access.target]?{[access.target]:settings.studentDifficulty[access.target]}:{}};

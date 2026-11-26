@@ -1,3 +1,4 @@
+import {learningRecap} from './learning';
 import 'server-only';
 import{createHash,randomBytes,randomUUID}from'node:crypto';
 import{preparationAccess}from'../command-center/access';
@@ -56,7 +57,7 @@ export async function finishMatch(request:Request,input:Record<string,unknown>){
   let replay;try{replay=replayBattle(match.seed,match.difficulty,match.deck,match.levels,commands,endTick);}catch{throw new RoyaleError('Запись боя не прошла проверку энергии, размещения или порядка действий.',409);}
   if(input.forfeit!==true&&!replay.result)throw new RoyaleError('Бой ещё не завершён.');outcome=input.forfeit===true?'loss':replay.result!;
   const answers=match.challenges.filter(c=>c.answered).map(c=>{const q=publishedTrainerById.get(c.questionId)!;return{correct:Boolean(c.correct),topics:q.topics,section:q.section,questionId:q.id};});rewarded=input.forfeit!==true&&Boolean(replay.result)&&answers.some(a=>a.correct)&&endTick>=200&&Date.now()-match.startedAt>=10_000;
-  const earned=rewardMatch(profile,outcome,answers,replay.played,match.id,{at:Date.now(),arena:match.arena,difficulty:match.difficulty,crowns:replay.towers.filter(t=>t.side==='bot'&&t.hp<=0).length,rewarded,forfeit:input.forfeit===true});if(!rewarded){earned.xp=profile.xp;earned.coins=profile.coins;earned.trophies=profile.trophies;earned.achievements=profile.achievements;}profile=earned;
+  const earned=rewardMatch(profile,outcome,answers,replay.played,match.id,{at:Date.now(),arena:match.arena,difficulty:match.difficulty,crowns:replay.towers.filter(t=>t.side==='bot'&&t.hp<=0).length,rewarded,forfeit:input.forfeit===true,learning:learningRecap(answers,replay.energy,replay.played)});if(!rewarded){earned.xp=profile.xp;earned.coins=profile.coins;earned.trophies=profile.trophies;earned.achievements=profile.achievements;}profile=earned;
   tx.set(profileRef,profile);tx.update(ref,{finished:true,outcome,rewarded,finishHash:fingerprint,finishedAt:Date.now(),endTick,commandCount:commands.length});if(active.get('id')===match.id)tx.delete(activeRef);
  });return{profile,outcome,rewarded};
 }
