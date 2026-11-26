@@ -13,8 +13,8 @@ export function KingdomScene({quality}: {quality:GraphicsQuality}) {
   const reduce=matchMedia('(prefers-reduced-motion: reduce)');
   const begin=()=>{
    if(reduce.matches||!canvas.current)return;
-   void import('@/lib/royale/three/kingdom-scene').then(module=>{
-    if(active&&canvas.current)cleanup=module.mountKingdomScene(canvas.current,recovery?'low':quality,()=>setStatus('ready'),()=>setStatus('fallback'));
+   void import('@/lib/royale/three/kingdom-v3-scene').then(module=>{
+    if(active&&canvas.current)cleanup=module.mountKingdomV3Scene(canvas.current,recovery?'low':quality,()=>setStatus('ready'),()=>setStatus('fallback'));
    }).catch(()=>{if(active)setStatus('fallback');});
   };
   const observer=new IntersectionObserver(([entry])=>{

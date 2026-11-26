@@ -493,3 +493,11 @@
  .courtLeague,.courtLearning{min-height:68px}
  .courtLearning .learningIcon{width:29px;height:29px}
 }
+
+
+/* Kingdom 3.0 environment artwork */
+.court{background-image:url('/royale/kingdom-v3/sky.webp')}
+.scenePoster{background-image:url('/royale/kingdom-v3/environment-poster.webp')}
+@media(max-width:620px){
+ .court{background-image:url('/royale/kingdom-v3/sky-portrait.webp')}
+}
