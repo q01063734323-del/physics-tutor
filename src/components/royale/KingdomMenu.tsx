@@ -61,7 +61,7 @@ export function KingdomHome({profile,topics,preferences,ready,action,showSetting
   <div className={k.courtMist} aria-hidden="true"/>
   <header className={k.courtHeading}><span className={k.courtCrown}><KingdomMark name="crown" size={33}/></span>
    <h1 id="kingdom-title">Physics <em>Royale</em></h1>
-   
+
   </header>
   {ready&&<KingdomScene key={preferences.quality} quality={preferences.quality}/>}
   <aside className={k.courtLeague}><LeagueBadge {...current}/><div><small>Ваша лига</small><b>{current.name}</b>
