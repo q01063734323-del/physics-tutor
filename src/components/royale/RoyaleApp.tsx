@@ -1,4 +1,5 @@
 'use client';
+import { arenaQuality } from '@/lib/royale/quality';
 import Link from'next/link';import{useEffect,useRef,useState}from'react';import{onAuthStateChanged,type User}from'firebase/auth';import{auth}from'@/lib/firebase';import{readLocalRecord,updateLocalRecord,writeLocalRecord}from'@/lib/blitz/storage';import{royaleRequest}from'@/lib/royale/client';import{starterDeck,validDeck,availableCards,arenas,defaultSettings,type Difficulty,type CardId,type RoyaleSettings}from'@/lib/royale/config';import{normalizeProfile,upgradeProfile,type RoyaleProfile}from'@/lib/royale/progress';import{resumeTiming}from'@/lib/royale/timeline';
 import{replayBattle}from'@/lib/royale/engine';
 import{balance}from'@/lib/royale/config';
@@ -86,7 +87,7 @@ function AccountRoyale({user,practice,onPractice,onCloud}:{user:User|null;practi
    fixed={Boolean(!practice&&settings.studentDifficulty[user?.uid||''])} preferences={preferences} updatePreferences={updatePreferences}
    action={action} onDeck={()=>{setEditDeck(true);setTab('collection');}}/>}
   {profile&&tab==='collection'&&<RoyaleCollection profile={profile} deck={deck} setDeck={setDeck} busy={busy} save={()=>void collection('deck')}
-   upgrade={id=>void collection('upgrade',id)} quality={preferences.quality} initialDeck={editDeck}/>}
+   upgrade={id=>void collection('upgrade',id)} quality={arenaQuality(preferences.quality)} initialDeck={editDeck}/>}
   {profile&&tab==='progress'&&<KingdomProgress profile={profile} topics={catalog?.topics??[]} onBattle={()=>navigate('battle')}/>}
   {profile&&tab==='stats'&&<Suspense fallback={<p role="status" className={k.notice}>Открываем статистику…</p>}><KingdomStats profile={profile} topics={catalog?.topics??[]}
    catalog={catalog?.questions??[]} user={practice?null:user}/></Suspense>}

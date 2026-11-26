@@ -40,6 +40,13 @@ def surface(name, color, roughness, metallic=0, family=None, normal=.50, tiles=F
     shader.inputs['Metallic'].default_value=metallic
     shader.inputs['Emission Color'].default_value=(*rgb(color),1)
     shader.inputs['Emission Strength'].default_value=emission
+    if family=='sprays':
+        image=nd.new('ShaderNodeTexImage')
+        image.image=sample_image('sprays-color.png')
+        link(image.outputs['Color'],shader.inputs['Base Color'])
+        link(image.outputs['Alpha'],shader.inputs['Alpha'])
+        material.surface_render_method='DITHERED'
+        return material
     if not family: return material
     def image(label,suffix,linear):
         node=nd.new('ShaderNodeTexImage')
@@ -85,6 +92,7 @@ def create_palette(textures, reduced=False):
         'petals':('Orchid and buttercup petals','ffffff',.80,0,None,0),
         'seam':('Shadowed recess','272039',.97,0,None,0),
         'cloth':('Indigo embroidered cloth','254e86',.94,0,'cloth',.24),
+        'sprays':('Painted crown sprays','7a8841',.88,0,'sprays',0),
         'leaves':('Foliage atlas','8eab51',.86,0,'leaf',.21),
         'gem':('Cerulean vein crystal','309bea',.33,.16,None,0),
         'wet':('Water, stylized base coat','287aaf',.28,.17,None,0),
@@ -98,9 +106,9 @@ class Craft:
     """Batched by material for the browser, then published into named Blender collections."""
     def __init__(self, name):
         self.name=name
-        self.groups=defaultdict(lambda: {'verts':[], 'polys':[], 'uv':[], 'tone':[], 'smooth':[]})
+        self.groups=defaultdict(lambda: {'verts':[], 'polys':[], 'uv':[], 'tone':[], 'smooth':[], 'normals':[]})
 
-    def patch(self, mat, points, polys, tone=(1,1,1), uv=None, smooth=False):
+    def patch(self, mat, points, polys, tone=(1,1,1), uv=None, smooth=False, normals=None):
         chunk=self.groups[mat]
         n=len(chunk['verts'])
         chunk['verts'].extend(points)
@@ -118,6 +126,7 @@ class Craft:
             chunk['uv'].extend(tex)
             chunk['tone'].extend([(*tone,1)]*len(face))
             chunk['smooth'].append(smooth)
+            chunk['normals'].extend([normals[i] if normals else (0,0,0) for i in face])
 
     def block(self, c, size, mat, bevel=.035, angle=0, tone=(1,1,1)):
         x,y,z=c
@@ -184,6 +193,8 @@ class Craft:
                 colors.data.foreach_set('color',[v for c in data['tone'] for v in c])
             mesh.color_attributes.active_color=colors
             for poly,flag in zip(mesh.polygons,data['smooth']): poly.use_smooth=flag
+            if any(any(n) for n in data['normals']):
+                mesh.normals_split_custom_set(data['normals'])
             # Blender uses the vertex data for the offline light pass. glTF records it as COLOR_0.
             material=PALETTE[key]
             if complete and not material.get('vertex_tint'):

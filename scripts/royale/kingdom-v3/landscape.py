@@ -49,6 +49,10 @@ def sculpt_island(g,center,sizes,variant,low):
             ring.append((x,y,z))
             uv.append((i/sides*sx*2.22, -z*.43+.15*sin(i*.72)+.06*cos(i*1.41)))
         verts.append(ring);ring_uv.append(uv)
+    def rock_normal(row,col):
+        along=Vector(verts[row][(col+1)%sides])-Vector(verts[row][(col-1)%sides])
+        down=Vector(verts[min(len(verts)-1,row+1)][col])-Vector(verts[max(0,row-1)][col])
+        return down.cross(along).normalized()
     for j in range(len(verts)-1):
         a,b=verts[j:j+2]
         for i in range(sides):
@@ -61,7 +65,11 @@ def sculpt_island(g,center,sizes,variant,low):
             if n==0:
                 tex=[(tex[k][0]+(sx*2.22 if k in [2,3] else 0),tex[k][1]) for k in range(4)]
             mat='top' if j==0 and (i+variant)%9 not in [2,3] else 'cliff'
-            g.patch(mat,points,[(0,1,2),(0,2,3)],(shade*.96,shade,min(1,shade*1.11)),uv=tex)
+            face=(Vector(points[1])-Vector(points[0])).cross(Vector(points[2])-Vector(points[0])).normalized()
+            blended=[tuple(face.lerp(rock_normal(r,c),.64 if mat=='cliff' else .4).normalized())
+                     for r,c in [(j,i),(j+1,i),(j+1,n),(j,n)]]
+            g.patch(mat,points,[(0,1,2,3)],(shade*.96,shade,min(1,shade*1.11)),uv=tex,
+                    smooth=True,normals=blended)
     ring=verts[0]
     midpoint=(cx,cy,cz+.02)
     verts_inner=[(cx+(x-cx)*.58,cy+(y-cy)*.58,cz+.03+(.05*sin(i*.42))) for i,(x,y,z) in enumerate(ring)]
@@ -87,7 +95,7 @@ def outcrop(g,center,size,variant,shade=1, moss=True):
             k=(i+1)%n
             l=(.65+.12*j)*rng.uniform(.77,1.09)*shade
             mat='top' if j==4 and moss and i%3==0 else 'cliff'
-            g.patch(mat,[a[i],a[k],b[k],b[i]],[(0,1,2),(0,2,3)],(l*.94,l,min(1,l*1.12)))
+            g.patch(mat,[a[i],a[k],b[k],b[i]],[(0,1,2,3)],(l*.94,l,min(1,l*1.12)))
     g.patch('top' if moss else 'cliff',profile[-1],[tuple(range(n))],(.81,.86,.76))
 
 def crystal(g,c,r,height,lean,theme=0):

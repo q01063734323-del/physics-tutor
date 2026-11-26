@@ -11,11 +11,13 @@ from common import create_palette, collection, PALETTE
 from architecture import LANTERNS, build_palace
 from vegetation import prototype, shrub, groundcover, SPECIES
 from landscape import make_landscape, demo_water, FALLS
+from maximum_detail import architectural_finish, terrain_finish
 
 parser=argparse.ArgumentParser()
 parser.add_argument('--textures',type=Path,required=True)
 parser.add_argument('--out',type=Path,required=True)
 parser.add_argument('--low',action='store_true')
+parser.add_argument('--ultra',action='store_true')
 parser.add_argument('--render',action='store_true')
 parser.add_argument('--render-only',action='store_true')
 parser.add_argument('--select',nargs='*',default=[])
@@ -134,11 +136,13 @@ def build():
     groves=collection('04 • Foliage prototypes and linked placements')
     water=collection('05 • Water, offline proxy')
     architecture,flags=build_palace(opts.low)
+    architectural_finish(architecture,opts.low,opts.ultra)
     palace=list(architecture.objects(main))
     core,satellites,shore=make_landscape(opts.low)
     terrain=list(core.objects(env))
     islands=[o for craft in satellites for o in craft.objects(env)]
-    details=[*shore.objects(detail),*groundcover(opts.low).objects(detail)]
+    cliff,ferns=terrain_finish(opts.low,opts.ultra)
+    details=[*shore.objects(detail),*groundcover(opts.low).objects(detail),*cliff.objects(detail),*ferns.objects(detail)]
     batch=palace+terrain+islands+details
     scene.view_layers[0].update()
     count=local_bake(palace+terrain+details,palace+terrain+details,dist=.42)
@@ -148,7 +152,7 @@ def build():
     for spec in TREE_SITES: placements[spec[0]].append(spec[1:])
     for i,(x,y,z) in enumerate(SHRUB_SITES): placements[5+i%3].append((x,y,z,.92+i%4*.10,i*.7))
     for i in range(8):
-        craft=prototype(i,opts.low) if i<5 else shrub(i-5,opts.low)
+        craft=prototype(i,opts.low,opts.ultra) if i<5 else shrub(i-5,opts.low)
         parts=list(craft.objects(groves))
         parent=bpy.data.objects.new(f'VEG_{i}',None)
         groves.objects.link(parent)
@@ -192,7 +196,7 @@ def build():
     for ob in batch+prototypes:
         ob.hide_set(False)
         ob.select_set(True)
-    stem='kingdom-low' if opts.low else 'kingdom-high'
+    stem='kingdom-low' if opts.low else 'kingdom-ultra' if opts.ultra else 'kingdom-high'
     bpy.ops.export_scene.gltf(filepath=str(opts.out/(stem+'.glb')),export_format='GLB',use_selection=True,
         export_image_format='AUTO',export_tangents=False,export_vertex_color='ACTIVE',export_extras=False)
     if not opts.low:

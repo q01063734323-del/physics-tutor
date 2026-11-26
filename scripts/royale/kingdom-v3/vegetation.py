@@ -28,19 +28,45 @@ def leaf(g,p,d,length,width,cell,shade=1):
     g.patch('leaves',[tuple(q) for q in points],[(0,1,4),(1,2,4),(2,3,4),(3,0,4)],(shade,shade,min(1,shade*1.07)),
             [atlas(cell,u,v) for u,v in [(.50,.10),(.12,.53),(.51,.89),(.88,.53),(.51,.56)]])
 
-def clump(g,c,radii,cell,rng,kind,low):
+def crown_spray(g, center, x_axis, foliage, cell, angle, tone):
+    # Curved alpha-cut branches offer fine silhouettes from each viewing direction.
+    x,y,z=center
+    across=Vector((cos(angle),sin(angle),.14))
+    rising=Vector((-.27*sin(angle),.27*cos(angle),.93))
+    depth=across.cross(rising).normalized()
+    start=Vector((x,y,z))
+    points=[]
+    for j in range(3):
+        for i in range(3):
+            u,v=i/2,j/2
+            points.append(tuple(start+across*(u-.42)*x_axis+rising*(v-.27)*foliage
+                                +depth*.18*foliage*sin(u*pi)*sin(v*pi)))
+    uv=[(.5*(cell%2)+.012+i*.238,.5*(1-cell//2)+.012+j*.238) for j in range(3) for i in range(3)]
+    g.patch('sprays',points,[(i,i+1,i+4,i+3) for i in (0,1,3,4)],tone,uv,smooth=True)
+
+def clump(g,c,radii,cell,rng,kind,low,ultra=False):
     zvals=[-.63,-.33,.03,.38,.71,.91]
     shape=[.22,.72,1.0,.88,.56,.21]
     if kind==1: shape=[.29,.94,.78,.61,.34,.095]
     cx,cy,cz=c; sx,sy,sz=radii
-    n=7 if low else 12
+    spray_cell=[0,1,2,3][cell]
+    for i in range(4 if low else (11 if ultra else 7)):
+        a=i*2.399+rng.uniform(-.25,.25)
+        radius=rng.uniform(.54,.88)
+        center=(cx+sx*cos(a)*radius,cy+sy*sin(a)*radius,cz+sz*rng.uniform(-.42,.46))
+        width=sx*rng.uniform(1.14,1.74)
+        height=max(sz*1.05,sx*.61)*rng.uniform(.84,1.27)
+        shade=.82+rng.uniform(-.12,.11)
+        crown_spray(g,center,width,height,spray_cell,a+pi/2,(shade,min(1,shade*1.11),shade*.89))
+    sx*=.79;sy*=.77;sz*=.86
+    n=8 if low else 14
     rings=[]
     phase=rng.random()*tau
     for j,(radius,h) in enumerate(zip(shape,zvals)):
         row=[]
         for i in range(n):
             a=phase+i*tau/n+(j%2)*.16
-            variation=1+.13*sin(a*3+j*.32)+.11*sin(a*5-j*.32)+rng.uniform(-.075,.075)
+            variation=1+.12*sin(a*3+j*.32)+.08*sin(a*5-j*.32)+rng.uniform(-.027,.027)
             row.append((cx+sx*radius*cos(a)*variation+.09*j*sx,
                         cy+sy*radius*sin(a)*variation,
                         cz+sz*(h+.114*sin(a*4+j)*radius)))
@@ -69,7 +95,7 @@ def clump(g,c,radii,cell,rng,kind,low):
         length=rng.uniform(.21,.46)*sx
         leaf(g,base,direction,length,length*(.75 if kind!=1 else .48),cell,shade=rng.uniform(.71,1))
 
-def prototype(index,low):
+def prototype(index,low,ultra=False):
     name,h,w,trunk,cell,bend,n,spread=SPECIES[index]
     rng=random.Random(241+index*421)
     g=Craft(name)
@@ -95,10 +121,15 @@ def prototype(index,low):
         path=[lower,(x*.47,y*.38,z-h*.14),(x*.69,y*.64,z-h*.055),(x,y,cz+.016)]
         g.taper(bark,path,[trunk*(.42-.13*u),trunk*.30,trunk*.17,.008],6,(.80,.74,.70))
         shape=(foliage*rng.uniform(.57,.80),foliage*rng.uniform(.52,.83),foliage*(.54 if index==1 else .65))
-        clump(g,(x,y,cz),shape,cell,rng,index,low)
+        clump(g,(x,y,cz),shape,cell,rng,index,low,ultra)
+        for branch in range(1 if low else 2):
+            twist=a+(branch-.5)*1.44
+            end=(x+cos(twist)*shape[0]*.85,y+sin(twist)*shape[1]*.74,cz+shape[2]*.59)
+            midpoint=(x*.86+cos(twist)*shape[0]*.41,y*.87+sin(twist)*shape[1]*.38,cz-shape[2]*.25)
+            g.taper(bark,[path[2],midpoint,end],[trunk*.18,trunk*.079,.003],5,(.74,.68,.61))
         if not low and index in [0,2,4] and j%2==0:
             clump(g,(x+cos(a)*foliage*.18,y+sin(a)*foliage*.25,cz-.12),
-                  tuple(v*.63 for v in shape),cell,rng,index,low)
+                  tuple(v*.63 for v in shape),cell,rng,index,low,ultra)
         if index==4 and j%2==0:
             for q in range(3 if low else 6):
                 p=Vector((x+cos(a+q*.44)*shape[0]*.74,y+sin(a+q*.44)*shape[1]*.82,cz-.11))

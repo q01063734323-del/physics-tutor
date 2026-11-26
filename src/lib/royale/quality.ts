@@ -1,4 +1,9 @@
 export type GraphicsQuality='auto'|'high'|'medium'|'low';
+export type KingdomQuality = GraphicsQuality | 'ultra';
+
+export function arenaQuality(mode: KingdomQuality): GraphicsQuality {
+ return mode === 'ultra' ? 'high' : mode;
+}
 /** Bounded, allocation-free rolling sample of rendered frames; simulation is separate. */
 export class FrameMeter{
  private samples=new Float64Array(120);private index=0;private count=0;private sum=0;

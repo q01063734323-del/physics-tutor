@@ -1,7 +1,8 @@
 import * as T from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { FrameMeter, type GraphicsQuality } from '../quality';
+import { FrameMeter, type KingdomQuality } from '../quality';
 import { makeCloudVolume } from './kingdom-cloud';
+import { makeCourtyardLife } from './kingdom-courtyard-life';
 import { disposeKingdomScene, loadKingdomAsset } from './kingdom-resources';
 import { makeKingdomWater, type WaterSite } from './kingdom-v3-water';
 
@@ -87,9 +88,10 @@ function makeGroves(world:T.Group,sites:PlantSite[][],reduced:boolean,wind:{valu
    });
    mesh.computeBoundingSphere();
    mesh.receiveShadow=!reduced;
-   mesh.castShadow=!reduced&&index<5;
+   // The solid boughs cast stable shadows. Small cutout leaves only receive them.
+   mesh.castShadow=!reduced&&index<5&&obj.material.name!=='Painted crown sprays';
    groups.push(mesh);batch.add(mesh);
-   if(obj.material instanceof T.MeshStandardMaterial&&obj.material.name==='Foliage atlas'){
+   if(obj.material instanceof T.MeshStandardMaterial&&(obj.material.name==='Foliage atlas'||obj.material.name==='Painted crown sprays')){
     const material=obj.material;
     material.side=T.DoubleSide;
     if(!leafMaterials.has(material)){
@@ -113,7 +115,18 @@ function makeGroves(world:T.Group,sites:PlantSite[][],reduced:boolean,wind:{valu
  // Painted grass shares the atlas. Use a separate shader program for the non-instanced geometry.
  world.traverse(obj=>{
   if(obj instanceof T.Mesh&&obj.material instanceof T.MeshStandardMaterial&&leafMaterials.has(obj.material)){
-   obj.material=obj.material.clone();obj.material.side=T.DoubleSide;
+   const leaves: T.MeshStandardMaterial=obj.material.clone();
+   obj.material=leaves;leaves.side=T.DoubleSide;
+   leaves.onBeforeCompile=shader=>{
+    shader.uniforms.uBreeze=wind;
+    shader.vertexShader='uniform float uBreeze;\n'+shader.vertexShader;
+    shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`
+      #include <begin_vertex>
+      float height=max(0.,position.y-.21);
+      transformed.x+=sin(uBreeze*1.77+position.x*5.+position.z*3.)*min(height,.4)*.037;
+    `);
+   };
+   leaves.customProgramCacheKey=()=> 'royale-courtyard-breeze';
   }
  });
  return {batch,groups};
@@ -153,37 +166,46 @@ const birdVertex=`
 `;
 const birdFragment=`void main(){gl_FragColor=vec4(.97,.91,.82,.89);}`;
 
-export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQuality,onReady:()=>void,onError:()=>void){
+export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:KingdomQuality,onReady:()=>void,onError:()=>void){
  const auto=quality==='auto';
  const cores=navigator.hardwareConcurrency||6;
  const memory=(navigator as Navigator&{deviceMemory?:number}).deviceMemory;
  const low=quality==='low'||(auto&&(cores<=4||(memory??6)<=4));
- const high=quality==='high'||(auto&&!low&&innerWidth>=950&&cores>=8);
+ const ultra=quality==='ultra';
+ const high=ultra||quality==='high'||(auto&&!low&&innerWidth>=950&&cores>=8);
+ const level=ultra?'ultra':low?'low':high?'high':'medium';
  const renderer=new T.WebGLRenderer({canvas,antialias:!low,alpha:true,powerPreference:low?'low-power':'default'});
  renderer.toneMapping=T.ACESFilmicToneMapping;
- renderer.toneMappingExposure=1.06;
+ renderer.toneMappingExposure=.94;
  renderer.shadowMap.enabled=!low;
  renderer.shadowMap.type=T.PCFShadowMap;
  renderer.shadowMap.autoUpdate=false;
  const scene=new T.Scene();
- scene.fog=new T.Fog(0xa3b5df,23,43);
+ scene.fog=new T.Fog(0x93a9d5,24,46);
  const camera=new T.PerspectiveCamera(32,1,.12,75);
  const stage=canvas.parentElement;
- const hemi=new T.HemisphereLight(0xbcd3ff,0x60617a,1.00);
- const sun=new T.DirectionalLight(0xffd3a5,3.65);
- sun.position.set(8,11,7);
+ const hemi=new T.HemisphereLight(0xb6caff,0x59433c,.77);
+ const sun=new T.DirectionalLight(0xffca8e,3.2);
+ sun.position.set(9,10,6.3);
  sun.castShadow=!low;
- sun.shadow.mapSize.setScalar(high?1536:768);
+ sun.shadow.mapSize.setScalar(ultra?2048:high?1536:768);
  Object.assign(sun.shadow.camera,{left:-7,right:7,top:7,bottom:-7,near:1,far:30});
- sun.shadow.normalBias=.043;sun.shadow.bias=-.0002;sun.shadow.radius=3.4;
- const cool=new T.DirectionalLight(0xa5c7fc,1.20);
+ sun.shadow.normalBias=.031;sun.shadow.bias=-.00015;sun.shadow.radius=ultra?3.1:2.6;
+ const cool=new T.DirectionalLight(0x8eb6f1,1.07);
  cool.position.set(-8,8,-6);
- scene.add(hemi,sun,cool);
+ const bounce=new T.DirectionalLight(0xffb784,.33);
+ bounce.position.set(0,-4,6);
+ scene.add(hemi,sun,cool,bounce);
+ if(!low){
+  const gateLight=new T.PointLight(0xffa751,7.5,3.2,2);
+  gateLight.position.set(.48,.97,2.16);
+  scene.add(gateLight);
+ }
  const generator=!low?new T.PMREMGenerator(renderer):undefined;
  const environment=generator?new RoomEnvironment():undefined;
  const reflected=generator&&environment?generator.fromScene(environment,.075):undefined;
  environment?.dispose();generator?.dispose();
- if(reflected){scene.environment=reflected.texture;scene.environmentIntensity=.40;}
+ if(reflected){scene.environment=reflected.texture;scene.environmentIntensity=.30;}
 
  const skyCloud=cloudMap();
  const atmosphere=new T.Group();
@@ -197,7 +219,9 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
   atmosphere.add(sprite);
   return {x,y,sprite};
  });
- const volumes=high?[[-6.5,-4.5,4.8,3.83],[6.4,-4.8,4.63,3.9],[-7.12,-1.34,-8.6,3.2]].map(([x,y,z,s])=>{
+ const volumeSites=[[-6.5,-4.5,4.8,3.83],[6.4,-4.8,4.63,3.9],[-7.12,-1.34,-8.6,3.2]];
+ if(ultra)volumeSites.push([5.18,-2.99,-5.7,4.3]);
+ const volumes=high?volumeSites.map(([x,y,z,s])=>{
   const cloud=makeCloudVolume();
   cloud.position.set(x,y,z);cloud.scale.set(s,.72,1.52);cloud.renderOrder=3;atmosphere.add(cloud);
   return {cloud,x};
@@ -208,12 +232,14 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
  }),low?3:7);
  birds.geometry.setAttribute('position',new T.Float32BufferAttribute([-.23,.026,0,0,0,.056,-.074,-.018,-.038,0,0,.056,.23,.026,0,.076,-.018,-.038],3));
  birds.frustumCulled=false;birds.renderOrder=6;scene.add(birds);
+ const life=high?makeCourtyardLife(ultra):null;
+ if(life)scene.add(life.root);
  const abort=new AbortController();
  const wind={value:0},aim=new T.Vector3(),location=new T.Vector3(),eye=new T.Vector3(),scratch=new T.Object3D();
  const meter=new FrameMeter();
  let visible=true,painted=false,disposed=false,frame=0,ready=false,frames=0,last=0,first=0,mouse=0,pointer=0;
- const idealDpr=low?1:high?1.58:1.28;
- let budgetDpr=Math.min(devicePixelRatio||1,idealDpr);
+ const idealDpr=low?1:ultra?1.65:high?1.58:1.28;
+ let budgetDpr=Math.min((devicePixelRatio||1)*(ultra?1.2:1),idealDpr);
  let water:ReturnType<typeof makeKingdomWater>|undefined;
  let flags:ReturnType<typeof kingFlags>|undefined;
  let instancing:T.InstancedMesh[]=[];
@@ -247,7 +273,7 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
   if(last)meter.push(time-last);
   last=time;first ||= time;
   const elapsed=(time-first)/1000;
-  if(auto&&!low&&elapsed-hitTimer>4&&meter.ready&&meter.fps<49&&budgetDpr>.78){
+  if((auto||ultra)&&!low&&elapsed-hitTimer>4&&meter.ready&&meter.fps<49&&budgetDpr>.78){
    hitTimer=elapsed;budgetDpr=Math.max(.78,budgetDpr*.88);sizing();
   }
   pointer=T.MathUtils.lerp(pointer,mouse,.047);
@@ -279,12 +305,16 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
   if(flags)flags.material.uniforms.uWind.value=elapsed;
   water?.update(elapsed);
   lanterns?.update(elapsed);
-  sun.intensity=3.65+dusk*.055;
-  if(!low&&frames%(high?11:19)===0)renderer.shadowMap.needsUpdate=true;
+  life?.update(elapsed);
+  sun.intensity=3.2+dusk*.035;
+  if(!low&&frames%(ultra?9:high?11:19)===0)renderer.shadowMap.needsUpdate=true;
   renderer.render(scene,camera);
   frames++;
   if(frames%20===1){
    canvas.dataset.sceneFrames=String(frames);canvas.dataset.sceneTime=String(time);
+   canvas.dataset.sceneGeometries=String(renderer.info.memory.geometries);
+   canvas.dataset.sceneTextures=String(renderer.info.memory.textures);
+   canvas.dataset.sceneQuality=level;
    canvas.dataset.sceneDraws=String(renderer.info.render.calls);canvas.dataset.sceneTriangles=String(renderer.info.render.triangles);
   }
   if(!painted){painted=true;onReady();}
@@ -296,7 +326,7 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
    return await response.json() as Layout;
   });
   const [settled,loaded]=await Promise.allSettled([layoutReady,
-   loadKingdomAsset(root+'/environment-'+(low?'low':high?'high':'medium')+'.glb',abort.signal)]);
+   loadKingdomAsset(root+'/environment-'+level+'.glb',abort.signal)]);
   if(loaded.status==='rejected')throw loaded.reason;
   const asset=loaded.value;
   if(settled.status==='rejected'){disposeKingdomScene(asset.scene);throw settled.reason;}
@@ -314,7 +344,7 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
     }
    }
   });
-  water=makeKingdomWater(layout.water,skyCloud,low,high);
+  water=makeKingdomWater(layout.water,skyCloud,level);
   flags=kingFlags(layout.flags);
   lanterns=makeLanternGlow(layout.lanterns??[],low);
   scene.add(asset.scene,grove.batch,water.root,flags.group,lanterns.group);
@@ -326,7 +356,7 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:GraphicsQua
  return ()=>{
   disposed=true;abort.abort();cancelAnimationFrame(frame);resize.disconnect();observer.disconnect();
   stage?.removeEventListener('pointermove',track);canvas.removeEventListener('webglcontextlost',onContextLost);
-  water?.dispose();lanterns?.dispose();birds.geometry.dispose();birds.material.dispose();birds.dispose();
+  water?.dispose();lanterns?.dispose();life?.dispose();birds.geometry.dispose();birds.material.dispose();birds.dispose();
   cloudBanks.forEach(({sprite})=>sprite.material.dispose());
   instancing.forEach(instance=>instance.dispose());
   disposeKingdomScene(scene);skyCloud.dispose();reflected?.dispose();sun.shadow.dispose();

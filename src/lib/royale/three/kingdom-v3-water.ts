@@ -28,6 +28,7 @@ const fragment = `
  uniform float uLayer;
  uniform float uSeed;
  uniform float uFlat;
+ uniform float uQuality;
  float hash(vec2 a){return fract(sin(dot(a,vec2(127.1,311.7)))*43758.5453);}
  float n(vec2 x){
   vec2 i=floor(x),f=fract(x);
@@ -36,31 +37,35 @@ const fragment = `
  }
  void main() {
   float x=vUv.x,y=vUv.y;
-  float clock=uTime*(1.02+.035*uSeed);
-  float wander=n(vec2(x*5.+uSeed,y*8.-clock*.28));
-  float wide=n(vec2(x*10.+wander*.68,y*5.-clock*1.75));
-  float small=n(vec2(x*29.+wander*1.9,y*10.-clock*2.9));
-  float lines=pow(.5+.5*sin(x*102.+5.*n(vec2(x*7.,y*13.-clock*3.))),6.);
-  float coarse=n(vec2(x*6.+uSeed,y*1.6-clock*.48));
-  float film=smoothstep(.26,.78,wide*.78+small*.23);
-  float turbulence=n(vec2(x*19.+uSeed,y*31.-clock*4.));
-  float lace=smoothstep(.61,.86,small*.63+turbulence*.37);
-  float crest=clamp(pow(max(0.,small),3.)*1.70+lines*.28+lace*.46,0.,1.);
-  float water=mix(.30,.82,film);
-  float translucent=(1.-smoothstep(.71,1.,y))*(smoothstep(.0,.09,x)*(1.-smoothstep(.92,1.,x)));
-  translucent*=mix(.64,1.,coarse);
-  float angle=abs(dot(normalize(vEye),normalize(vNormal)));
-  float highlight=pow(1.-clamp(angle,.0,1.),2.0)*.75;
-  vec3 blue=mix(vec3(.016,.12,.34),vec3(.067,.49,.83),water);
-  vec3 ice=mix(vec3(.39,.83,.94),vec3(1.0,.87,.68),highlight*.4);
-  vec3 color=mix(blue,ice,clamp(crest*.85+highlight*.15,0.,1.));
-  float lipFoam=(1.-smoothstep(.025,.13,y))*smoothstep(.42,.76,wide*.77+turbulence*.23);
-  color=mix(color,vec3(.78,.94,1.),lipFoam*.66);
+  float clock=uTime*(1.02+.035*uSeed), layer=uLayer*.27;
+  float drift=n(vec2(x*4.+uSeed,y*4.-clock*.36));
+  float speed=.80+.29*sin(x*29.+uSeed)+.16*cos(x*55.+layer*7.);
+  float v=y*(.81+.28*y)-clock*speed;
+  float pressure=n(vec2(x*11.+drift*.95,v*3.1+layer));
+  float rivulets=n(vec2(x*25.+drift*1.5,v*6.4));
+  float hairs=pow(.5+.5*sin(x*86.+rivulets*7.+layer*8.),7.);
+  float volume=n(vec2(x*6.+uSeed,y*1.9-clock*.38));
+  float stretched=smoothstep(.28,.83,pressure*.65+rivulets*.35);
+  float aeration=n(vec2(x*21.+drift,v*17.));
+  float foam=smoothstep(.61,.86,aeration*.46+rivulets*.32+pressure*.22);
+  float fringe=smoothstep(0.,.065,x)*(1.-smoothstep(.934,1.,x));
+  float breaks=mix(.55,1.,volume)*(1.-smoothstep(.60,1.0,y));
+  float highlight=pow(1.-abs(dot(normalize(vEye),normalize(vNormal))),1.8);
+  float sunSpec=pow(max(0.,dot(reflect(-normalize(vec3(.69,.55,.31)),normalize(vNormal)),normalize(vEye))),10.0);
+  vec3 deep=mix(vec3(.007,.055,.134),vec3(.037,.26,.41),stretched);
+  vec3 ice=mix(vec3(.57,.88,1.),vec3(1.,.89,.73),sunSpec*.63);
+  float whitewater=pow(stretched,1.76)*.75+hairs*.13+foam*(.22+.36*highlight);
+  float head=(1.-smoothstep(.015,.16,y))*smoothstep(.28,.70,pressure*.46+foam*.54);
+  float feet=smoothstep(.57,.92,y)*smoothstep(.44,.76,rivulets*.42+aeration*.58);
+  if(uQuality>2.5)whitewater+=.17*pow(.5+.5*sin(v*128.+x*11.+rivulets*8.),10.)*foam;
+  vec3 color=mix(deep,ice,clamp(whitewater+highlight*.20+head*.66+feet*.39,0.,1.));
   if(uFlat>.5){
-   color=mix(color,ice,pow(.5+.5*sin(x*44.+12.*y-clock*5.+6.*wide),11.)*.30);
-   translucent=max(.52,translucent);
+   float runout=smoothstep(.42,1.,y);
+   color=mix(color,ice,runout*smoothstep(.42,.7,pressure*.55+rivulets*.45));
+   breaks=mix(.67,.94,runout);
   }
-  gl_FragColor=vec4(color,translucent*(uLayer<.5?.91:(.26+.37*film)));
+  float coverage=uLayer<.5?(.84+.13*stretched):(.22+.25*stretched+.16*whitewater);
+  gl_FragColor=vec4(color,breaks*fringe*coverage);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
  }
@@ -114,7 +119,8 @@ const sprayFragment=`
  }
 `;
 
-export function makeKingdomWater(sites:WaterSite[], cloud:T.Texture, low:boolean, high:boolean){
+export function makeKingdomWater(sites:WaterSite[], cloud:T.Texture, quality: 'ultra'|'high'|'medium'|'low'){
+ const low=quality==='low', high=quality==='high'||quality==='ultra', ultra=quality==='ultra';
  const root=new T.Group(), materials:T.ShaderMaterial[]=[];
  const mist:T.Sprite[]=[];
  const drops:number[]=[],dropAttrs:number[]=[];
@@ -123,30 +129,37 @@ export function makeKingdomWater(sites:WaterSite[], cloud:T.Texture, low:boolean
   zone.position.set(x,z,-y);
   zone.rotation.y=angle;
   root.add(zone);
-  const layers=low?1:high?3:2;
+  const layers=low?1:ultra?4:high?3:2;
   for(let k=0;k<=layers;k++){
    const flat=k===layers;
    const material=new T.ShaderMaterial({
     transparent:true,depthWrite:false,side:T.DoubleSide,
-    uniforms:{uTime:{value:0},uSeed:{value:index+1.7*k},uLayer:{value:flat?0:k},uFlat:{value:flat?1:0}},
+    uniforms:{uTime:{value:0},uSeed:{value:index+1.7*k},uLayer:{value:flat?0:k},uFlat:{value:flat?1:0},uQuality:{value:low?0:ultra?3:high?2:1}},
     vertexShader:vertex,fragmentShader:fragment,
    });
    const mesh=new T.Mesh(flat?pool(width):ribbon(width,height,k===1?-.83:.87,k,low),material);
    mesh.renderOrder=flat?7:9+k;materials.push(material);zone.add(mesh);
   }
-  for(let i=0;i<(low?1:3);i++){
+  for(let i=0;i<(low?1:ultra?4:3);i++){
    const vapor=new T.Sprite(new T.SpriteMaterial({map:cloud,color:i===0?0xd8e8fc:0xafcee7,
     depthWrite:false,transparent:true,opacity:.40/(i===0?1:1.4)}));
    const bottom=-height*.98+i*.14;
    vapor.position.set((i-1)*width*.28,bottom,.66+i*.11);
-   vapor.scale.set(width*(1.8+i*.24),.62+i*.2,1);
+   vapor.scale.set(width*(1.85+i*.27),.58+i*.22,1);
    vapor.userData.bottom=bottom;
    vapor.renderOrder=14;zone.add(vapor);mist.push(vapor);
   }
-  for(let i=0;i<(low?12:high?43:28);i++){
+  for(let i=0;i<(low?14:ultra?68:high?43:28);i++){
    const ratio=i*.6180339%1;
    drops.push(x+(ratio-.5)*width*1.16,z-height*.97+.08*Math.sin(i),-y+.59+Math.sin(i*1.77)*.22);
    dropAttrs.push(ratio,34+(i*13%59),i*.117%1,i*.349%1);
+  }
+  if(!low&&index<4){
+   for(let i=0;i<(ultra?24:10);i++){
+    const q=i*.6180339%1;
+    drops.push(x+(q-.5)*width*.94,z+.024+.04*Math.sin(i),-y+.19+.10*Math.cos(i*1.7));
+    dropAttrs.push(q,24+i%14,0.3, q*.58);
+   }
   }
  });
  const geometry=new T.BufferGeometry();
@@ -164,7 +177,7 @@ export function makeKingdomWater(sites:WaterSite[], cloud:T.Texture, low:boolean
    mist.forEach((m,i)=>{
     m.position.y=(m.userData.bottom as number)+.16*Math.sin(time*.7+i*1.7);
     m.material.rotation=.13*Math.sin(time*.34+i);
-    m.material.opacity=.32+.09*Math.sin(time*.64+i);
+    m.material.opacity=.35+.11*Math.sin(time*.64+i);
    });
   },
   dispose(){

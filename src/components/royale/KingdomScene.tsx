@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import type { GraphicsQuality } from '@/lib/royale/quality';
+import type { KingdomQuality } from '@/lib/royale/quality';
 import k from './Kingdom.module.css';
 
-export function KingdomScene({quality}: {quality:GraphicsQuality}) {
+export function KingdomScene({quality}: {quality:KingdomQuality}) {
  const canvas=useRef<HTMLCanvasElement>(null);
  const stage=useRef<HTMLDivElement>(null);
  const [recovery,setRecovery]=useState(0);

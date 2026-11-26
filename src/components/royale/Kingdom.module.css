@@ -618,3 +618,37 @@
  .shell[data-tab=home] :is(.courtLeague,.courtLearning) {width:min(21%,264px);padding:14px}
  .shell[data-tab=home] .courtActions .goldButton {min-height:76px}
 }
+
+/* Engraved panels and brushed edges on the established home layout. */
+.shell[data-tab=home] {
+ --royale-metal:linear-gradient(166deg,#fff9dc 0%,#a86b33 12%,#ffe6a7 21%,#805023 41%,#e5a858 65%,#fff3c4 76%,#a2642d 88%,#e4ac57 100%);
+ --royale-panel:radial-gradient(100% 175% at 14% 0%,#354b7994,transparent 75%),
+  repeating-linear-gradient(125deg,#9fbafa09 0 1px,transparent 1px 4px),linear-gradient(155deg,#1a2a50,#0e1831);
+}
+.shell[data-tab=home] :is(.courtLeague,.courtLearning,.navigation) {
+ background:var(--royale-panel) padding-box,var(--royale-metal) border-box;
+ border-width:2px;
+}
+.shell[data-tab=home] :is(.courtLeague,.courtLearning) {
+ box-shadow:inset 0 0 0 2px #080d25,inset 0 0 0 3px #e9c37a76,inset 0 9px 20px #d7e4ff1b,0 8px 16px #101536b0;
+}
+.shell[data-tab=home] :is(.courtLeague,.courtLearning) small {color:#fff6e3}
+.shell[data-tab=home] .courtActions .goldButton {
+ background:
+  radial-gradient(ellipse at 53% 106%,#ea61fb70 0,transparent 58%) padding-box,
+  radial-gradient(ellipse at 48% 2%,#e29eff65 0,transparent 60%) padding-box,
+  repeating-linear-gradient(136deg,#e7b2ff0d 0 1px,transparent 1px 4px) padding-box,
+  linear-gradient(112deg,#4c1a80 1%,#612095 31%,#39165b 62%,#6c298b) padding-box,
+  var(--royale-metal) border-box;
+ box-shadow:inset 0 0 0 1px #fff2c4,inset 0 0 0 4px #815020,inset 0 0 0 5px #f4bb6c,
+  inset 0 8px 15px #ebd0ff43,inset 0 -9px 13px #21113786,0 4px 0 #6a3720,
+  0 9px 15px #06061be6,0 0 19px #f0aa456d;
+}
+.shell[data-tab=home] .courtActions .goldButton:focus-visible {outline:2px solid #fff3cc;outline-offset:6px}
+.shell[data-tab=home] .navigation button svg {
+ filter:drop-shadow(0 2px 1px #1a0b10) drop-shadow(0 0 4px #edb35a47);
+}
+@media(prefers-reduced-motion:reduce) {
+ .shell[data-tab=home] .courtActions .goldButton {transition:none}
+ .shell[data-tab=home] .courtActions .goldButton:is(:hover,:active) {transform:none}
+}

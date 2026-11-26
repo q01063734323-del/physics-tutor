@@ -93,7 +93,7 @@ export function KingdomBattleSetup({profile,arena,setArena,difficulty,setDifficu
    <aside className={k.panel}><h2>Следующий бой</h2><p>{arenas.find(item=>item.id===arena)?.name}</p>
     <label className={k.field}>Сложность <select value={difficulty} disabled={fixed} onChange={event=>setDifficulty(event.target.value as Difficulty)}>{Object.entries(difficultyLabels).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label>
     <label className={k.field}>Качество графики <select value={preferences.quality} onChange={event=>updatePreferences({quality:event.target.value as Preferences['quality']})}>
-     <option value="auto">Автоматически</option><option value="high">High · высокое</option><option value="medium">Medium · среднее</option><option value="low">Low · экономное</option>
+     <option value="auto">Автоматически</option><option value="ultra">Ultra · королевство</option><option value="high">High · высокое</option><option value="medium">Medium · среднее</option><option value="low">Low · экономное</option>
     </select></label>
     <div className={k.energyCallout}><RoyaleIcon name="energy"/><p>Верные ответы пополняют энергию. Она нужна для разыгрывания карт.</p></div>
     {action}
