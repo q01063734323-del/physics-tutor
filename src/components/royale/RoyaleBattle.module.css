@@ -783,3 +783,98 @@
 @media (max-width: 920px) and (max-height: 530px) and (orientation: landscape) {
   .dock, .game[data-task="true"] .dock { width: min(430px, 55vw); }
 }
+
+/* Engraved frames and darker title strips preserve the original card artwork. */
+.dock {
+  --frame-blade: #9b592b;
+  --frame-edge: #efc080;
+}
+.game .card {
+  border-color: var(--frame-edge) #b98549 var(--frame-blade);
+  background: linear-gradient(160deg, #29344f, #111b35 70%);
+  box-shadow: 0 0 0 1px #1a1326, 0 3px 0 #673d28, 0 10px 16px #060b1db7;
+}
+.card::before {
+  background: linear-gradient(180deg, #10162900 45%, #11192e2b 59%, #101a2aef 83%, #0b1125 100%);
+}
+.card::after {
+  inset: 2px;
+  border: 1px solid #fff0b473;
+  border-bottom-color: #d9984dca;
+  box-shadow: inset 0 0 7px #f5bd6441, inset 0 -1px #2b1528;
+}
+.card b {
+  display: grid;
+  align-content: center;
+  min-height: 2.85em;
+  padding-inline: 6px;
+  text-wrap: balance;
+}
+.game .card[data-card="archers"] img { object-position: 50% 37%; }
+.game .card[data-card="knight"] img { clip-path: none; scale: 1; object-position: 50% 11%; }
+.game .card[data-card="skeletons"] img { object-position: 50% 9%; }
+.game .card[aria-pressed="true"] {
+  border-color: #fff0b3;
+  box-shadow: 0 0 0 2px #eec983, 0 0 0 4px #a26337, 0 0 23px #ffd67a7e, 0 9px 18px #060a1e;
+}
+.cardCost {
+  border-radius: 36% 37% 43% 43%;
+  background: radial-gradient(ellipse at 32% 12%, #e2acff, #9d56d6 26%, #6527af 66%, #3d196b);
+  box-shadow: inset 0 1px 1px #f6d4ff, inset 0 0 0 2px #40176f, 0 3px 6px #100923c0;
+  font-variant-numeric: tabular-nums;
+}
+.energySegments i { border-color: #7580b171; }
+.energySegments i::after {
+  background: linear-gradient(180deg, #f2c2ff, #bd6bfc 36%, #7d30be 59%, #ad61f3 90%);
+  box-shadow: inset 0 1px 3px #fff1ff, 0 0 7px #a846dcab;
+}
+.energy[data-earned="true"] .energyGem { animation: energyGem .65s var(--ease) both; }
+.clock { box-shadow: 0 4px 11px #090e24ad, inset 0 0 0 2px #111a30, inset 0 0 0 3px #eac78f44, inset 0 8px 19px #c4d2ff18; }
+.team { padding-block: .33em; }
+.scoreboard { letter-spacing: .015em; }
+.game .solve {
+  background: linear-gradient(177deg,#fff2c7 1%,#ffd880 22%,#dfa043 70%,#ffc669);
+  border-bottom-color: #b87730;
+  box-shadow: inset 0 0 0 2px #a66d35, inset 0 0 0 3px #fff0ab88, 0 4px 0 #78441f, 0 10px 28px #100b1ea0;
+}
+.solve small { font-weight: 850; }
+.lesson {
+  border-color: #e3ba73;
+  background: radial-gradient(ellipse at 0 1%, #3d3760, transparent 36%), linear-gradient(159deg, #182d51, #0d172f 66%, #1a2040);
+}
+.lessonHeader h2 { font-variant-numeric: lining-nums; }
+.lesson .paper { box-shadow: inset 0 1px 9px #e9e1ec, 0 3px 11px #070a1b30; }
+.game [role="dialog"]:has(> .matchResult) {
+  border-color: #efc488;
+  background: radial-gradient(ellipse at 50% 0%, #3a3758, #14213e 53%, #0d1830);
+  box-shadow: inset 0 0 0 2px #151f35, inset 0 0 0 3px #be8e587a, 0 18px 70px #050816e0;
+  color: #f2efff;
+}
+.game .matchResult {
+  padding: 14px 7px 4px;
+  animation: resultAppear .44s var(--ease) both;
+}
+.matchResult > img { filter: drop-shadow(0 4px 12px #eaaa5c88); }
+.game .matchResult h1 { color: #ffe0a0; text-wrap: balance; letter-spacing: -.02em; }
+.game .matchResult[data-outcome="loss"] h1 { color: #f5ccd6; }
+@keyframes energyGem { 0%, 100% { scale: 1; } 33% { scale: 1.18; } }
+@keyframes resultAppear { from { opacity: 0; translate: 0 7px; } to { opacity: 1; translate: 0 0; } }
+
+@media (min-width: 761px) and (min-height: 531px), (min-width: 921px) {
+  .game .solve {
+    width: clamp(178px, 20.7vw, 338px);
+    font-size: clamp(.91rem, 1.57vw, 1.8rem);
+  }
+  .solve b { white-space: nowrap; }
+}
+
+.game[data-graphics="3d"] .arena {
+  mask-image: linear-gradient(180deg, transparent 0, #000 4%, #000 94%, transparent 100%);
+}
+@media (min-width: 1100px) {
+  .game[data-graphics="3d"] .arena {
+    mask-image: linear-gradient(180deg, transparent 0, #000 4%, #000 94%, transparent 100%),
+      linear-gradient(90deg, transparent 0, #000 10%, #000 90%, transparent 100%);
+    mask-composite: intersect;
+  }
+}
