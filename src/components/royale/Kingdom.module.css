@@ -501,3 +501,20 @@
 @media(max-width:620px){
  .court{background-image:url('/royale/kingdom-v3/sky-portrait.webp')}
 }
+
+@media(orientation:landscape) and (max-height:510px){
+ .shell[data-tab=home]{padding-block:max(5px,env(safe-area-inset-top)) max(5px,env(safe-area-inset-bottom))}
+ .shell[data-tab=home] .topbar{min-height:42px;margin-bottom:7px}
+ .shell[data-tab=home] .brand>span{width:36px;height:36px}
+ .court{min-height:clamp(245px,calc(100svh - 111px),410px)}
+ .courtHeading{margin-top:6px}
+ .courtHeading h1{font-size:clamp(30px,4.4vw,48px)}
+ .courtCrown svg{height:20px}
+ .scene{inset:13% 0 0}
+ .courtLeague,.courtLearning{bottom:24%;padding:8px}
+ .courtActions{margin-bottom:4px;gap:2px}
+ .courtActions .goldButton{min-height:44px;font-size:26px}
+ .shell .heroLink{min-height:31px;font-size:11px}
+ .shell[data-tab=home] .navigation{margin-top:7px}
+ .shell[data-tab=home] .navigation button{min-height:42px;padding-block:7px}
+}
