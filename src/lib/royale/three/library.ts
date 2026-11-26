@@ -63,6 +63,10 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
  function createInstance(source:GLTF,id:CardId) {
   const root=new T.Group();
   const model=clone(source.scene);
+  const skeletons=new Set<T.Skeleton>();
+  model.traverse(node=>{
+   if(node instanceof T.SkinnedMesh)skeletons.add(node.skeleton);
+  });
   const spec=figures[id]!;
   const bounds=new T.Box3().setFromObject(model);
   const height=bounds.max.y-bounds.min.y;
@@ -101,7 +105,14 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
    if(pose.reducedMotion)active.time=0;
    mixer.update(dt);last=pose.time;
   }
-  const instance={root,animate,dispose(){mixer.stopAllAction();mixer.uncacheRoot(model);root.removeFromParent();bound.delete(instance);}};
+  const instance={root,animate,dispose(){
+   mixer.stopAllAction();
+   mixer.uncacheRoot(model);
+   root.removeFromParent();
+   // Cloned rigs own their bone textures. Mesh geometries and materials are shared by the library.
+   for(const skeleton of skeletons)skeleton.dispose();
+   bound.delete(instance);
+  }};
   return instance;
  }
  return {
