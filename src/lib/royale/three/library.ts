@@ -13,7 +13,8 @@ const figures: Partial<Record<CardId, {file?:string;height:number;forward?:numbe
  ballista:{height:2.06},hunters:{height:1.75},
 };
 
-const remasteredFigures=new Set(['rider','frost','ember','ballista','meteor','hunters','hunters-silver']);
+const premiumFigures=new Set(['giant','frost']);
+const remasteredFigures=new Set(['rider','ember','ballista','meteor','hunters','hunters-silver']);
 
 export function createFigureLibrary(onProgress?: (ready:number,total:number,failed:number)=>void, initialLow=false) {
  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
@@ -39,7 +40,7 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
    while(!disposed&&index<entries.length){
     const [id,spec]=entries[index++];
     try{
-     const folder=remasteredFigures.has(id)?'remaster':'v1';
+     const folder=premiumFigures.has(id)?'v3':remasteredFigures.has(id)?'remaster':'v1';
      const file=(spec.file??id)+'.glb';
      const source=await loader.loadAsync('/royale/'+folder+'/'+file);
      track(source);
