@@ -48,8 +48,8 @@ export function LeagueJourney({trophies,quality,onBattle}:{trophies:number;quali
   node.addEventListener('wheel',wheel,{passive:false});
   return ()=>node.removeEventListener('wheel',wheel);
  },[]);
- const choose=(index:number)=>{
-  latest.current=index;setSelected(index);scene.current?.focus(index);
+ const choose=(index:number,reset=false)=>{
+  latest.current=index;setSelected(index);scene.current?.focus(index,reset);
  };
  function start(event:PointerEvent<HTMLDivElement>){
   if((event.target as HTMLElement).closest('button')||event.button!==0)return;
@@ -88,7 +88,7 @@ export function LeagueJourney({trophies,quality,onBattle}:{trophies:number;quali
    <div className={css.camera} aria-label="Камера карты">
     <button type="button" aria-label="Приблизить карту" disabled={world!=='ready'} onClick={()=>scene.current?.zoom(1.22,latest.current)}>+</button>
     <button type="button" aria-label="Отдалить карту" disabled={world!=='ready'} onClick={()=>scene.current?.zoom(1/1.22,latest.current)}>−</button>
-    <button type="button" onClick={()=>choose(progress.index)}>К моей лиге</button>
+    <button type="button" onClick={()=>choose(progress.index,true)}>К моей лиге</button>
    </div>
   </div>
   <ol className={css.route} aria-label="Все лиги">{leagues.map((item,index)=><li key={item.name}>
