@@ -14,7 +14,7 @@ import {KingdomDialog} from './KingdomDialog';
 import k from './Kingdom.module.css';
 import {learningRecap,type LearningRecap} from '@/lib/royale/learning';
 type Finish={profile:RoyaleProfile;outcome:'win'|'loss'|'draw';rewarded:boolean};
-type Props={preferences:Preferences;updatePreferences:(patch:Partial<Preferences>)=>void;user:User|null;match:MatchDescriptor;draft:SavedRun|null;catalog:GameTask[];settings:RoyaleSettings;profile:RoyaleProfile;storageKey:string;profileKey:string;onProfile:(profile:RoyaleProfile)=>void;onReturn:()=>void;onRematch:()=>void;onDeck:()=>void};
+type Props={preferences:Preferences;updatePreferences:(patch:Partial<Preferences>)=>void;user:User|null;match:MatchDescriptor;draft:SavedRun|null;catalog:GameTask[];settings:RoyaleSettings;profile:RoyaleProfile;storageKey:string;profileKey:string;onProfile:(profile:RoyaleProfile)=>void;onReturn:(tab?:'stats')=>void;onRematch:()=>void;onDeck:()=>void};
 function bootBattle(match:MatchDescriptor,draft:SavedRun|null,targetTick=0){const state=draft?replayBattle(match.seed,match.difficulty,match.deck,match.levels,draft.commands,draft.tick):createBattle(match.seed,match.difficulty,match.deck,match.levels);if(draft?.forfeit)state.result='loss';if(!state.result&&targetTick>state.tick)advanceBattle(state,targetTick);return state;}
 export function RoyaleGame({preferences,updatePreferences,user,match,draft,catalog,settings,profile,storageKey,profileKey,onProfile,onReturn,onRematch,onDeck}:Props){
  const paused=useRef(false);
@@ -98,7 +98,7 @@ export function RoyaleGame({preferences,updatePreferences,user,match,draft,catal
  useEffect(()=>{const sound=soundRef.current!;sound.muted=!soundOn;sound.volume=volume;sound.music=music;if(soundOn){sound.unlock();if(music>0)sound.startMusic();else sound.stopMusic();}else sound.stopMusic();},[soundOn,volume,music]);
  useEffect(()=>{
   const element=canvas.current;
-  if(!element)return;
+  if(!element||hud.result)return;
   let cancelled=false,created:BattleView|null=null,observer:ResizeObserver|undefined;
   const capabilities=navigator as Navigator & {deviceMemory?:number};
   autoQuality.current=viewRevision?'low':initialAutoQuality(window.innerWidth,navigator.hardwareConcurrency||8,capabilities.deviceMemory);
@@ -119,7 +119,7 @@ export function RoyaleGame({preferences,updatePreferences,user,match,draft,catal
    if(initial==='low')setViewLoading(null);
   }).catch(fail);
   return()=>{cancelled=true;observer?.disconnect();if(viewRef.current===created)viewRef.current=null;created?.dispose();};
- },[viewRevision,match.arena]);
+ },[viewRevision,match.arena,hud.result]);
  useEffect(()=>{const battle=battleRef.current!,sound=soundRef.current!;alive.current=true;window.scrollTo({top:0,left:0});const previous=new Map<number,{x:number;y:number}>();let frame=0,last=performance.now(),accumulator=0,lastHud=0,lastEffect=0,lastDraw=0,lastMeasure=0,renderCost=0,draws=0,endedAt=0;const meter=new FrameMeter();let qualityMode=preferencesRef.current.quality,qualityLow=qualityMode==='low',slowWindows=0;const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const loop=(now:number)=>{if(qualityMode!==preferencesRef.current.quality){qualityMode=preferencesRef.current.quality;slowWindows=0;meter.reset();}const resolvedQuality=qualityMode==='auto'?autoQuality.current:arenaQuality(qualityMode);qualityLow=resolvedQuality==='low';const delta=paused.current?0:Math.max(0,now-last);last=now;let slowed=0;if(focusActive.current&&focusRemaining.current>0&&questionFocus.current<balance.focusPerQuestionSeconds&&!battle.result){slowed=Math.min(delta,focusRemaining.current*1000,(balance.focusPerQuestionSeconds-questionFocus.current)*1000);focusRemaining.current-=slowed/1000;questionFocus.current+=slowed/1000;}accumulator+=slowed*match.focusScale+(delta-slowed);let steps=0;
    while(accumulator>=balance.tickMs&&steps++<32&&!battle.result){previous.clear();for(const unit of battle.units)previous.set(unit.id,{x:unit.x,y:unit.y});stepBattle(battle);accumulator-=balance.tickMs;}
@@ -311,17 +311,18 @@ export function RoyaleGame({preferences,updatePreferences,user,match,draft,catal
   <h2>{match.practice?'Пауза':'Завершить бой?'}</h2><p>Досрочный выход не приносит кубков, XP или монет.</p>
   <div className={k.actions}><button className={k.goldButton} onClick={resume}>Продолжить бой</button><button onClick={leaveBattle}>Завершить без наград</button></div>
  </KingdomDialog>}
- {graphicsFailure&&!outcome&&<KingdomDialog title="Не удалось открыть 3D" onClose={onReturn} kind="settings">
+ {graphicsFailure&&!outcome&&<KingdomDialog title="Не удалось открыть 3D" onClose={()=>onReturn()} kind="settings">
   <header className={k.dialogHead}><h2>3D недоступно</h2></header>
   <p>Попробуйте облегчённую графику. Матч можно продолжить из меню, если время ещё не истекло.</p>
   <div className={k.actions}><button className={k.goldButton} onClick={()=>{updatePreferences({quality:'low'});setGraphicsFailure(false);setViewRevision(revision=>revision+1);}}>Повторить на Low</button>
-   <button onClick={()=>{void store().finally(onReturn);}}>В главное меню</button></div>
+   <button onClick={()=>{void store().finally(()=>onReturn());}}>В главное меню</button></div>
  </KingdomDialog>}
  {outcome&&<KingdomResult outcome={outcome} forfeit={hud.forfeit} score={[hud.scorePlayer,hud.scoreBot]}
    record={finishResult?.profile.history.find(item=>item.id===match.id)}
+   trophies={finishResult?.profile.trophies}
    pending={localRecap??learningRecap(answerHistory,balance.startEnergy,{})}
    saving={saving} error={finishError} saved={Boolean(finishResult)} catalog={catalog}
-   onRetry={()=>void finalize()} onMenu={onReturn} onDeck={onDeck} onRematch={onRematch}/>}
+   onRetry={()=>void finalize()} onMenu={()=>onReturn()} onStats={()=>onReturn('stats')} onDeck={onDeck} onRematch={onRematch}/>}
   </main>
  );
 }
