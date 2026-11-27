@@ -202,3 +202,28 @@
  .collection {grid-template-rows:clamp(250px,calc(100dvh - 70px),355px) auto}
  .inspector {align-self:stretch;max-height:100%;overflow-y:auto}
 }
+
+/* Match the action hierarchy of the Royale home without changing the layout. */
+.collection .training[aria-expanded=false],
+.collection .deckHead .save:enabled {
+ background:linear-gradient(#ffe781,#f8be36 52%,#d78a10);
+ color:#482b09;
+ border-color:#ffedb5;
+ box-shadow:inset 0 1px #fff2ca,0 3px 0 #78501e,0 6px 12px #030812;
+}
+.collection .training[aria-expanded=false] svg {fill:currentColor}
+.collection .training:enabled,
+.collection .deckHead button:enabled {transition:filter .16s ease,transform .16s ease}
+.collection .training:enabled:hover,
+.collection .deckHead button:enabled:hover {filter:brightness(1.08)}
+.collection .training:enabled:active,
+.collection .deckHead button:enabled:active {transform:translateY(2px)}
+.collection :is(.search,.category):focus-within {border-color:#f3cd83}
+.collection :is(.card,.deckCard)[aria-pressed=true] {
+ border-color:#ffedb5;
+ box-shadow:0 0 0 1px #995a1b,0 0 10px #e8a35160,inset 0 0 0 1px #fff4cc;
+}
+@media(prefers-reduced-motion:reduce) {
+ .collection .training:enabled,.collection .deckHead button:enabled {transition:none}
+ .collection :is(.card,.deckCard,.training,.deckHead button):is(:hover,:active) {transform:none}
+}

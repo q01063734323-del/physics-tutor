@@ -79,7 +79,7 @@ export function makeScienceHall(tier:Tier){
  const oak=new T.MeshStandardMaterial({color:0x60391f,map:wood,roughness:.67});
  const amber=new T.MeshBasicMaterial({color:0xffc674});
  const azure=new T.MeshStandardMaterial({color:0x4ba1db,metalness:.33,roughness:.25,emissive:0x277de2,emissiveIntensity:.58,flatShading:true});
- const windowMaterial=new T.MeshBasicMaterial({map:glass,color:0xb7d3ff});
+ const windowMaterial=new T.MeshBasicMaterial({map:glass,color:0x9fbce8});
  const patches=new Map<T.Material,T.BufferGeometry[]>();
  function add(geometry:T.BufferGeometry,material:T.Material,x=0,y=0,z=0){
   geometry.translate(x,y,z);
@@ -186,6 +186,21 @@ export function makeScienceHall(tier:Tier){
    });
    tube(points,radius,radius>.07?trim:gold);
   }
+ }
+ // Longitudinal ribs connect the transverse arches into a vaulted ceiling.
+ for(const side of [-1,1]){
+  for(const x of [2.3,4.7]){
+   const altitude=6.93+2.15*(1-(x/5.49)**1.65);
+   tube([[side*x,altitude,-6.38],[side*x,altitude+.10,-3.01],[side*x,altitude,.28]],.067,trim);
+  }
+  for(const z of [-6.38,-3.01,.28]){
+   const x=side*5.56;
+   box(.86,.13,.83,x,7.23,z,trim);
+   ornament(x,6.61,z+.36,.20,gold);
+  }
+ }
+ for(const z of [-6.38,-3.01,.28]){
+  add(new T.IcosahedronGeometry(.20,1).scale(1,.67,1),gold,0,8.95,z);
  }
  for(const side of [-1,1]){
   const x=side*3.2,z=-5.95;
@@ -318,7 +333,7 @@ export function makeScienceHall(tier:Tier){
    fragmentShader:`varying vec2 vUv;
    void main(){vec2 q=vUv;float width=.17+.19*q.y;
    float mask=(1.-smoothstep(.015,width,abs(q.x-.5)))*sin(q.y*3.14159);
-   gl_FragColor=vec4(.24,.43,.86,mask*.156);}`});
+   gl_FragColor=vec4(.24,.43,.86,mask*.105);}`});
   for(const x of [-3.66,0,3.74]){
    const beam=new T.Mesh(new T.PlaneGeometry(2.2,7.4),material);
    beam.position.set(x,3.72,-5);beam.rotation.z=-.42;root.add(beam);

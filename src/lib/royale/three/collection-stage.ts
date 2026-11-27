@@ -13,7 +13,7 @@ const accents: Partial<Record<CardId, number>> = {
  ember:0xff9d42, fireball:0xff743e, meteor:0xac73ff, guardians:0xffb54b, archers:0x7db693,
  spears:0x70d8ea, sentinel:0xc581f2, skeletons:0xce9ffd, hunters:0xae8bdd, ballista:0x83bafa, rider:0xffad68,
 };
-const ground=.45;
+const ground=.57;
 
 function stageContact(){
  const canvas=document.createElement('canvas');canvas.width=canvas.height=96;
@@ -34,23 +34,36 @@ function podium(low:boolean){
   const mesh=new T.Mesh(geometry,material);mesh.position.y=y;mesh.receiveShadow=!low;root.add(mesh);return mesh;
  };
  const segments=low?36:72;
- for(const [rt,rb,h,y,m] of [[1.92,2.10,.12,.07,patina],[1.87,1.92,.08,.17,gold],[1.84,1.88,.16,.292,rock],[1.80,1.85,.045,.40,gold],[1.78,1.82,.029,.429,patina]] as const){
+ for(const [rt,rb,h,y,m] of [[1.96,2.10,.14,.08,patina],[1.93,1.96,.045,.17,gold],[1.88,1.93,.14,.26,rock],[1.89,1.89,.025,.34,patina],[1.87,1.89,.14,.42,rock],[1.82,1.87,.047,.51,gold],[1.79,1.83,.037,.55,patina]] as const){
   horizontal(new T.CylinderGeometry(rt,rb,h,segments),m,y);
  }
- for(const [r,y] of [[1.78,.452],[1.65,.451],[.62,.452]]){
+ for(const [r,y] of [[1.78,.572],[1.65,.571],[.62,.572]]){
   horizontal(new T.TorusGeometry(r,.012,5,segments).rotateX(-Math.PI/2),r>1.7?light:gold,y);
  }
  for(let i=0;i<3;i++){
-  const orbit=horizontal(new T.TorusGeometry(.54,.010,4,44).scale(1,.39,1).rotateX(-Math.PI/2),gold,.452);
+  const orbit=horizontal(new T.TorusGeometry(.54,.010,4,44).scale(1,.39,1).rotateX(-Math.PI/2),gold,.572);
   orbit.rotation.y=i*Math.PI/3;
  }
  for(let i=0;i<12;i++){
   const a=i*Math.PI/6;
-  const stud=horizontal(new T.OctahedronGeometry(.045,0), gold,.453);
+  const stud=horizontal(new T.OctahedronGeometry(.045,0), gold,.574);
   stud.position.x=1.70*Math.cos(a);stud.position.z=1.70*Math.sin(a);
  }
+ // Recessed panels and brass inlays share two instanced batches around the drum.
+ const recesses=new T.InstancedMesh(new T.BoxGeometry(.19,.078,.034),patina,segments/2);
+ const inlays=new T.InstancedMesh(new T.OctahedronGeometry(.039),gold,segments/2);
+ const stamp=new T.Object3D();
+ for(let index=0;index<recesses.count;index++){
+  const angle=index*Math.PI*2/recesses.count;
+  stamp.rotation.y=angle;
+  stamp.position.set(1.884*Math.sin(angle),.418,1.884*Math.cos(angle));
+  stamp.updateMatrix();recesses.setMatrixAt(index,stamp.matrix);
+  stamp.position.x*=1.009;stamp.position.z*=1.009;
+  stamp.updateMatrix();inlays.setMatrixAt(index,stamp.matrix);
+ }
+ root.add(recesses,inlays);
  const contact=new T.Mesh(new T.PlaneGeometry(3.1,2.7),new T.MeshBasicMaterial({map:stageContact(),transparent:true,depthWrite:false}));
- contact.rotation.x=-Math.PI/2;contact.position.y=.453;root.add(contact);
+ contact.rotation.x=-Math.PI/2;contact.position.y=.574;root.add(contact);
  return {root,light,contact};
 }
 
@@ -109,8 +122,8 @@ export function mountCollectionStage(canvas:HTMLCanvasElement, frame:HTMLElement
  const low=level==='low', ultra=level==='ultra', high=ultra||level==='high';
  const renderer=new T.WebGLRenderer({alpha:false,canvas,antialias:!low,powerPreference:low?'low-power':'default'});
  const scene=new T.Scene(),camera=new T.PerspectiveCamera(37,1,.08,55);
- scene.background=new T.Color(0x0c1629);scene.fog=new T.FogExp2(0x10192d,.028);
- renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.10;
+ scene.background=new T.Color(0x0c1629);scene.fog=new T.FogExp2(0x10192d,.036);
+ renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.04;
  renderer.shadowMap.enabled=high;renderer.shadowMap.type=T.PCFShadowMap;
  renderer.shadowMap.autoUpdate=false;
  const room=high?new RoomEnvironment():undefined;
@@ -121,22 +134,22 @@ export function mountCollectionStage(canvas:HTMLCanvasElement, frame:HTMLElement
  const hall=makeScienceHall(level), stand=podium(low);
  const motes=makeMotes(low?22:ultra?135:high?86:48);
  scene.add(hall.root,stand.root,motes.points,new T.HemisphereLight(0xb2ccfc,0x6f4137,1.47));
- const key=new T.DirectionalLight(0xffdfb2,3.1);key.position.set(-3,6,5);key.castShadow=high;
+ const key=new T.DirectionalLight(0xffe3c1,3.4);key.position.set(-2.5,5.5,6);key.castShadow=high;
  key.shadow.mapSize.setScalar(ultra?1536:1024);
  Object.assign(key.shadow.camera,{left:-3.3,right:3.3,bottom:-3.3,top:3.3,far:20});
  key.shadow.normalBias=.023; key.shadow.bias=-.00022; key.shadow.radius=3;
- const fill=new T.DirectionalLight(0x82abff,1.49);fill.position.set(3,5,-6);
+ const fill=new T.DirectionalLight(0x90b7ff,1.25);fill.position.set(3,5,-6);
  const rim=new T.PointLight(0x738dff,high?38:23,10,2);rim.position.set(2.65,2.83,-1.9);
  const glow=new T.PointLight(0xffad60,29,13,2);glow.position.set(-2.8,1.72,3);
  scene.add(key,fill,rim,glow);
 
  let model:Loaded|undefined, disposed=false, selected:CardId|undefined, pending:AbortController|undefined;
- let rotation=0, targetRotation=0, zoom=1, targetZoom=1, distance=10, width=1,height=1;
+ let rotation=0, targetRotation=0, zoom=1, targetZoom=1, distance=10, aimHeight=2.0, width=1,height=1;
  let visible=true, animation=0, last=0, time=0, frames=0, stamp=0, born=0, dirty=true;
  let frameAverage=0;
  let viewScale=Math.min((devicePixelRatio||1)*(ultra?1.15:1),low?1:ultra?1.75:high?1.46:1.15);
  const cameraAim=new T.Vector3(0,2.0,0);
- const renderCamera=()=>{camera.position.set(.38,distance*.17+2.28,distance*zoom);camera.lookAt(cameraAim);};
+ const renderCamera=()=>{camera.position.set(.38,distance*.17+2.28,distance*zoom);cameraAim.y=aimHeight;camera.lookAt(cameraAim);};
  const sizing=()=>{
   const bounds=canvas.getBoundingClientRect(), subject=frame.getBoundingClientRect();
   width=Math.round(bounds.width);height=Math.round(bounds.height);
@@ -192,8 +205,10 @@ export function mountCollectionStage(canvas:HTMLCanvasElement, frame:HTMLElement
     const bounds=new T.Box3().setFromObject(facing), size=bounds.getSize(new T.Vector3()),center=bounds.getCenter(new T.Vector3());
     if(bounds.isEmpty()||!Number.isFinite(size.lengthSq()))continue;
     const hover=isSpell(id)||id==='spears';
-    const scale=count===1?Math.min((hover?2.42:3.30)/Math.max(.18,size.y),3.55/Math.max(.18,size.x,size.z))
-      :Math.min((id==='spears'?1.72:2.15)/Math.max(.18,size.y),1.26/Math.max(.18,size.x,size.z));
+    const stageWidth=frame.getBoundingClientRect().width;
+    const emphasis=stageWidth>=600?(count===1&&!hover?1.16:1.06):1;
+    const scale=emphasis*(count===1?Math.min((hover?2.42:3.30)/Math.max(.18,size.y),3.55/Math.max(.18,size.x,size.z))
+      :Math.min((id==='spears'?1.72:2.15)/Math.max(.18,size.y),1.26/Math.max(.18,size.x,size.z)));
     const row=count===2?(i===0?-.62:.62):i===0?0:i===3?.02:(i%2?-1.04:1.04);
     facing.position.set(count===1?0:row,ground+(hover?.47:0)+(i===3?.12:0),i===0?.34:i===3?-1.18:count===2?-.10:-.40);
     const wrapper=new T.Group();wrapper.scale.setScalar(scale);facing.add(wrapper);
@@ -215,6 +230,7 @@ export function mountCollectionStage(canvas:HTMLCanvasElement, frame:HTMLElement
    motes.material.uniforms.strength.value=1.2+(isSpell(id)?.8:0);
    stand.light.color.setHex(color);
    stand.contact.scale.set(count>1?1.12:.87,count>1?1.08:.92,1);
+   aimHeight=isSpell(id)?1.99:count>1?1.98:id==='dragon'?2.26:2.24;
    rotation=targetRotation=0;zoom=targetZoom=1;born=time;activeClip='';
    const idle=clips.find(clip=>clip.name==='Idle')??clips.find(clip=>/hover|fly/i.test(clip.name));
    if(idle)play(idle.name);
