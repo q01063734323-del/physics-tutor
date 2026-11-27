@@ -26,3 +26,6 @@
 .map{height:clamp(370px,41vw,570px)}
 @media(max-width:620px){.map{height:360px}}
 @media(orientation:landscape) and (max-height:550px){.map{height:310px}}
+@media(min-width:951px){
+ .status .battle{min-width:160px;font-size:1.36rem;padding-inline:28px}
+}
