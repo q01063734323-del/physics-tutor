@@ -360,6 +360,6 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:KingdomQual
   cloudBanks.forEach(({sprite})=>sprite.material.dispose());
   instancing.forEach(instance=>instance.dispose());
   disposeKingdomScene(scene);skyCloud.dispose();reflected?.dispose();sun.shadow.dispose();
-  renderer.renderLists.dispose();renderer.dispose();
+  renderer.renderLists.dispose();renderer.dispose();renderer.forceContextLoss();
  };
 }

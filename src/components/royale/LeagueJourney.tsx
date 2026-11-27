@@ -47,7 +47,7 @@ export function LeagueJourney({trophies,quality,onBattle}:{trophies:number;quali
   };
   node.addEventListener('wheel',wheel,{passive:false});
   return ()=>node.removeEventListener('wheel',wheel);
- },[]);
+ },[progress.index,quality]);
  const choose=(index:number,reset=false)=>{
   latest.current=index;setSelected(index);scene.current?.focus(index,reset);
  };
@@ -78,7 +78,7 @@ export function LeagueJourney({trophies,quality,onBattle}:{trophies:number;quali
  return <section className={css.journey} aria-label="Карта лиг">
   <div className={css.map} data-world={world} onPointerDown={start} onPointerMove={move} onPointerUp={stop}
    onPointerCancel={stop} onLostPointerCapture={stop}>
-   <canvas ref={canvas} aria-label="Трёхмерная карта парящих королевств"/>
+   <canvas key={`${progress.index}:${quality}`} ref={canvas} aria-label="Трёхмерная карта парящих королевств"/>
    <div className={css.heading}><p>Небесные королевства</p><h1>Карта лиг</h1></div>
    {world==='loading'&&<p className={css.notice} role="status">Открываем небесную карту…</p>}
    {world==='failed'&&<p className={css.notice} role="status">3D недоступно. Данные всех лиг доступны под картой.</p>}

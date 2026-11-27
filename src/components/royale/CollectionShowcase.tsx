@@ -15,7 +15,7 @@ type Props={id:CardId;name:string;quality:KingdomQuality;showClips:boolean};
 export default function CollectionShowcase({id,name,quality,showClips}:Props){
  const canvas=useRef<HTMLCanvasElement>(null),frame=useRef<HTMLElement>(null),gesture=useRef<HTMLDivElement>(null);
  const player=useRef<Player|undefined>(undefined),pending=useRef(id);
- const [view,setView]=useState<{id:CardId;clips:string[];clip:string}|null>(null);
+ const [view,setView]=useState<{id:CardId;clips:string[];clip:string;quality:KingdomQuality}|null>(null);
  const [failure,setFailure]=useState<CardId|'webgl'|null>(null);
  const [retry,setRetry]=useState(0);
  const fingers=useRef(new Map<number,{x:number;y:number}>());
@@ -24,7 +24,7 @@ export default function CollectionShowcase({id,name,quality,showClips}:Props){
   void import('@/lib/royale/three/collection-stage').then(module=>{
    if(!current||!canvas.current||!frame.current)return;
    instance=module.mountCollectionStage(canvas.current,frame.current,quality,
-    (ready,clips,clip)=>{if(current){setView({id:ready,clips,clip});setFailure(null);}},
+    (ready,clips,clip)=>{if(current){setView({id:ready,clips,clip,quality});setFailure(null);}},
     card=>{if(current)setFailure(card??'webgl');});
    player.current=instance;instance.choose(pending.current);
   }).catch(()=>{if(current)setFailure('webgl');});
@@ -41,7 +41,7 @@ export default function CollectionShowcase({id,name,quality,showClips}:Props){
   area?.addEventListener('wheel',wheel,{passive:false});
   return()=>area?.removeEventListener('wheel',wheel);
  },[]);
- const state=failure==='webgl'||failure===id?'failed':view?.id===id?'ready':'loading';
+ const state=failure==='webgl'||failure===id?'failed':view?.id===id&&view.quality===quality?'ready':'loading';
  function start(event:PointerEvent<HTMLElement>){
   if(event.pointerType==='mouse'&&event.button!==0)return;
   fingers.current.set(event.pointerId,{x:event.clientX,y:event.clientY});
@@ -63,7 +63,7 @@ export default function CollectionShowcase({id,name,quality,showClips}:Props){
  }
  const stop=(event:PointerEvent<HTMLElement>)=>{fingers.current.delete(event.pointerId);};
  return <>
-  <div className={styles.hall}><canvas key={retry} ref={canvas} aria-hidden="true"/></div>
+  <div className={styles.hall}><canvas key={`${quality}:${retry}`} ref={canvas} aria-hidden="true"/></div>
   <figure className={styles.showcase} ref={frame} aria-label={'Презентация · '+name} data-showcase={state}>
    <div className={styles.gesture} ref={gesture} data-collection-gesture role="group" aria-label="Вращение модели"
     onPointerDown={start} onPointerMove={drag} onPointerUp={stop} onPointerCancel={stop} onLostPointerCapture={stop}/>

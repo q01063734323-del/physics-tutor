@@ -285,6 +285,6 @@ export function mountCollectionStage(canvas:HTMLCanvasElement, frame:HTMLElement
   if(model)releaseModel(model);
   hall.dispose();motes.dispose();
   disposeKingdomScene(scene);reflected?.dispose();key.shadow.dispose();
-  renderer.renderLists.dispose();renderer.dispose();
+  renderer.renderLists.dispose();renderer.dispose();renderer.forceContextLoss();
  }};
 }
