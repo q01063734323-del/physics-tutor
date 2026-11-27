@@ -718,3 +718,5 @@
 @media (max-width: 950px) {
  .shell[data-tab=collection] .navigation {position:static}
 }
+
+.shell[data-tab=progress] .navigation {position:static}

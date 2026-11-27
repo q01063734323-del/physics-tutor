@@ -87,7 +87,7 @@ function AccountRoyale({user,practice,onPractice,onCloud}:{user:User|null;practi
    action={action} onDeck={()=>{setEditDeck(true);setTab('collection');}}/>}
   {profile&&tab==='collection'&&<Suspense fallback={<p className={k.notice} role="status">Открываем коллекцию…</p>}><RoyaleCollection profile={profile} deck={deck} setDeck={setDeck} busy={busy} save={()=>void collection('deck')}
    upgrade={id=>void collection('upgrade',id)} quality={preferences.quality} initialDeck={editDeck}/></Suspense>}
-  {profile&&tab==='progress'&&<KingdomProgress profile={profile} topics={catalog?.topics??[]} onBattle={()=>navigate('battle')}/>}
+  {profile&&tab==='progress'&&<KingdomProgress quality={preferences.quality} profile={profile} topics={catalog?.topics??[]} onBattle={()=>navigate('battle')}/>}
   {profile&&tab==='stats'&&<Suspense fallback={<p role="status" className={k.notice}>Открываем статистику…</p>}><KingdomStats profile={profile} topics={catalog?.topics??[]}
    catalog={catalog?.questions??[]} user={practice?null:user}/></Suspense>}
   {settingsOpen&&<KingdomDialog title="Настройки Physics Royale" onClose={()=>setSettingsOpen(false)} kind="settings">
