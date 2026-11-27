@@ -1,7 +1,7 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {cards,isSpell,type CardId,type Side} from '../config';
-import {canPlace,type Unit,type Tower} from '../engine';
+import {cards,cardIds,isSpell,type CardId,type Side} from '../config';
+import {canPlace,type Battle,type Unit,type Tower} from '../engine';
 import type {BattleView,GroundPoint,ViewFrame} from '../presentation';
 import {gameToWorld,worldToGame,WORLD_SCALE} from './coordinates';
 import {createBattleCamera,fitBattleCamera} from './camera';
@@ -21,7 +21,7 @@ type Turret={rig:ModelRig;health:Health;tower:Tower;rubble:T.Group};
 const scaleOf=(id:CardId)=>id==='dragon'?1:1.22;
 const heightOf=(id:CardId)=>id==='giant'?3.58:id==='rider'?3.24:id==='dragon'?2.24:id==='ballista'?2.72:id==='frost'||id==='sentinel'?2.95:2.48;
 /** The only source of combat truth is ViewFrame.battle. No timers advance game rules here. */
-export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(message:string)=>void,onProgress?:(ready:number,total:number)=>void,initialQuality:ArenaQuality='high'):BattleView{
+export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(message:string)=>void,onProgress?:(ready:number,total:number)=>void,initialQuality:ArenaQuality='high',initialFigures:readonly CardId[]=cardIds):BattleView{
  let renderer:T.WebGLRenderer;
  try{renderer=new T.WebGLRenderer({canvas,antialias:initialQuality!=='low',alpha:true,powerPreference:initialQuality==='low'?'low-power':'default'});}catch{throw Error('На этом устройстве недоступен WebGL 2. Попробуйте облегчённую 3D-графику.');}
  const startLow=initialQuality==='low';
@@ -48,12 +48,12 @@ export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(me
   onProgress?.(subscribed+Number(arenaDone)+Number(cometDone),totalAssets+2);
   if(arenaDone&&cometDone&&subscribed===totalAssets&&(failedAssets||arenaFailed||cometFailed))onFailure('Часть 3D-ресурсов не загрузилась. Для них используются облегчённые модели.');
  };
- const library=createFigureLibrary((ready,total,failed)=>{subscribed=ready;totalAssets=total;failedAssets=failed;publishProgress();},true,initialQuality);
+ const library=createFigureLibrary((ready,total,failed)=>{subscribed=ready;totalAssets=total;failedAssets=failed;publishProgress();},initialQuality);
  const effects=expansionEffects(scene);
  const sky=loadSkyArena(scene,ok=>{arenaDone=true;arenaFailed=!ok;publishProgress();},initialQuality);
  function preload(){
   if(loading)return;
-  loading=true;library.preload();
+  loading=true;library.preload(initialFigures);
   void import('./approved-comet.mjs').then(module=>module.createCometFlame(scene,{
    baseURL:new URL('/royale/v1/',location.href),quality:'medium',capacity:3,
   })).then(instance=>{if(disposed)instance.dispose();else comet=instance;})
@@ -100,10 +100,17 @@ export function create3DView(canvas:HTMLCanvasElement,theme:string,onFailure:(me
   if(entry.art){entry.art.root.visible=active;if(active){rig.body.visible=false;entry.art.animate(pose);}}
  }
  function detail(rig:ModelRig,low:boolean,key:string,factory:()=>ModelRig){rig.body.visible=!low;let mesh=lowMeshes.get(rig.root);if(low&&!mesh){mesh=lod.create(key,factory);lowMeshes.set(rig.root,mesh);rig.root.add(mesh);}if(mesh)mesh.visible=low;}
+ let lastHand:Battle['hand']=[];
+ let lastBotHand:Battle['botHand']=[];
  return{
  resize(w,h,pixelRatio){width=Math.max(1,w);height=Math.max(1,h);dpr=pixelRatio;renderer.setPixelRatio(Math.min(dpr,lastQuality==='low'?1:lastQuality==='medium'?1.5:2));renderer.setSize(width,height,false);bloom?.resize(width,height,dpr);fitBattleCamera(camera,width/height);},
  pick(x,y,rect):GroundPoint|null{if(disposed||!rect.width||!rect.height)return null;pointer.set((x-rect.left)/rect.width*2-1,-(y-rect.top)/rect.height*2+1);ray.setFromCamera(pointer,camera);if(!ray.ray.intersectPlane(ground,intersection))return null;const result=worldToGame(intersection.x,intersection.z);return result.x>=0&&result.x<=420&&result.y>=0&&result.y<=720?result:null;},
  render(f:ViewFrame){if(disposed||renderer.getContext().isContextLost())return;const state=f.battle,time=state.tick+f.alpha,seconds=time/20,resolved=f.lowQuality||f.quality==='low'?'low':f.quality==='medium'?'medium':'high';quality(resolved);effects.begin(seconds,f.ultraEffects&&resolved==='high'?'ultra':resolved,f.reducedMotion);sky.update(seconds,f.reducedMotion);world.root.visible=!sky.active();crystalRoot.visible=!sky.active()&&resolved!=='low';if(world.root.visible)world.animate(time,f.reducedMotion);mixers.forEach(m=>m.setTime(f.reducedMotion?0:seconds));
+  if(resolved!=='low'&&subscribed===totalAssets&&
+   (state.hand.some((card,i)=>card!==lastHand[i])||state.botHand.some((card,i)=>card!==lastBotHand[i]))){
+   lastHand=[...state.hand];lastBotHand=[...state.botHand];
+   library.prepare([...lastHand,...lastBotHand,...state.units.map(unit=>unit.card)]);
+  }
   for(const t of state.towers){let entry=turrets.get(t.id);if(!entry){const rig=workshop.createTower(t.kind,t.side);contact(rig,t.kind==='king'?2.2:1.8);scene.add(rig.root);const rubble=new T.Group();for(let i=0;i<9;i++){const block=new T.Mesh(rubbleGeo,rubbleMat);block.position.set(Math.cos(i*2.4)*(.3+i*.06),.25,Math.sin(i*2.4)*(.3+i*.06));block.rotation.set(i*.2,i*.8,i*.4);rubble.add(block);}rubble.visible=false;scene.add(rubble);entry={rig,health:health(t.side,t.kind==='king'?1.6:1.25),tower:t,rubble};turrets.set(t.id,entry);}const p=gameToWorld(t.x,t.y),death=t.hp<=0?Math.min(1,(time-t.hitAt)/16):0;entry.rig.root.position.set(p.x,.18,p.z);entry.rig.root.rotation.y=t.side==='player'?0:Math.PI;sky.setTower(t);entry.rig.animate({time:seconds,moving:false,attack:t.attackAt>0?Math.max(0,1-(time-(t.attackAt-20))/6):0,hit:Math.max(0,1-(time-t.hitAt)/5),death,reducedMotion:f.reducedMotion});detail(entry.rig,f.lowQuality,'tower:'+t.kind+t.side,()=>workshop.createTower(t.kind,t.side));entry.rig.root.visible=death<1&&!sky.active();entry.health.group.visible=t.hp>0;setHealth(entry.health,p.x,t.kind==='king'?(sky.active()?4.96:3.95):3.07,p.z,t.hp/t.maxHp);entry.rubble.position.set(p.x,.1,p.z);entry.rubble.visible=death>0;}
   const currentIds=new Set<number>();for(const u of state.units){currentIds.add(u.id);let entry=figures.get(u.id);if(!entry){entry=acquire(u);figures.set(u.id,entry);}entry.unit=u;const old=f.previous.get(u.id)||u,x=old.x+(u.x-old.x)*f.alpha,y=old.y+(u.y-old.y)*f.alpha,p=gameToWorld(x,y),flying=cards[u.card].flying?.7:0;entry.rig.root.position.set(p.x,.18+flying,p.z);entry.rig.root.rotation.y=-u.facing-Math.PI/2;present(entry,{time:seconds,moving:Math.abs(old.x-u.x)+Math.abs(old.y-u.y)>.015,attack:Math.max(0,1-(time-u.lastAttack)/8),hit:Math.max(0,1-(time-u.hitAt)/5),death:0,reducedMotion:f.reducedMotion},f.lowQuality);entry.rig.root.scale.multiplyScalar(scaleOf(u.card)*(f.reducedMotion?1:.63+.37*T.MathUtils.smoothstep(time-u.bornAt,0,9)));setHealth(entry.health,p.x,heightOf(u.card)+flying,p.z,u.hp/u.maxHp);
    effects.arrival(u.card,p.x,p.z,u.side,u.id,(time-u.bornAt)/20);if(resolved!=='low')effects.badge(p.x,.25,p.z,u.side,u.id);effects.aura(u.card,u.id,p.x,.2+flying,p.z,Math.max(0,1-(time-u.lastAttack)/8));}

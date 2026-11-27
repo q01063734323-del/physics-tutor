@@ -15,14 +15,23 @@ const figures: Partial<Record<CardId, {height:number;forward?:number}>> = {
  ballista:{height:2.06},hunters:{height:1.75},
 };
 
-export function createFigureLibrary(onProgress?: (ready:number,total:number,failed:number)=>void, initialLow=false, knightQuality:ArenaQuality='high') {
+type FigureAssetId = CardId | 'hunters-silver';
+
+function figureAssets(cards: readonly CardId[]): FigureAssetId[] {
+ const assets: FigureAssetId[] = [...new Set(cards)];
+ if (assets.includes('hunters')) assets.push('hunters-silver');
+ return assets;
+}
+
+export function createFigureLibrary(onProgress?: (ready:number,total:number,failed:number)=>void, knightQuality:ArenaQuality='high') {
  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
  const assets=new Map<string,GLTF>();
- const pendingKnights=new Set<ArenaQuality>();
+ const pendingKnights=new Map<ArenaQuality,Promise<void>>();
  const knightPaint=new Map<T.MeshStandardMaterial,T.MeshStandardMaterial>();
  const resources=new Set<T.BufferGeometry|T.Material|T.Texture>();
  const bound=new Set<ReturnType<typeof createInstance>>();
- const entries=[...Object.keys(figures),'hunters-silver','fireball','meteor'] as Array<CardId|'hunters-silver'>;
+ const pending=new Map<FigureAssetId,Promise<void>>();
+ const unavailable=new Set<FigureAssetId>();
  let disposed=false, settled=0, failed=0, started=false;
  const track=(data:GLTF)=>data.scene.traverse(o=>{
   if(!(o instanceof T.Mesh))return;
@@ -34,43 +43,56 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
  });
  const clear=()=>{for(const value of resources)value.dispose();resources.clear();};
  function knightKey(quality:ArenaQuality){return 'knight-'+quality;}
- async function fetchKnight(quality:ArenaQuality){
+ function fetchKnight(quality:ArenaQuality){
   const key=knightKey(quality);
-  if(disposed||assets.has(key)||pendingKnights.has(quality))return;
-  pendingKnights.add(quality);
-  try{
-   const source=await loader.loadAsync(figureAsset('knight',quality));
+  if(disposed||assets.has(key))return Promise.resolve();
+  const pending=pendingKnights.get(quality);
+  if(pending)return pending;
+  const request=loader.loadAsync(figureAsset('knight',quality)).then(source=>{
    track(source);
    if(disposed)clear();else assets.set(key,source);
-  }finally{pendingKnights.delete(quality);}
+  }).finally(()=>pendingKnights.delete(quality));
+  pendingKnights.set(quality,request);
+  return request;
  }
  function setKnightQuality(quality:ArenaQuality){
   if(quality===knightQuality)return;
   knightQuality=quality;
   if(started||quality==='low')void fetchKnight(quality).catch(()=>undefined);
  }
- if(initialLow&&knightQuality==='low')void fetchKnight('low').catch(()=>undefined);
- function preload(){
+ if(knightQuality==='low')void fetchKnight('low').catch(()=>undefined);
+ function load(id:FigureAssetId):Promise<void>{
+  if(disposed||assets.has(id))return Promise.resolve();
+  if(id==='knight')return fetchKnight(knightQuality);
+  const existing=pending.get(id);
+  if(existing)return existing;
+  const request=loader.loadAsync(figureAsset(id)).then(source=>{
+   track(source);
+   if(disposed)clear();else assets.set(id,source);
+  }).catch(error=>{unavailable.add(id);throw error;}).finally(()=>pending.delete(id));
+  pending.set(id,request);
+  return request;
+ }
+ function preload(cards:readonly CardId[]){
   if(started||disposed)return;
+  const entries=figureAssets(cards);
   started=true;onProgress?.(0,entries.length,0);
   let index=0;
   async function next(){
    while(!disposed&&index<entries.length){
     const id=entries[index++];
-    try{
-     if(id==='knight'){await fetchKnight(knightQuality);}
-     else{
-     const source=await loader.loadAsync(figureAsset(id));
-     track(source);
-     if(disposed)clear();else assets.set(id,source);
-     }
-    }catch{failed++;}
+    try{await load(id);}catch{failed++;}
     if(!disposed)onProgress?.(++settled,entries.length,failed);
    }
   }
   for(let i=0;i<4;i++)void next();
  }
- if(!initialLow)preload();
+ function prepare(cards:readonly CardId[]){
+  if(disposed)return;
+  for(const id of figureAssets(cards)){
+   if(!unavailable.has(id))void load(id).catch(()=>undefined);
+  }
+ }
  const projectile=(id:'fireball'|'meteor')=>{
   const source=assets.get(id);if(!source)return;
   const model=clone(source.scene),root=new T.Group(),bounds=new T.Box3().setFromObject(model);
@@ -148,12 +170,13 @@ export function createFigureLibrary(onProgress?: (ready:number,total:number,fail
   return instance;
  }
  return {
-  preload,projectile,setKnightQuality,
+  preload,prepare,projectile,setKnightQuality,
   knightTier(){
    return assets.has(knightKey(knightQuality))?knightQuality:
      (['medium','high','low'] as const).find(q=>assets.has(knightKey(q)));
   },
   create(id:CardId,silver=false,side?:Side,quality?:ArenaQuality){
+   if(id==='hunters'&&silver&&!assets.has('hunters-silver')&&!unavailable.has('hunters-silver'))return;
    const source=id==='knight'&&quality?assets.get(knightKey(quality)):
      (id==='hunters'&&silver?assets.get('hunters-silver'):undefined)??assets.get(id);
    if(!source||disposed)return;

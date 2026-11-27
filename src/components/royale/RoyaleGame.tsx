@@ -109,9 +109,11 @@ export function RoyaleGame({preferences,updatePreferences,user,match,draft,catal
   queueMicrotask(()=>{if(!cancelled)setViewLoading(0);});
   void import('@/lib/royale/three/renderer').then(module=>{
    if(cancelled)return;
+   const {hand,botHand,units}=battleRef.current!;
+   const startingFigures=[...hand,...botHand,...units.map(unit=>unit.card)];
    const view=module.create3DView(element,match.arena,report,(ready,total)=>{
     if(!cancelled)setViewLoading((initial==='low'||ready===total)?null:Math.round(ready/total*100));
-   },initial);
+   },initial,startingFigures);
    created=view;viewRef.current=view;soundRef.current?.play('start');
    const resize=()=>{const box=element.getBoundingClientRect();view.resize(box.width,box.height,Math.min(devicePixelRatio||1,2));};
    resize();observer=new ResizeObserver(resize);observer.observe(element);
