@@ -8,10 +8,12 @@ export function createSkyMotes(scene:T.Scene) {
  const matrix=new T.Object3D();
  const centers=[[-7.75,.99],[7.75,.99],[-1.75,.04],[1.65,.03],[-7.75,17.8],[7.75,17.8],[0,-24.6]];
  spray.count=0;spray.frustumCulled=false;spray.renderOrder=4;
+ spray.instanceMatrix.setUsage(T.DynamicDrawUsage);
+ const tint=new T.Color();
  scene.add(spray);
  return {
-  update(seconds:number,quality:ArenaQuality,visible:boolean){
-   const count=!visible||quality==='low'?0:quality==='medium'?34:77;
+  update(seconds:number,quality:ArenaQuality,visible:boolean,ultra=false){
+   const count=!visible||quality==='low'?0:quality==='medium'?28:ultra?96:66;
    spray.count=count;
    for(let i=0;i<count;i++){
     const anchor=centers[i%centers.length];
@@ -20,11 +22,12 @@ export function createSkyMotes(scene:T.Scene) {
     matrix.position.set(anchor[0]+(.21+.61*t)*Math.cos(a),
      (anchor[1]>7?-.52:.28)+(1-t)*.85*Math.sin(Math.PI*t),anchor[1]+t*.72*Math.sin(a));
     matrix.rotation.set(a,t*4,t*4);
-    matrix.scale.setScalar((1-t)*1.35);
+    matrix.scale.setScalar(Math.sin(Math.PI*t)*(.66+(i%5)*.15));
     matrix.updateMatrix();
     spray.setMatrixAt(i,matrix.matrix);
+    spray.setColorAt(i,tint.setHex(i%3===0?0xe1f6ff:0xa7d6f7).multiplyScalar(Math.sin(Math.PI*t)));
    }
-   if(count)spray.instanceMatrix.needsUpdate=true;
+   if(count){spray.instanceMatrix.needsUpdate=true;if(spray.instanceColor)spray.instanceColor.needsUpdate=true;}
   },
   dispose(){spray.removeFromParent();spray.dispose();geometry.dispose();material.dispose();},
  };

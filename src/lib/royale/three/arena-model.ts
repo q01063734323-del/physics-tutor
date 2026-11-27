@@ -74,9 +74,9 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void,initial:
       mat.alphaMap=alpha;
       mat.transparent=true;
       mat.depthWrite=false;
-      mat.opacity=.86;
+      mat.opacity=.80;
       mat.emissive.setHex(0x198ed4);
-      mat.emissiveIntensity=.45;
+      mat.emissiveIntensity=.36;
       mat.side=T.DoubleSide;
      }
      if(mat.name.startsWith('Cloud')){
@@ -93,7 +93,7 @@ export function loadSkyArena(scene:T.Scene,onSettled:(ok:boolean)=>void,initial:
        map.wrapS=map.wrapT=T.RepeatWrapping;
        map.needsUpdate=true;
        mat[field]=map;model.resources.add(map);
-       model.flowing.set(map,isFall?{u:.005,v:-.188}:{u:.091,v:-.040});
+       model.flowing.set(map,isFall?{u:field==='normalMap'?-.013:.010,v:field==='normalMap'?-.241:-.165}:{u:.076,v:-.032});
       }
      }
     }

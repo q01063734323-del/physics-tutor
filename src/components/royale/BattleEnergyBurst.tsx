@@ -3,35 +3,38 @@
 import { useEffect, useRef, type RefObject } from 'react';
 import b from './RoyaleBattle.module.css';
 
-export function BattleEnergyBurst({ from, to, mobile }: {
+export function BattleEnergyBurst({ from, to, mobile, amount }: {
   from: RefObject<HTMLDivElement | null>;
   to: RefObject<HTMLDivElement | null>;
   mobile: boolean;
+  amount: number;
 }) {
   const layer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const start = from.current?.getBoundingClientRect();
-    const end = to.current?.getBoundingClientRect();
+    const filled = to.current?.querySelectorAll<HTMLElement>('[data-filled="true"]');
+    const target = filled?.[filled.length - 1];
+    const end = (target ?? to.current)?.getBoundingClientRect();
     if (!start || !layer.current) return;
     const bounds = layer.current.getBoundingClientRect();
     const startX = start.left + (mobile ? start.width * .5 : 25) - bounds.left;
     const startY = start.top + start.height / 2 - bounds.top;
-    const endX = end ? end.left + end.width * .32 - bounds.left : startX;
+    const endX = end ? end.left + end.width * .5 - bounds.left : startX;
     const endY = end ? end.top + end.height / 2 - bounds.top : startY;
     const animations = Array.from(layer.current.children).map((particle, index) => {
-      const bend = (index - 5) * 10;
+      const bend = (index - (layer.current!.children.length - 1) / 2) * 8;
       return particle.animate([
         { transform: `translate(${startX}px, ${startY}px) rotate(45deg) scale(.15)`, opacity: 0 },
         { transform: `translate(${startX + (endX - startX) * .45 + bend}px, ${startY + (endY - startY) * .37 - 44 + bend}px) rotate(115deg) scale(1)`, opacity: 1 },
         { transform: `translate(${endX}px, ${endY}px) rotate(230deg) scale(.2)`, opacity: 0 },
-      ], { duration: 550, delay: index * 22, easing: 'cubic-bezier(.25,.45,.3,1)' });
+      ], { duration: 460, delay: index * 18, easing: 'cubic-bezier(.25,.45,.3,1)' });
     });
     return () => { for (const animation of animations) animation.cancel(); };
-  }, [from, to, mobile]);
+  }, [from, to, mobile, amount]);
 
   return <div ref={layer} className={b.particles} aria-hidden="true">
-    {Array.from({ length: 11 }, (_, index) => <i key={index}/>)}
+    {Array.from({ length: Math.min(9, amount + 3) }, (_, index) => <i key={index}/>)}
   </div>;
 }

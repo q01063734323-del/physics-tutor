@@ -887,9 +887,9 @@
   content:"";position:absolute;z-index:2;inset:1px;border:1px solid #ffe2a6;border-radius:inherit;
   box-shadow:inset 0 0 12px #ffd3624d,0 0 20px #d7adff5e;pointer-events:none;
 }
-.particles i{width:8px;height:8px;border-radius:2px;background:#fff1c2;box-shadow:0 0 7px 2px #f7acff8c}
+.particles i{width:8px;height:8px;border-radius:2px;background:#e6b8ff;box-shadow:0 0 7px 2px #c88cff8c}
 .particles i:nth-child(3n+2){width:5px;height:5px;background:#c5a3ff;box-shadow:0 0 7px 2px #a987ff89}
-.particles i:nth-child(3n+3){width:4px;height:4px;background:#fef6ff;box-shadow:0 0 5px 1px #f1d3ff9c}
+.particles i:nth-child(3n+3){width:4px;height:4px;background:#f3dbff;box-shadow:0 0 5px 1px #d8afff9c}
 @media(prefers-reduced-motion:reduce){.arena{animation:none}.particles{display:none}}
 
 .game[data-card-selected="true"] .arena{cursor:crosshair;}
