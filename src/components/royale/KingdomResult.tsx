@@ -10,20 +10,13 @@ import k from './Kingdom.module.css';
 import r from './CinematicResult.module.css';
 import { leagueProgress } from '@/lib/royale/leagues';
 import { RoyaleIcon } from './RoyaleIcon';
+import {ResultHero} from './ResultHero';
+import type {KingdomQuality} from '@/lib/royale/quality';
+import {ResultRegalia} from './ResultRegalia';
 import { BattleIcon } from './RoyaleBattleIcon';
 
 const titles = { win:'Победа!', loss:'Поражение', draw:'Ничья' };
 const signed = (value: number) => value > 0 ? '+' + value : String(value);
-
-function VictoryCrest(){
- return <svg viewBox="0 0 160 105" aria-hidden="true">
-  <defs><linearGradient id="victoryMetal" x2=".35" y2="1"><stop stopColor="#fff6cb"/><stop offset=".48" stopColor="#e8a74d"/><stop offset="1" stopColor="#925027"/></linearGradient></defs>
-  <path fill="#0f1e38" stroke="#ffe0a0" strokeWidth="2" d="m80 17 35 12v24c0 19-16 33-35 44-19-11-35-25-35-44V29Z"/>
-  <path fill="url(#victoryMetal)" stroke="#fff0ba" strokeWidth="1.4" d="m51 38 16 7 13-17 13 17 16-7-9 28H60Zm10 33h38v5H61Z"/>
-  <path fill="url(#victoryMetal)" d="M65 93C40 92 22 74 13 51c12 6 18 16 24 24-4-12-5-19-5-31 12 9 14 21 15 35 5-7 7-10 13-13 0 10-3 13-5 18Zm30 0c25-1 43-19 52-42-12 6-18 16-24 24 4-12 5-19 5-31-12 9-14 21-15 35-5-7-7-10-13-13 0 10 3 13 5 18Z"/>
-  <path fill="#fff3c2" d="m80 38 5 10-5 6-5-6Z"/>
- </svg>;
-}
 
 function TrophyCount({total,skip}:{total:number|null;skip:boolean}) {
  const [value,setValue]=useState(total??0);
@@ -43,9 +36,9 @@ function TrophyCount({total,skip}:{total:number|null;skip:boolean}) {
  return total===null?'—':<><span className={k.trophyValue} aria-hidden="true">{signed(skip?total:value)}</span><span className={k.srOnly}>{signed(total)}</span></>;
 }
 
-export function KingdomResult({outcome,forfeit,score,record,trophies,pending,saving,error,saved,catalog,onRetry,onMenu,onStats,onDeck,onRematch}: {
- outcome: keyof typeof titles; forfeit: boolean; score:[number,number]; record?:MatchHistory; trophies?:number; pending:LearningRecap;
- saving:boolean; error:string; saved:boolean; catalog:GameTask[]; onRetry:()=>void; onMenu:()=>void; onStats:()=>void; onDeck:()=>void; onRematch:()=>void;
+export function KingdomResult({outcome,forfeit,score,record,trophies,quality,pending,saving,error,saved,catalog,onRetry,onMenu,onStats,onLeague,onDeck,onRematch}: {
+ outcome: keyof typeof titles; forfeit: boolean; score:[number,number]; record?:MatchHistory; trophies?:number; quality:KingdomQuality; pending:LearningRecap;
+ saving:boolean; error:string; saved:boolean; catalog:GameTask[]; onRetry:()=>void; onMenu:()=>void; onStats:()=>void; onLeague:()=>void; onDeck:()=>void; onRematch:()=>void;
 }) {
  const [review,setReview] = useState(false);
  const [skip,setSkip] = useState(false);
@@ -66,13 +59,15 @@ export function KingdomResult({outcome,forfeit,score,record,trophies,pending,sav
  return <KingdomDialog className={r.dialog} title={title} onClose={()=>{if(!saving)onMenu();}} kind={result}>
   <div className={r.stage} data-skip={skip} data-result={result}>
    <div className={r.landscape} aria-hidden="true"/>
-   <div className={r.heroPortrait} aria-hidden="true"/>
-   {result==='win'&&<div className={r.sparks} aria-hidden="true"/>}
+   <ResultHero result={result} quality={quality} skip={skip}/>
+   {(result==='win'||result==='loss')&&<div className={r.sparks} aria-hidden="true"/>}
    <div className={r.content}>
     {!skip&&<button className={r.skip} type="button" onClick={()=>{setSkip(true);menuButton.current?.focus();}}>Пропустить анимацию</button>}
     <header className={r.banner}>
-     <div className={r.emblem}>{result==='win'?<VictoryCrest/>:result==='loss'?<RoyaleIcon name="shield"/>:<KingdomMark name="atom" size={62}/>}</div>
-     <h1>{title}</h1>
+     <div className={r.regalia} data-ornate={result==='win'||result==='loss'}>
+      {result==='win'||result==='loss'?<ResultRegalia win={result==='win'}/>:<div className={r.emblem}><KingdomMark name="atom" size={62}/></div>}
+      <h1>{title}</h1>
+     </div>
      <div className={r.score} aria-label={`Счёт ${score[0]} : ${score[1]}`}><b>{score[0]}</b><RoyaleIcon name="swords"/><b>{score[1]}</b></div>
      {result==='loss'&&<p>Следующий бой можно начать с разбора трудных задач.</p>}
     </header>
@@ -84,12 +79,14 @@ export function KingdomResult({outcome,forfeit,score,record,trophies,pending,sav
      {record&&<div className={r.experience}><small>Опыт за бой</small><b>+{record.xp} XP</b></div>}
     </div>
     {promotion&&<aside className={r.promotion} role="status">
+     <span className={r.leagueArtwork} style={{backgroundImage:`url(/royale/cinematic/league-${standing.index}.webp)`}} aria-hidden="true"/>
      <LeagueBadge {...standing.current}/><div><small>Новая лига</small><b>{standing.current.name}</b><p>{trophies} кубков · порог {standing.current.trophies}</p></div>
+     <button type="button" onClick={onLeague}>К карте лиг</button>
     </aside>}
     <section className={r.learning} aria-label="Учебные итоги">
-     <div><span>Точность</span><b>{percent===null?'—':percent+'%'}</b>{percent!==null&&<progress aria-label="Точность ответов" value={percent} max={100}/>}</div>
-     <div><span>Верные ответы</span><b>{correct} <small>/ {attempts}</small></b><small>С ошибкой: {attempts-correct}</small></div>
-     <div className={r.energy}><span>Энергия за задачи</span><b>+{report.energy}</b><small>за этот бой</small></div>
+     <div><span><BattleIcon name="stats"/>Точность</span><b>{percent===null?'—':percent+'%'}</b>{percent!==null&&<progress aria-label="Точность ответов" value={percent} max={100}/>}</div>
+     <div><span><BattleIcon name="book"/>Верные ответы</span><b>{correct} <small>/ {attempts}</small></b><small>С ошибкой: {attempts-correct}</small></div>
+     <div className={r.energy}><span><BattleIcon name="energy"/>Энергия за задачи</span><b>+{report.energy}</b><small>за этот бой</small></div>
     </section>
     {subjects.length>0?<section className={r.topics}><h2>Итоги по темам</h2><ul>{subjects.map(([topic,v])=><li key={topic}><span>{topic}</span><b>{v.correct} / {v.attempts}</b></li>)}</ul>
      {mistakes.length>0&&<p>Стоит повторить: {mistakes[0][0]}</p>}</section>:

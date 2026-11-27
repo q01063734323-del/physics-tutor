@@ -14,7 +14,7 @@ import {KingdomDialog} from './KingdomDialog';
 import k from './Kingdom.module.css';
 import {learningRecap,type LearningRecap} from '@/lib/royale/learning';
 type Finish={profile:RoyaleProfile;outcome:'win'|'loss'|'draw';rewarded:boolean};
-type Props={preferences:Preferences;updatePreferences:(patch:Partial<Preferences>)=>void;user:User|null;match:MatchDescriptor;draft:SavedRun|null;catalog:GameTask[];settings:RoyaleSettings;profile:RoyaleProfile;storageKey:string;profileKey:string;onProfile:(profile:RoyaleProfile)=>void;onReturn:(tab?:'stats')=>void;onRematch:()=>void;onDeck:()=>void};
+type Props={preferences:Preferences;updatePreferences:(patch:Partial<Preferences>)=>void;user:User|null;match:MatchDescriptor;draft:SavedRun|null;catalog:GameTask[];settings:RoyaleSettings;profile:RoyaleProfile;storageKey:string;profileKey:string;onProfile:(profile:RoyaleProfile)=>void;onReturn:(tab?:'stats'|'progress')=>void;onRematch:()=>void;onDeck:()=>void};
 function bootBattle(match:MatchDescriptor,draft:SavedRun|null,targetTick=0){const state=draft?replayBattle(match.seed,match.difficulty,match.deck,match.levels,draft.commands,draft.tick):createBattle(match.seed,match.difficulty,match.deck,match.levels);if(draft?.forfeit)state.result='loss';if(!state.result&&targetTick>state.tick)advanceBattle(state,targetTick);return state;}
 export function RoyaleGame({preferences,updatePreferences,user,match,draft,catalog,settings,profile,storageKey,profileKey,onProfile,onReturn,onRematch,onDeck}:Props){
  const paused=useRef(false);
@@ -319,10 +319,10 @@ export function RoyaleGame({preferences,updatePreferences,user,match,draft,catal
  </KingdomDialog>}
  {outcome&&<KingdomResult outcome={outcome} forfeit={hud.forfeit} score={[hud.scorePlayer,hud.scoreBot]}
    record={finishResult?.profile.history.find(item=>item.id===match.id)}
-   trophies={finishResult?.profile.trophies}
+   trophies={finishResult?.profile.trophies} quality={preferences.quality}
    pending={localRecap??learningRecap(answerHistory,balance.startEnergy,{})}
    saving={saving} error={finishError} saved={Boolean(finishResult)} catalog={catalog}
-   onRetry={()=>void finalize()} onMenu={()=>onReturn()} onStats={()=>onReturn('stats')} onDeck={onDeck} onRematch={onRematch}/>}
+   onRetry={()=>void finalize()} onMenu={()=>onReturn()} onStats={()=>onReturn('stats')} onLeague={()=>onReturn('progress')} onDeck={onDeck} onRematch={onRematch}/>}
   </main>
  );
 }

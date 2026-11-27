@@ -64,3 +64,52 @@
 .learning progress::-moz-progress-bar{background:linear-gradient(90deg,#379c87,#e3ca81)}
 .actions .primary{min-width:148px;padding-inline:15px}
 .actions button:enabled:hover{filter:brightness(1.1)}
+
+/* A shaped, layered ribbon and metal insignia; the headline stays live text. */
+.regalia{position:relative;width:min(100%,950px);margin:0 auto 3px}
+.regalia[data-ornate=true]{aspect-ratio:820/211}
+.regalia[data-ornate=true]>svg{position:absolute;inset:0;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 9px 10px #0c1127b0);animation:crest .48s cubic-bezier(.18,.8,.2,1) both}
+.regalia[data-ornate=true] h1{
+ position:absolute;inset:48% 13% auto;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;background:none;
+ font-size:clamp(1.75rem,7vw,5.65rem);line-height:.95;letter-spacing:.025em;
+ text-shadow:0 1px #fff4ca,0 3px #ac6b23,0 5px #613616,0 8px 14px #220d33;
+}
+.stage[data-result=loss] .regalia[data-ornate=true] h1{
+ font-size:clamp(1.29rem,6.2vw,4.68rem);text-shadow:0 1px #f9d7c5,0 3px #9b4e60,0 5px #471f38,0 7px 11px #240f31;
+}
+.content{width:min(calc(100% - 32px),980px);padding-top:clamp(17px,3.4vh,40px)}
+.banner{margin-bottom:12px}.score b{min-width:52px;font-size:1.65rem}
+.rewards,.learning>div,.topics,.promotion{
+ border-color:#ceab76;box-shadow:inset 0 1px #f7ddb63d,inset 0 0 0 3px #080f2292,inset 0 0 0 4px #d4be9031,0 8px 18px #0a102a80;
+}
+.learning>div{padding:13px 15px}.learning span{display:flex;align-items:center;gap:5px;color:#fff1d9}
+.learning span svg{color:#ffd495;width:21px;height:21px;flex:none}.learning .energy svg{color:#e7b6ff}
+.learning b{font-size:clamp(1.55rem,3.8vw,2.8rem)}
+.actions .primary{min-width:200px;min-height:54px;border:2px solid #fff4ba;border-radius:14px;padding-inline:23px;font-size:1.13rem;
+ background:radial-gradient(ellipse at 50% 0%,#fffad08a,transparent 68%),linear-gradient(#ffe781,#f8be36 52%,#d78a10);
+ box-shadow:inset 0 0 0 2px #a26624,inset 0 0 0 4px #ffedb583,0 4px #805116,0 8px 17px #0c102aa0;
+ transition:transform .13s,filter .13s;}
+.actions .primary:enabled:active{transform:translateY(3px)}
+@media(max-width:650px){
+ .content{width:calc(100% - 20px);padding:max(44px,env(safe-area-inset-top)) 0 max(19px,env(safe-area-inset-bottom))}
+ .regalia[data-ornate=true] h1{font-size:clamp(1.33rem,7.8vw,2.8rem)}
+ .stage[data-result=loss] .regalia[data-ornate=true] h1{font-size:clamp(1.08rem,6.45vw,2.45rem)}
+ .learning>div{padding:8px 6px}.learning span svg{width:15px;height:15px}
+ .actions .primary{min-width:0;font-size:1rem}
+}
+
+.landscape{background-image:linear-gradient(180deg,#16172d12,#15244345 66%,#14213b8c),url('/royale/kingdom-v3/environment-poster.webp'),url('/royale/kingdom-v3/sky.webp')}
+.stage[data-result=loss] .landscape{filter:saturate(.8) hue-rotate(10deg) brightness(.93)}
+.heroPortrait{inset:auto auto 0 0;width:min(28vw,460px);height:min(82vh,840px)}
+.heroPortrait:has(canvas[data-hero-ready=true]){mask-image:none;background:none;opacity:1;filter:none}
+.heroPortrait canvas{display:block;width:100%;height:100%;visibility:hidden}
+.heroPortrait canvas[data-hero-ready=true]{visibility:visible}
+.stage[data-result=loss] .heroPortrait:not(:has([data-hero-ready=true])){background-position:70% 41%;background-size:auto 109%;filter:saturate(.7) brightness(.88)}
+.stage[data-result=loss] .sparks{background:radial-gradient(ellipse at 70% 0%,#bdb2ff65,transparent 55%);mask-image:none}
+.stage[data-result=loss] .sparks::after{background:radial-gradient(circle at 25% 18%,#d9adff 0 2px,transparent 5px),radial-gradient(circle at 82% 33%,#d8b5ff 0 2px,transparent 6px)}
+.promotion{position:relative;isolation:isolate;overflow:hidden}
+.leagueArtwork{position:absolute;inset:0 0 0 auto;width:43%;z-index:-1;background-size:cover;background-position:center;opacity:.25;mask-image:linear-gradient(90deg,transparent,#000)}
+.promotion button{margin-inline-start:auto;min-height:44px;padding:6px 12px;border:1px solid #dfbf82;border-radius:7px;background:#172341e8;color:#ffedc6;font-weight:700}
+@media(min-width:1050px){.content{margin-left:auto;margin-right:max(16px,calc((100vw - 1480px)/2));width:min(980px,72vw)}}
+@media(max-width:650px){.promotion{gap:6px;flex-wrap:wrap}.promotion button{min-height:40px}}
+.stage[data-result=win] .regalia[data-ornate=true] h1{box-shadow:none}
