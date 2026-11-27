@@ -35,7 +35,7 @@ for (const [account, path, status] of [[alice, own, 200], [bob, own, 403], [bob,
 assert.equal((await access(alice, `users/${alice.uid}?updateMask.fieldPaths=role`, {
   method: "PATCH", body: JSON.stringify({ fields: { role: { stringValue: "teacher" } } }),
 })).status, 403);
-const teacher = await student("teacher", "e.galkin58@mail.ru");
+const teacher = await student("teacher", "e.galkin07@mail.ru");
 const classroom = `classroomRooms/${suffix}`;
 const board = `${classroom}/board/state`;
 const expiry = new Date(Date.now() + 60_000);
