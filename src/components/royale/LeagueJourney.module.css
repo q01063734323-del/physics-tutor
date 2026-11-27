@@ -8,8 +8,9 @@
 .map .pin{position:absolute;inset:0 auto auto 0;transform:translate(-50%,30%);min-height:34px;min-width:88px;max-width:150px;padding:4px 8px;border:1px solid #8e9cbc;border-radius:8px;color:#f1e6d8;background:#18223aef;font:700 .78rem/1.16 Georgia,serif;box-shadow:0 4px 9px #080f25b3}
 .map .pin[hidden]{display:none}.pin span{display:block;color:#f3cf96}
 .map .pin[data-current=true]{border-color:#ffe19a;background:#3d2a24}.map .pin[aria-pressed=true]{outline:2px solid #f9d081;outline-offset:2px}.map .pin[data-ahead=true]:not([aria-pressed=true]){color:#d8dfed}
-.camera{position:absolute;right:10px;bottom:12px;display:flex;gap:5px}
+.camera{display:flex;justify-content:flex-end;gap:5px;padding:6px 10px;background:#0d172d}
 .camera button,.route button{background:#16233cf5;color:#fff0d4;border:1px solid #a78656;border-radius:8px;min-height:44px;padding:5px 10px}
+.camera button{min-width:44px}
 .camera button:disabled{opacity:.45}.route{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));list-style:none;gap:6px;padding:10px;margin:0;background:#0d172d}
 .route li{min-width:0}.route button{width:100%;height:100%;display:flex;align-items:center;gap:6px;text-align:left;line-height:1.15;overflow-wrap:anywhere}
 .route button small{display:block;color:#d8b47d;margin-top:5px}.route button[aria-pressed=true]{border-color:#ffdb83;background:#372a27}.route button[data-ahead=true]:not([aria-pressed=true]){border-color:#536580}

@@ -10,7 +10,8 @@
 .stage[data-result=loss] .heroPortrait{filter:saturate(.67) brightness(.69)}
 .sparks{background:radial-gradient(ellipse at 52% -12%,#ffdb8059,transparent 53%),repeating-conic-gradient(from 1deg at 53% 3%,#ffdc791a 0deg,transparent 7deg,transparent 24deg);mask-image:linear-gradient(#000 0%,transparent 65%);animation:glow .8s ease-out both}
 .content{position:relative;width:min(calc(100% - 32px),880px);margin:auto;padding:28px 0 32px;animation:arrive .44s ease-out both}
-.skip{position:absolute;top:12px;right:0;background:#111a30dd;color:#e7d8ba;border:1px solid #a58b60;border-radius:7px;padding:6px 9px;font-size:.74rem}
+.resultControls{display:flex;justify-content:flex-end;min-height:44px}
+.skip{min-height:44px;background:#111a30dd;color:#e7d8ba;border:1px solid #a58b60;border-radius:7px;padding:6px 12px;font-size:.8rem}
 .banner{text-align:center;margin:0 auto 14px}
 .banner h1{margin:-9px auto 10px;padding:10px 16px;color:var(--foil);font:800 clamp(2rem,6.1vw,5rem)/1.02 Georgia,serif;text-transform:uppercase;letter-spacing:.02em;text-shadow:0 3px #6b4021,0 6px 12px #000b;background:linear-gradient(180deg,#ffffff25,transparent 32%,#0b061e65),var(--ribbon);border:2px solid var(--rim);border-radius:12% 12% 8% 8% / 23% 23% 32% 32%;box-shadow:inset 0 0 0 3px #f8dca529,0 9px 25px #0b1225b3}
 .banner p{margin:8px 0 0;color:#f1e6ed;font-size:.91rem}
@@ -77,7 +78,7 @@
 .stage[data-result=loss] .regalia[data-ornate=true] h1{
  font-size:clamp(1.29rem,6.2vw,4.68rem);text-shadow:0 1px #f9d7c5,0 3px #9b4e60,0 5px #471f38,0 7px 11px #240f31;
 }
-.content{width:min(calc(100% - 32px),980px);padding-top:clamp(17px,3.4vh,40px)}
+.content{width:min(calc(100% - 32px),980px);padding-top:max(8px,env(safe-area-inset-top))}
 .banner{margin-bottom:12px}.score b{min-width:52px;font-size:1.65rem}
 .rewards,.learning>div,.topics,.promotion{
  border-color:#ceab76;box-shadow:inset 0 1px #f7ddb63d,inset 0 0 0 3px #080f2292,inset 0 0 0 4px #d4be9031,0 8px 18px #0a102a80;
@@ -91,12 +92,13 @@
  transition:transform .13s,filter .13s;}
 .actions .primary:enabled:active{transform:translateY(3px)}
 @media(max-width:650px){
- .content{width:calc(100% - 20px);padding:max(44px,env(safe-area-inset-top)) 0 max(19px,env(safe-area-inset-bottom))}
+ .content{width:calc(100% - max(20px,env(safe-area-inset-left) + env(safe-area-inset-right) + 12px));padding:max(6px,env(safe-area-inset-top)) 0 max(19px,env(safe-area-inset-bottom))}
  .regalia[data-ornate=true] h1{font-size:clamp(1.33rem,7.8vw,2.8rem)}
  .stage[data-result=loss] .regalia[data-ornate=true] h1{font-size:clamp(1.08rem,6.45vw,2.45rem)}
  .learning>div{padding:8px 6px}.learning span svg{width:15px;height:15px}
- .actions .primary{min-width:0;font-size:1rem}
+ .actions .primary{min-width:0;font-size:1.13rem;line-height:1.2;text-wrap:balance}
 }
+@media(prefers-reduced-motion:reduce){.resultControls{display:none}}
 
 .landscape{background-image:linear-gradient(180deg,#16172d12,#15244345 66%,#14213b8c),url('/royale/kingdom-v3/environment-poster.webp'),url('/royale/kingdom-v3/sky.webp')}
 .stage[data-result=loss] .landscape{filter:saturate(.8) hue-rotate(10deg) brightness(.93)}

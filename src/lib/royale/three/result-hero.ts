@@ -20,8 +20,10 @@ export async function mountResultHero(canvas:HTMLCanvasElement,win:boolean,detai
  rim.position.set(1,3,-4);scene.add(rim);
  camera.position.set(win?.36:.12,.18,7);camera.lookAt(0,.09,0);
  const mixer=new T.AnimationMixer(model);
- const clip=animations.find(item=>item.name===(win?'Victory':'Defeat'));
+ // The arena's Defeat clip is a fall. Keep the results portrait standing.
+ const clip=animations.find(item=>item.name===(win?'Victory':'Idle'));
  if(clip){const action=mixer.clipAction(clip);action.setLoop(T.LoopOnce,1);action.clampWhenFinished=true;action.play();}
+ if(!win)mixer.setTime(Math.min(.35,clip?.duration??0));
  const motion=matchMedia('(prefers-reduced-motion: reduce)');
  let frame=0,started:number|undefined,disposed=false;
  function resize(){
@@ -41,7 +43,7 @@ export async function mountResultHero(canvas:HTMLCanvasElement,win:boolean,detai
   if(!motion.matches){mixer.setTime(Math.min(elapsed,clip?.duration??0));renderer.render(scene,camera);}
   if(!motion.matches&&elapsed<(clip?.duration??0))frame=requestAnimationFrame(tick);
  }
- resize();canvas.dataset.heroReady='true';frame=requestAnimationFrame(tick);
+ resize();canvas.dataset.heroReady='true';if(win)frame=requestAnimationFrame(tick);
  return ()=>{
   disposed=true;observer.disconnect();cancelAnimationFrame(frame);mixer.stopAllAction();mixer.uncacheRoot(model);
   disposeKingdomScene(model);renderer.dispose();renderer.forceContextLoss();delete canvas.dataset.heroReady;

@@ -85,12 +85,12 @@ export function LeagueJourney({trophies,quality,onBattle}:{trophies:number;quali
    {leagues.map((item,index)=><button key={item.name} ref={node=>{pins.current[index]=node;}} type="button" hidden
     className={css.pin} data-current={index===progress.index} data-ahead={index>progress.index}
     aria-pressed={index===selected} onClick={()=>choose(index)}><span>{numerals[index]}</span>{item.name}</button>)}
-   <div className={css.camera} aria-label="Камера карты">
+  </div>
+   <div className={css.camera} role="group" aria-label="Камера карты">
     <button type="button" aria-label="Приблизить карту" disabled={world!=='ready'} onClick={()=>scene.current?.zoom(1.22,latest.current)}>+</button>
     <button type="button" aria-label="Отдалить карту" disabled={world!=='ready'} onClick={()=>scene.current?.zoom(1/1.22,latest.current)}>−</button>
     <button type="button" onClick={()=>choose(progress.index,true)}>К моей лиге</button>
    </div>
-  </div>
   <ol className={css.route} aria-label="Все лиги">{leagues.map((item,index)=><li key={item.name}>
    <button type="button" aria-pressed={index===selected} aria-current={index===progress.index?'step':undefined}
     data-ahead={index>progress.index} onClick={()=>choose(index)}>

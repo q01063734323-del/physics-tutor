@@ -62,7 +62,9 @@ export function KingdomResult({outcome,forfeit,score,record,trophies,quality,pen
    <ResultHero result={result} quality={quality} skip={skip}/>
    {(result==='win'||result==='loss')&&<div className={r.sparks} aria-hidden="true"/>}
    <div className={r.content}>
-    {!skip&&<button className={r.skip} type="button" onClick={()=>{setSkip(true);menuButton.current?.focus();}}>Пропустить анимацию</button>}
+    <div className={r.resultControls}>
+     {!skip&&<button className={r.skip} type="button" onClick={()=>{setSkip(true);menuButton.current?.focus();}}>Пропустить анимацию</button>}
+    </div>
     <header className={r.banner}>
      <div className={r.regalia} data-ornate={result==='win'||result==='loss'}>
       {result==='win'||result==='loss'?<ResultRegalia win={result==='win'}/>:<div className={r.emblem}><KingdomMark name="atom" size={62}/></div>}
