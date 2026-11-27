@@ -290,7 +290,7 @@
   font: 900 clamp(.93rem, 1.45vw, 1.55rem)/1 var(--font-display), system-ui, sans-serif;
   text-shadow: 0 2px 2px #260f3e;
 }
-.game .card[data-unaffordable="true"] img { filter: brightness(.51) saturate(.58); }
+.game .card[data-unaffordable="true"] img { filter: brightness(.65) saturate(.72); }
 .game .card[data-unaffordable="true"] .cardCost { background: linear-gradient(#794eab, #4b2968); border-color: #b88ad0; }
 .game .card[aria-pressed="true"] { transform: translateY(-8px); border-color: #fef3b7; box-shadow: 0 0 0 2px #f4cc75, 0 0 25px #ffd97487, 0 7px 14px #050814; }
 @media (hover: hover) {
@@ -370,9 +370,10 @@
   border: 1px solid #f0baff;
   background: linear-gradient(180deg, #efa3ff 5%, #b85bf5 32%, #7f32c8 60%, #bc75ff 95%);
   box-shadow: inset 0 1px 3px #fff1ff, 0 0 10px #ba5affad;
-  transition: opacity .28s var(--ease);
+  transform: scaleY(.55);
+  transition: opacity .22s var(--ease), transform .24s var(--ease);
 }
-.energySegments i[data-filled="true"]::after { opacity: 1; }
+.energySegments i[data-filled="true"]::after { opacity: 1; transform: scaleY(1); }
 .energy[data-earned="true"] { animation: award .78s var(--ease) both; }
 .game .goldButton {
   min-height: 40px;
@@ -815,7 +816,7 @@
 .game .card[data-card="skeletons"] img { object-position: 50% 9%; }
 .game .card[aria-pressed="true"] {
   border-color: #fff0b3;
-  box-shadow: 0 0 0 2px #eec983, 0 0 0 4px #a26337, 0 0 23px #ffd67a7e, 0 9px 18px #060a1e;
+  box-shadow: 0 0 0 1px #eec983, 0 0 13px #ffd67a66, 0 8px 15px #060a1e;
 }
 .cardCost {
   border-radius: 36% 37% 43% 43%;
@@ -833,9 +834,10 @@
 .team { padding-block: .33em; }
 .scoreboard { letter-spacing: .015em; }
 .game .solve {
-  background: linear-gradient(177deg,#fff2c7 1%,#ffd880 22%,#dfa043 70%,#ffc669);
-  border-bottom-color: #b87730;
-  box-shadow: inset 0 0 0 2px #a66d35, inset 0 0 0 3px #fff0ab88, 0 4px 0 #78441f, 0 10px 28px #100b1ea0;
+  background: linear-gradient(180deg, #ffe781, #f8be36 52%, #d78a10);
+  border-color: #ffedb5;
+  color: #482b09;
+  box-shadow: inset 0 2px #fff5cd, inset 0 0 0 2px #97591070, 0 4px 0 #784710, 0 9px 19px #100b1e9e;
 }
 .solve small { font-weight: 850; }
 .lesson {
@@ -920,4 +922,44 @@
 }
 @media(prefers-reduced-motion:reduce){
  .energy[data-earned="true"] .energySegments i[data-filled="true"]::after{animation:none}
+}
+
+.game .solve:enabled:hover {
+  background: linear-gradient(180deg, #ffe781, #f8be36 52%, #d78a10);
+  border-color: #ffedb5;
+}
+.game .solve:enabled:active {
+  transform: translateY(3px);
+  box-shadow: inset 0 2px #fff5cd, inset 0 0 0 2px #97591070, 0 1px 0 #784710, 0 3px 9px #100b1e9e;
+}
+.game .card { touch-action: manipulation; }
+.game .card:enabled:active { transform: translateY(-2px) scale(.99); }
+.cardDeficit {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 2px 4px;
+  border: 1px solid #cb9cf0;
+  border-radius: 5px;
+  background: #301c4a;
+  color: #f7e5ff;
+  font: 800 .7rem/1.1 system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.energyNumber b, .clock span, .team b, .focusText b {
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 3px #070b20;
+}
+.energySegments i {
+  box-shadow: inset 0 2px 4px #080d22bb;
+}
+.energySegments i::after {
+  box-shadow: inset 0 1px 2px #fff1ff, inset 0 -2px 3px #57218d80, 0 0 6px #a846dc80;
+}
+.answerField input:focus-visible {
+  outline: 2px solid #ffdf94;
+  outline-offset: 2px;
+}
+@media (max-width: 600px) {
+  .answerField input { font-size: 16px; }
 }

@@ -181,11 +181,11 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:KingdomQual
  renderer.shadowMap.type=T.PCFShadowMap;
  renderer.shadowMap.autoUpdate=false;
  const scene=new T.Scene();
- scene.fog=new T.Fog(0x93a9d5,24,46);
+ scene.fog=new T.Fog(0x93a9d5,22,40);
  const camera=new T.PerspectiveCamera(32,1,.12,75);
  const stage=canvas.parentElement;
  const hemi=new T.HemisphereLight(0xb6caff,0x59433c,.77);
- const sun=new T.DirectionalLight(0xffca8e,3.2);
+ const sun=new T.DirectionalLight(0xffca8e,2.9);
  sun.position.set(9,10,6.3);
  sun.castShadow=!low;
  sun.shadow.mapSize.setScalar(ultra?2048:high?1536:768);
@@ -306,7 +306,7 @@ export function mountKingdomV3Scene(canvas:HTMLCanvasElement,quality:KingdomQual
   water?.update(elapsed);
   lanterns?.update(elapsed);
   life?.update(elapsed);
-  sun.intensity=3.2+dusk*.035;
+  sun.intensity=2.9+dusk*.035;
   if(!low&&frames%(ultra?9:high?11:19)===0)renderer.shadowMap.needsUpdate=true;
   renderer.render(scene,camera);
   frames++;

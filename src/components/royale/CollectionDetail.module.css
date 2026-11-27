@@ -227,3 +227,7 @@
  .collection .training:enabled,.collection .deckHead button:enabled {transition:none}
  .collection :is(.card,.deckCard,.training,.deckHead button):is(:hover,:active) {transform:none}
 }
+
+@media (max-width: 620px) {
+ .collection .deckHead button {min-height:44px}
+}

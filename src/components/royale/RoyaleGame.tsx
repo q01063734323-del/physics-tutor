@@ -115,6 +115,8 @@ export function RoyaleGame({preferences,updatePreferences,user,match,draft,catal
    created=view;viewRef.current=view;soundRef.current?.play('start');
    const resize=()=>{const box=element.getBoundingClientRect();view.resize(box.width,box.height,Math.min(devicePixelRatio||1,2));};
    resize();observer=new ResizeObserver(resize);observer.observe(element);
+   // Low starts with the lightweight arena and does not run the preload progress callbacks.
+   if(initial==='low')setViewLoading(null);
   }).catch(fail);
   return()=>{cancelled=true;observer?.disconnect();if(viewRef.current===created)viewRef.current=null;created?.dispose();};
  },[viewRevision,match.arena]);
@@ -253,9 +255,10 @@ export function RoyaleGame({preferences,updatePreferences,user,match,draft,catal
     <div className={b.hand} aria-label="Четыре активные карты">
      {hud.hand.map(card => <button type="button" className={b.card} key={card}
       data-card={card} data-unaffordable={hud.energy < cards[card].cost} aria-pressed={selected === card}
-      aria-label={`${cards[card].name}, ${cards[card].cost} энергии`}
+      aria-label={`${cards[card].name}, ${cards[card].cost} энергии${hud.energy < cards[card].cost ? `, не хватает ${cards[card].cost - hud.energy}` : ''}`}
       disabled={Boolean(hud.result) || hud.catchingUp} onClick={() => choose(card)}>
       <CardArtwork id={card}/><span className={b.cardCost}>{cards[card].cost}</span>
+      {hud.energy < cards[card].cost && <span className={b.cardDeficit} aria-hidden="true">−{cards[card].cost - hud.energy}</span>}
       <b>{cards[card].name}</b>
      </button>)}
     </div>
