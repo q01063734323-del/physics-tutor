@@ -71,12 +71,13 @@ assert.deepEqual(await list(bob, [eq("audience", "student"), eq("assignedToId", 
 assert.deepEqual(await list(bob, [eq("audience", "class")]), [shared.split("/").at(-1)]);
 
 const submission = `submissions/answer-${suffix}`;
-const body = (account, score) => {
-  const values = {
+const submissionData = (account, score) => ({
     assignment: "Test", assignmentId: own.split("/").at(-1), teacherId: "teacher", assignmentText: "",
     status: "На проверке", fileUrl: "https://example.com/answer", fileName: "answer.pdf", fileType: "application/pdf",
     fileSize: 100, user: account.email, userId: account.uid, reviewedBy: null, comment: "", score,
-  };
+});
+const body = (account, score) => {
+  const values = submissionData(account, score);
   const fields = Object.fromEntries(Object.entries(values).map(([key, value]) =>
     [key, value === null ? { nullValue: null } : typeof value === "number" ? { integerValue: String(value) } : { stringValue: value }]));
   return JSON.stringify({ writes: [{
@@ -85,13 +86,17 @@ const body = (account, score) => {
     currentDocument: { exists: false },
   }] });
 };
-for (const [account, score, status] of [[bob, "", 403], [alice, "10", 403], [alice, "", 200]]) {
+// Submission mutations are server-only, even with otherwise valid student data.
+for (const [account, score] of [[bob, ""], [alice, "10"], [alice, ""]]) {
   const result = await access(account, ":commit", { method: "POST", body: body(account, score) });
-  assert.equal(result.status, status, await result.text());
+  assert.equal(result.status, 403, await result.text());
 }
+await db.doc(submission).set({ ...submissionData(alice, ""), createdAt: new Date() });
 const grade = { method: "PATCH", body: JSON.stringify({ fields: { score: { stringValue: "8" } } }) };
 assert.equal((await access(alice, `${submission}?updateMask.fieldPaths=score`, grade)).status, 403);
-assert.equal((await access(teacher, `${submission}?updateMask.fieldPaths=score`, grade)).status, 200);
+assert.equal((await access(teacher, `${submission}?updateMask.fieldPaths=score`, grade)).status, 403);
+assert.equal((await access(teacher, submission)).status, 200);
+await db.doc(submission).update({ score: "8" });
 assert.equal((await (await access(alice, submission)).json()).fields.score.stringValue, "8");
 assert.equal((await access(bob, submission)).status, 403);
 
