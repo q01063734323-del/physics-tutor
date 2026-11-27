@@ -22,6 +22,7 @@ export function RoyaleApp({teacher=false}:{teacher?:boolean}){const[user,setUser
 function AccountRoyale({user,practice,onPractice,onCloud}:{user:User|null;practice:boolean;onPractice:()=>void;onCloud:()=>void}){
  const [catalog,setCatalog]=useState<Catalog|null>(null),[profile,setProfile]=useState<RoyaleProfile|null>(null),[settings,setSettings]=useState<RoyaleSettings>(defaultSettings),[error,setError]=useState(''),[busy,setBusy]=useState(false),[tab,setTab]=useState<KingdomTab>('home'),[settingsOpen,setSettingsOpen]=useState(false),[editDeck,setEditDeck]=useState(false),[difficulty,setDifficulty]=useState<Difficulty>('novice'),[arena,setArena]=useState('academy'),[run,setRun]=useState<{match:MatchDescriptor;draft:SavedRun|null}|null>(null),[saved,setSaved]=useState<SavedRun|null>(null),[active,setActive]=useState<MatchDescriptor|null>(null),[notice,setNotice]=useState(''),[deck,setDeck]=useState<CardId[]>([...starterDeck]);
  const {preferences,update:updatePreferences,ready:preferencesReady}=useRoyalePreferences();
+ const [loadRevision,setLoadRevision]=useState(0);
  const [checkedAt,setCheckedAt]=useState(()=>Date.now());useEffect(()=>{const timer=setInterval(()=>setCheckedAt(Date.now()),30000);return()=>clearInterval(timer);},[]);
  const menuAudio=useRef<RoyaleSound|null>(null);
  useEffect(()=>{
@@ -45,7 +46,7 @@ function AccountRoyale({user,practice,onPractice,onCloud}:{user:User|null;practi
     else{const [account,ongoing]=await Promise.all([royaleRequest<Account>(user,undefined,'',controller.signal),royaleRequest<{active:MatchDescriptor|null}>(user,undefined,'?view=active',controller.signal)]);if(alive){setProfile(account.profile);setDeck(account.profile.deck);setSettings(account.settings);setActive(ongoing.active);if(account.settings.studentDifficulty[user!.uid])setDifficulty(account.settings.studentDifficulty[user!.uid]);}}
    }catch(problem){if(alive&&!controller.signal.aborted)setError(problem instanceof Error?problem.message:'Не удалось открыть игру.');}}
   void load();return()=>{alive=false;controller.abort();};
- },[practice,profileKey,storageKey,user]);
+ },[practice,profileKey,storageKey,user,loadRevision]);
  async function start(){if(!profile||busy)return;setBusy(true);setError('');try{let match:MatchDescriptor;if(!validDeck(profile.deck))throw Error('Сначала сохраните полную колоду.');if(practice){const selected=arenas.find(a=>a.id===arena)!;if(profile.trophies<selected.trophies)throw Error('Для этой арены пока не хватает кубков.');match={id:crypto.randomUUID(),seed:crypto.getRandomValues(new Uint32Array(1))[0]||1,difficulty,deck:profile.deck,levels:profile.levels,arena,startedAt:Date.now(),focusScale:settings.focusScale,topics:[],section:selected.topic,practice:true,version:balance.version};}
    else{const response=await royaleRequest<{match:Omit<MatchDescriptor,'practice'>}>(user,{action:'start',arena,difficulty});match={...response.match,practice:false};setActive(match);}
    const draft:SavedRun={match,commands:[],tick:0,savedAt:Date.now(),focusActive:false,focusRemaining:120,questionFocus:0,used:[],answers:[],task:null,feedback:null,typedAnswer:''};await writeLocalRecord(storageKey,draft);setSaved(draft);setRun({match,draft:null});
@@ -78,6 +79,7 @@ function AccountRoyale({user,practice,onPractice,onCloud}:{user:User|null;practi
  </div>:<button className={k.goldButton} disabled={busy||!catalog||!preferencesReady} onClick={()=>void start()}>{busy?'Готовим арену…':'В бой'} <RoyaleIcon name="swords"/></button>;
  return <KingdomShell tab={tab} profile={profile} name={user?.displayName} practice={practice} onNavigate={navigate} onSettings={()=>setSettingsOpen(true)}>
   {error&&<p className={k.alert} role="alert">{error}</p>}
+  {!profile&&error&&<button className={k.subButton} onClick={()=>{setError('');setLoadRevision(value=>value+1);}}>Повторить загрузку</button>}
   {notice&&<div className={k.notice} role="status">{notice}<button aria-label="Скрыть сообщение" onClick={()=>setNotice('')}>×</button></div>}
   {!profile&&!error&&<p className={k.notice} role="status">Открываем профиль и банк задач…</p>}
   {!practice&&!profile&&error&&<button className={k.subButton} onClick={onPractice}>Открыть локальную практику</button>}
