@@ -394,7 +394,7 @@ export default function Home() {
     { title: "Кабинет", entries: teacher
       ? [["home", "Обзор", "home"], ["tasks", "Задания", "tasks"], ["schedule", "Расписание", "calendar"], ["students", "Ученики", "people"]]
       : [["home", "Обзор", "home"], ["tasks", "Мои задания", "tasks"], ["schedule", "Расписание", "calendar"], ["progress", "Прогресс", "progress"], ["materials", "Материалы", "book"]] },
-    { title: "Практика", entries: [["royale", teacher ? "Задачи Physics Royale" : "Physics Royale", "progress"], ["preparation", "Моя подготовка", "progress"], ["library", teacher?"Мои материалы":"Библиотека", "book"], ["exam", "ЕГЭ-тренажёр", "tasks"], ["bank", "Банк задач", "book"], ["theory", "Теория", "book"], ["formulas", "Формулы", "book"], ["blitz", "Блиц", "progress"], ["lab", "Лаборатория", "lab"], ["errors", "Разбор ошибок", "progress"]] },
+    { title: "Практика", entries: [["royale", teacher ? "Задачи Physics Royale" : process.env.NEXT_PUBLIC_ROYALE_BETA === "true" ? "Physics Royale · Бета" : "Physics Royale", "progress"], ["preparation", "Моя подготовка", "progress"], ["library", teacher?"Мои материалы":"Библиотека", "book"], ["exam", "ЕГЭ-тренажёр", "tasks"], ["bank", "Банк задач", "book"], ["theory", "Теория", "book"], ["formulas", "Формулы", "book"], ["blitz", "Блиц", "progress"], ["lab", "Лаборатория", "lab"], ["errors", "Разбор ошибок", "progress"]] },
     { title: "Аккаунт", entries: teacher ? [["profile", "Профиль", "profile"]] : [["notifications", "Уведомления", "bell"], ["profile", "Профиль", "profile"]] },
   ];
   const viewTitle = navGroups.flatMap(group => group.entries).find(([key]) => key === activeView)?.[1];

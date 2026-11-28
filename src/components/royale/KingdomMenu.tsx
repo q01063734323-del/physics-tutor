@@ -47,7 +47,11 @@ export function KingdomShell({tab,profile,practice,name,onNavigate,onSettings,ch
     {kingdomTabs.map(([id,label])=><button type="button" key={id} aria-current={tab===id?'page':undefined} onClick={()=>onNavigate(id)}>
      {tab==='home'?<KingdomMenuMedal name={id}/>:id==='stats'?<KingdomMark name="stats"/>:<RoyaleIcon name={id==='battle'?'swords':id==='collection'?'deck':'progress'}/>}<span>{label}</span></button>)}
    </nav>
-   <footer className={k.footer}><span>{practice?'Локальная практика':'Личный профиль'}</span><Link href="/trainer">Тренажёр ЕГЭ</Link><Link href="/">Физика с Егором</Link></footer>
+   <footer className={k.footer}>
+    <span>{practice?'Локальная практика':'Личный профиль'}</span>
+    {process.env.NEXT_PUBLIC_ROYALE_BETA === 'true' && <Link href="/royale/feedback">Отзыв о бете</Link>}
+    <Link href="/trainer">Тренажёр ЕГЭ</Link><Link href="/">Физика с Егором</Link>
+   </footer>
   </div>
  </main>;
 }
