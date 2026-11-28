@@ -15,7 +15,7 @@ try{
  const api=require(path.join(folder,'route.js')),db=require(path.join(folder,'admin.js')).records,bank=require(path.join(folder,'bank.js')),engine=require(path.join(folder,'engine.js'));
  const req=(method='GET',user=null,body=null,query='')=>new Request('https://example.test/api/royale'+query,{method,headers:{Origin:'https://example.test',...(user?{Authorization:'Bearer '+user}:{}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
  async function call(user,body,status=200){const response=await api.POST(req('POST',user,body));assert.equal(response.status,status,await response.clone().text());return response.json();}
- const catalog=await(await api.GET(req('GET',null,null,'?view=catalog'))).json();assert.equal(catalog.questions.length,288);assert(catalog.questions.every(q=>q.solution===null&&q.answer.type!=='manual'&&(q.answer.expected===''||q.answer.expected.length===0)));
+ const catalog=await(await api.GET(req('GET',null,null,'?view=catalog'))).json();assert.equal(catalog.questions.length,1361);assert(catalog.questions.every(q=>q.solution===null&&q.answer.type!=='manual'&&(q.answer.expected===''||q.answer.expected.length===0)));
  assert.equal((await api.GET(req())).status,401);await call('alice',{action:'teacher-balance',rewards:{easy:6,medium:6,hard:6},focusScale:.2},403);
  const first=await call('alice',{action:'start',difficulty:'physicist',arena:'academy',xp:999999});const id=first.match.id;await call('alice',{action:'start'},409);await call('bob',{action:'question',matchId:id,tick:0},403);
  const active=await(await api.GET(req('GET','alice',null,'?view=active'))).json();assert.equal(active.active.id,id);assert.equal(active.active.settings,undefined);
@@ -27,6 +27,13 @@ try{
  const third=await call('alice',{action:'question',matchId:id,tier:'easy',tick:0});assert(third.syncTick>=solved.receipt.minTick);
  const forfeited=await call('alice',{action:'finish',matchId:id,endTick:600,forfeit:true,commands:[],win:true,xp:99999});assert.equal(forfeited.outcome,'loss');assert.equal(forfeited.profile.xp,0);assert.equal(forfeited.profile.coins,0);assert.equal(forfeited.rewarded,false);
  const again=await call('alice',{action:'finish',matchId:id,endTick:600,forfeit:true,commands:[]});assert.equal(again.profile.matches,1);assert.deepEqual(again.profile.history.at(-1).learning,forfeited.profile.history.at(-1).learning);assert.equal(again.profile.history.at(-1).learning.energy,0);assert.deepEqual(again.profile.history.at(-1).learning.missedIds,[q.id]);await call('alice',{action:'finish',matchId:id,endTick:601,forfeit:true,commands:[]},409);
+ const previousBank=await call('alice',{action:'start'});
+ db.set('royaleMatches/'+previousBank.match.id,{...db.get('royaleMatches/'+previousBank.match.id),bankVersion:'previous-release'});
+ assert.equal((await (await api.GET(req('GET','alice',null,'?view=active'))).json()).active,null);
+ const currentBank=await call('alice',{action:'start'});
+ assert.notEqual(currentBank.match.id,previousBank.match.id);
+ assert.equal(db.get('royaleMatches/'+previousBank.match.id).bankVersion,'previous-release');
+ await call('alice',{action:'abandon',matchId:currentBank.match.id});
  const stale=await call('alice',{action:'start'});db.set('royaleMatches/'+stale.match.id,{...db.get('royaleMatches/'+stale.match.id),version:999});await call('bob',{action:'abandon',matchId:stale.match.id},403);await call('alice',{action:'abandon',matchId:stale.match.id});assert(!db.has('royaleActive/alice'));
  const game=await call('alice',{action:'start',difficulty:'novice'}),challenge=await call('alice',{action:'question',matchId:game.match.id,tier:'easy',tick:0});now+=10000;const solution=bank.publishedTrainerById.get(challenge.question.id).answer.expected;const graded=await call('alice',{action:'answer',matchId:game.match.id,challengeId:challenge.challengeId,answer:solution,tick:200});const commands=[{kind:'reward',tick:200,id:graded.receipt.id,amount:graded.receipt.amount},{kind:'deploy',tick:200,card:'knight',x:110,y:440}];now+=190000;
  const expected=engine.replayBattle(game.match.seed,game.match.difficulty,game.match.deck,game.match.levels,commands,3600).result;
@@ -49,5 +56,5 @@ try{
  assert.deepEqual([bobLearning.attempts,bobLearning.solved,bobLearning.accuracy],[1,0,0]);
  assert(!JSON.stringify(aliceLearning).includes('private'));
 
- console.log('Royale API checks passed: 288 original tasks, concealed answer keys, role/owner boundaries, server grading, no reward on wrong/repeated answers, receipt chronology and retries, replay-derived outcomes, no forfeit farming, idempotent awards, stale active-match recovery, upgrade/deck constraints, teacher settings and student isolation. Firebase I/O mocked.');
+ console.log('Royale API checks passed: real 1361-task adapter, concealed answer keys, role/owner boundaries, server grading, no reward on wrong/repeated answers, receipt chronology and retries, replay-derived outcomes, no forfeit farming, idempotent awards, stale active-match recovery, upgrade/deck constraints, teacher settings and student isolation. Firebase I/O mocked.');
 }finally{Date.now=originalNow;await fs.rm(folder,{recursive:true,force:true});}

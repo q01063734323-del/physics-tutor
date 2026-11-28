@@ -1,5 +1,5 @@
 import "server-only";
-import published from "../../data/trainer/public-original.json";
+import published from "../../data/trainer/physics-2026.json";
 import { canPublishQuestion, type TrainerQuestion } from "./trainer-bank";
 import { publicTrainerQuestion } from "./trainer-public";
 import legacyAttempts from "../../data/trainer/legacy-attempt-index.json";
