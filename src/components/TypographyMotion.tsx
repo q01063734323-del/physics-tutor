@@ -22,6 +22,11 @@ export function TypographyMotion() {
       }
     }, { threshold: .15 });
     function scan() {
+      for (const element of observed) {
+        if (element.isConnected) continue;
+        observer.unobserve(element);
+        observed.delete(element);
+      }
       if (media.matches) return;
       document.querySelectorAll("h1 em, main h2, .pt-dashboard h2").forEach(element => {
         if (observed.has(element) || element.closest(".katex, [data-reveal], [data-motion-scene]")) return;
