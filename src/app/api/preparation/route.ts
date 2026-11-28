@@ -1,7 +1,7 @@
 import { preparationAccess } from "@/lib/command-center/access";
 import { summarizeAttempts, topicAnalytics, numberAnalytics, type LearningAttempt } from "@/lib/command-center/analytics";
 import { displayTrainerAnswer } from "@/lib/trainer-bank";
-import { publishedTrainerById, publishedTrainerCatalog } from "@/lib/published-trainer-server";
+import { publishedTrainerById, publishedTrainerCatalog, trainerHistoryCatalog } from "@/lib/published-trainer-server";
 function reply(data: object, status = 200) { return Response.json(data, { status, headers: { "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" } }); }
 export async function GET(request: Request) {
   try {
@@ -30,7 +30,8 @@ export async function GET(request: Request) {
     const fullExamsSnapshot = await access.db.collection("preparationExams").where("studentId", "==", access.target).limit(200).get();
     const fullExams = fullExamsSnapshot.docs.map(record => ({...record.data(),id:record.id}));
     const tasks = publishedTrainerCatalog.map(task => ({ id: task.id, version: task.version, section: task.section, topics: task.topics, examNumber: task.examNumber }));
-    return reply({ tasks, assignments, fullExams, pendingAttempts: attempts.filter(attempt => attempt.evaluationStatus === "pending" && publishedTrainerById.get(attempt.taskId)?.version === attempt.taskVersion), examHistory, studentId: access.target, profile: settings.data() || null, summary: summarizeAttempts(tasks, attempts), topics: topicAnalytics(tasks, attempts), numbers: numberAnalytics(tasks, attempts), forecast: { status: "unavailable", reason: "Нет подтверждённых полноценных пробников и валидированной модели прогноза." }, calculatedAt: new Date().toISOString(), calculationVersion: "command-center-1" });
+    const historyCatalog = trainerHistoryCatalog(attempts);
+    return reply({ tasks, assignments, fullExams, pendingAttempts: attempts.filter(attempt => attempt.evaluationStatus === "pending" && publishedTrainerById.get(attempt.taskId)?.version === attempt.taskVersion), examHistory, studentId: access.target, profile: settings.data() || null, summary: summarizeAttempts(historyCatalog, attempts), topics: topicAnalytics(historyCatalog, attempts), numbers: numberAnalytics(historyCatalog, attempts), forecast: { status: "unavailable", reason: "Нет подтверждённых полноценных пробников и валидированной модели прогноза." }, calculatedAt: new Date().toISOString(), calculationVersion: "command-center-1" });
   } catch (error) { const code = error instanceof SyntaxError ? 400 : error instanceof Error ? Number(error.message) : 0; return reply({ error: code === 403 ? "Нет доступа к аналитике ученика." : code === 401 ? "Войди в аккаунт." : "Аналитика временно недоступна. Данные не заменены нулями." }, [400,401,403].includes(code) ? code : 503); }
 }
 

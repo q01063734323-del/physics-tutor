@@ -51,3 +51,8 @@ next-env.d.ts
 
 # Reproducible PDF.js worker/fonts prepared by postinstall
 /public/pdf-assets/
+
+# Local archive of the imported commercial trainer bank
+/data/trainer/physics-2026.json
+/data/trainer/assets.json
+/public/trainer-assets/physics-2026/

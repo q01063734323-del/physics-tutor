@@ -11,7 +11,7 @@ const reply = (status: number) => new Response(null, {
 });
 
 export async function POST(request: Request) {
-  if (process.env.NEXT_PUBLIC_ROYALE_BETA !== "true") return reply(404);
+  if (process.env.NEXT_PUBLIC_ROYALE_BETA === "false") return reply(404);
   const origin = request.headers.get("origin");
   const publicUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://physics-tutor-6ytz.onrender.com";
   if (!origin || request.headers.get("sec-fetch-site") === "cross-site" ||

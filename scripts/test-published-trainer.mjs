@@ -3,7 +3,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { createRequire } from "node:module";
-import { createHash } from "node:crypto";
 import ts from "typescript";
 
 const temporary = await fs.mkdtemp(path.join(os.tmpdir(), "published-trainer-test-"));
@@ -25,39 +24,27 @@ try {
   assert.equal(trainerOriginAllowed(null, internalUrl, publicUrl), true);
   for (const origin of ["https://example.com", "https://physics-tutor-6ytz.onrender.com.evil.example", "http://physics-tutor-6ytz.onrender.com", "null"]) assert.equal(trainerOriginAllowed(origin, internalUrl, publicUrl), false);
   assert.equal(trainerOriginAllowed("https://example.com", internalUrl, "invalid"), false);
-  const bank = JSON.parse(await fs.readFile(new URL("../data/trainer/physics-2026.json", import.meta.url), "utf8"));
-  const assets = JSON.parse(await fs.readFile(new URL("../data/trainer/assets.json", import.meta.url), "utf8"));
-  assert.equal(bank.questions.length, 1460);
-  assert.equal(bank.excluded, 21);
-  assert.equal(new Set(bank.questions.map(q => q.id)).size, 1460);
-  const referenced = new Set();
+  const bank = JSON.parse(await fs.readFile(new URL("../data/trainer/public-original.json", import.meta.url), "utf8"));
+  const historical = JSON.parse(await fs.readFile(new URL("../data/trainer/legacy-attempt-index.json", import.meta.url), "utf8"));
+  assert.equal(bank.questions.length, 288);
+  assert.equal(new Set(bank.questions.map(q => q.id)).size, bank.questions.length);
+  assert.equal(new Set(bank.questions.map(q => q.prompt)).size, bank.questions.length);
+  assert.equal(historical.length, 1460);
+  assert(historical.every(task => Object.keys(task).sort().join(",") === "examNumber,id,section,topics,version"));
+  await assert.rejects(fs.access(new URL("../public/trainer-assets/physics-2026", import.meta.url)), { code: "ENOENT" });
   for (const question of bank.questions) {
+    assert.equal(question.origin, "original");
+    assert.equal(question.assets.length, 0);
+    assert.equal(question.examNumber, null);
     assert(canPublishQuestion(question));
     assert.deepEqual(validateTrainerQuestion(question), []);
-    assert.equal(question.searchText, undefined, "do not export unreviewed OCR columns");
     const visible = publicTrainerQuestion(question);
     assert.equal(visible.solution, null);
     assert.equal(visible.searchText, undefined);
-    assert(visible.assets.every(asset => !["solution", "answer", "condition"].includes(asset.role)));
-    assert(!visible.answer || (visible.answer.type === "manual" ? visible.answer.expected === undefined : Array.isArray(visible.answer.expected) ? visible.answer.expected.length === 0 : visible.answer.expected === ""));
-    if (question.answer.type !== "manual") {
-      const expected = question.answer.type === "numeric" ? question.answer.expected : question.answer.expected.join(";");
-      const result = checkPublishedAnswer(question, expected);
-      assert.equal(result.correct, true, question.id);
-      assert.deepEqual(result.answer, question.answer);
-      assert(result.assets.every(asset => asset.role === "solution"));
-    }
-    for (const asset of question.assets) {
-      assert.match(asset.url, /^\/trainer-assets\/physics-2026\/(crop|asset)-[a-f0-9]+\.webp$/);
-      referenced.add(path.basename(asset.url));
-    }
+    assert(visible.answer.expected === "" || visible.answer.expected.length === 0);
+    const expected = question.answer.type === "numeric" ? question.answer.expected : question.answer.expected.join(";");
+    assert.equal(checkPublishedAnswer(question, expected).correct, true, question.id);
+    assert.equal(checkPublishedAnswer(question, "9999000").correct, false, question.id);
   }
-  assert.equal(referenced.size, assets.assets.length);
-  for (const asset of assets.assets) {
-    assert(referenced.has(asset.file));
-    const bytes = await fs.readFile(new URL(`../public/trainer-assets/physics-2026/${asset.file}`, import.meta.url));
-    assert.equal(bytes.subarray(8, 12).toString(), "WEBP");
-    assert.equal(createHash("sha256").update(bytes).digest("hex"), asset.sha256);
-  }
-  console.log(`published trainer checks passed: 1460 unique approved records, 21 excluded, ${referenced.size} verified images; no keys or solutions in the catalog; all automatic answer keys accepted`);
+  console.log("Published trainer: 288 distinct original tasks, validated keys, no solution leakage or archived images; historical index has metadata only.");
 } finally { await fs.rm(temporary, { recursive: true, force: true }); }

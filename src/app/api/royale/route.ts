@@ -1,6 +1,6 @@
 import {topicAnalytics,summarizeAttempts,type LearningAttempt} from '@/lib/command-center/analytics';
 import{preparationAccess}from'@/lib/command-center/access';
-import{publishedTrainerQuestions,publishedTrainerById,publishedTrainerVersion,publishedTrainerCatalog}from'@/lib/published-trainer-server';
+import{publishedTrainerQuestions,publishedTrainerById,publishedTrainerVersion,trainerHistoryCatalog}from'@/lib/published-trainer-server';
 import{publicTrainerQuestion,checkPublishedAnswer,trainerOriginAllowed}from'@/lib/trainer-public';
 import{defaultSettings}from'@/lib/royale/config';
 import{suitableTask,taskTier,normalizeUnitInput}from'@/lib/royale/tasks';
@@ -16,8 +16,9 @@ export async function GET(request:Request){try{const p=new URL(request.url).sear
   const records=await access.db.collection('preparationAttempts').where('studentId','==',access.target).limit(5001).get();
   if(records.size>5000)throw new RoyaleError('Сводка платформы временно недоступна для этой истории.',422);
   const attempts=records.docs.map(record=>record.data() as LearningAttempt);
-  const {attemptsCount,uniqueSolved,accuracy}=summarizeAttempts(publishedTrainerCatalog,attempts);
-  const topics=topicAnalytics(publishedTrainerCatalog,attempts)
+  const historyCatalog=trainerHistoryCatalog(attempts);
+  const {attemptsCount,uniqueSolved,accuracy}=summarizeAttempts(historyCatalog,attempts);
+  const topics=topicAnalytics(historyCatalog,attempts)
    .filter(topic=>topic.attemptsCount>0)
    .map(({topic,attemptsCount,accuracy})=>({topic,attempts:attemptsCount,accuracy}));
   return reply({attempts:attemptsCount,solved:uniqueSolved,accuracy,topics});

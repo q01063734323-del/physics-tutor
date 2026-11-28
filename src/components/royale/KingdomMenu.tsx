@@ -49,7 +49,7 @@ export function KingdomShell({tab,profile,practice,name,onNavigate,onSettings,ch
    </nav>
    <footer className={k.footer}>
     <span>{practice?'Локальная практика':'Личный профиль'}</span>
-    {process.env.NEXT_PUBLIC_ROYALE_BETA === 'true' && <Link href="/royale/feedback">Отзыв о бете</Link>}
+    {process.env.NEXT_PUBLIC_ROYALE_BETA !== 'false' && <Link href="/royale/feedback">Отзыв о бете</Link>}
     <Link href="/trainer">Тренажёр ЕГЭ</Link><Link href="/">Физика с Егором</Link>
    </footer>
   </div>
